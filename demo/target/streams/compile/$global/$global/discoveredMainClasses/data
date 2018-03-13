@@ -1,1 +1,0 @@
-["io.ontherocks.hellogrpc.ClockClient","io.ontherocks.hellogrpc.ClockServer","io.ontherocks.hellogrpc.HelloWorldClient","io.ontherocks.hellogrpc.HelloWorldServer","io.ontherocks.hellogrpc.SumClient","io.ontherocks.hellogrpc.SumServer"]

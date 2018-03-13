@@ -1,6 +1,0 @@
-[0m[[0m[0minfo[0m] [0m[0mCompiling 4 protobuf files to C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\target\scala-2.12\src_managed\main[0m
-[0m[[0m[0mdebug[0m] [0m[0mprotoc options:[0m
-[0m[[0m[0minfo[0m] [0m[0mCompiling schema C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\protobuf\clock.proto[0m
-[0m[[0m[0minfo[0m] [0m[0mCompiling schema C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\protobuf\customizations.proto[0m
-[0m[[0m[0minfo[0m] [0m[0mCompiling schema C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\protobuf\helloworld.proto[0m
-[0m[[0m[0minfo[0m] [0m[0mCompiling schema C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\protobuf\sum.proto[0m
