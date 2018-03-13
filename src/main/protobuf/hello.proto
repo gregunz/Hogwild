@@ -1,8 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/wrappers.proto";
-import "scalapb/scalapb.proto";
-
 package demo;
 
 /*
@@ -18,7 +15,7 @@ message ToBeGreeted {
     }
 
     Person person = 1;
-    google.protobuf.StringValue msg = 2;
+    string msg = 2;
 }
 
 message Greeting {
