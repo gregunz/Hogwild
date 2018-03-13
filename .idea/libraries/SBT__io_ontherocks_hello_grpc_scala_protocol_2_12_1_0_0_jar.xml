@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: io.ontherocks:hello-grpc-scala-protocol_2.12:1.0.0:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/AppData/Local/Coursier/cache/v1/https/dl.bintray.com/pbvie/maven/io/ontherocks/hello-grpc-scala-protocol_2.12/1.0.0/hello-grpc-scala-protocol_2.12-1.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/AppData/Local/Coursier/cache/v1/https/dl.bintray.com/pbvie/maven/io/ontherocks/hello-grpc-scala-protocol_2.12/1.0.0/hello-grpc-scala-protocol_2.12-1.0.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/AppData/Local/Coursier/cache/v1/https/dl.bintray.com/pbvie/maven/io/ontherocks/hello-grpc-scala-protocol_2.12/1.0.0/hello-grpc-scala-protocol_2.12-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

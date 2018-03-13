@@ -1,0 +1,721 @@
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\ClockClient.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.clock.{ ClockGrpc, TimeRequest, TimeResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject ClockClient {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val client  = ClockGrpc.stub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val observer: StreamObserver[TimeResponse] = new StreamObserver[TimeResponse] {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onCompleted(): Unit         = println("ON_COMPLETED")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onNext(response: TimeResponse): Unit =[0m
+[0m[[0m[0mdebug[0m] [0m[0m        println(s"ON_NEXT: Received current time ms: ${response.currentTime}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    client.streamTime(TimeRequest(), observer)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.clock.{ ClockGrpc, TimeRequest, TimeResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject ClockClient {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val client  = ClockGrpc.stub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val observer: StreamObserver[TimeResponse] = new StreamObserver[TimeResponse] {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onCompleted(): Unit         = println("ON_COMPLETED")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onNext(response: TimeResponse): Unit =[0m
+[0m[[0m[0mdebug[0m] [0m[0m        println(s"ON_NEXT: Received current time ms: ${response.currentTime}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    client.streamTime(TimeRequest(), observer)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\ClockServer.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.clock.ClockGrpc.Clock[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.clock.{ ClockGrpc, TimeRequest, TimeResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.Scheduler[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.Scheduler.{ global => scheduler }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.duration._[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject ClockServer extends GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  class ClockService extends Clock {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    def streamTime(request: TimeRequest, responseObserver: StreamObserver[TimeResponse]): Unit =[0m
+[0m[[0m[0mdebug[0m] [0m[0m      scheduler.scheduleWithFixedDelay(0.seconds, 3.seconds) {[0m
+[0m[[0m[0mdebug[0m] [0m[0m        responseObserver.onNext(TimeResponse(System.currentTimeMillis()))[0m
+[0m[[0m[0mdebug[0m] [0m[0m      }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val ssd = ClockGrpc.bindService(new ClockService(), Scheduler.global)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    runServer(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.clock.ClockGrpc.Clock[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.clock.{ ClockGrpc, TimeRequest, TimeResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.Scheduler[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.Scheduler.{ global => scheduler }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.duration._[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject ClockServer extends GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  class ClockService extends Clock {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    def streamTime(request: TimeRequest, responseObserver: StreamObserver[TimeResponse]): Unit =[0m
+[0m[[0m[0mdebug[0m] [0m[0m      scheduler.scheduleWithFixedDelay(0.seconds, 3.seconds) {[0m
+[0m[[0m[0mdebug[0m] [0m[0m        responseObserver.onNext(TimeResponse(System.currentTimeMillis()))[0m
+[0m[[0m[0mdebug[0m] [0m[0m      }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val ssd = ClockGrpc.bindService(new ClockService(), Scheduler.global)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    runServer(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\GrpcServer.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.{ ServerBuilder, ServerServiceDefinition }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mtrait GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  /**[0m
+[0m[[0m[0mdebug[0m] [0m[0m    * Just for demo purposes[0m
+[0m[[0m[0mdebug[0m] [0m[0m    */[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def runServer(ssd: ServerServiceDefinition): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val server = ServerBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .forPort(50051)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .addService(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .build[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .start[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // make sure our server is stopped when jvm is shut down[0m
+[0m[[0m[0mdebug[0m] [0m[0m    Runtime.getRuntime.addShutdownHook(new Thread() {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      override def run(): Unit = server.shutdown()[0m
+[0m[[0m[0mdebug[0m] [0m[0m    })[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    server.awaitTermination()[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.{ ServerBuilder, ServerServiceDefinition }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mtrait GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  /**[0m
+[0m[[0m[0mdebug[0m] [0m[0m    * Just for demo purposes[0m
+[0m[[0m[0mdebug[0m] [0m[0m    */[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def runServer(ssd: ServerServiceDefinition): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val server = ServerBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .forPort(50051)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .addService(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .build[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .start[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // make sure our server is stopped when jvm is shut down[0m
+[0m[[0m[0mdebug[0m] [0m[0m    Runtime.getRuntime.addShutdownHook(new Thread() {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      override def run(): Unit = server.shutdown()[0m
+[0m[[0m[0mdebug[0m] [0m[0m    })[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    server.awaitTermination()[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\HelloWorldClient.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.HelloWorldGrpc.{ HelloWorldBlockingStub, HelloWorldStub }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.ToBeGreeted.Person[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.{ Greeting, HelloWorldGrpc, ToBeGreeted }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.ExecutionContext.Implicits.global[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.Future[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject HelloWorldClient {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val channel = ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .forAddress("localhost", 50051) // host and port of service[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .usePlaintext(true) // don't use encryption (for demo purposes)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .build[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val person = Person([0m
+[0m[[0m[0mdebug[0m] [0m[0m      name = "Bob"[0m
+[0m[[0m[0mdebug[0m] [0m[0m    )[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val toBeGreeted = ToBeGreeted(Some(person))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // or use the generated builder methods[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // val toBeGreeted2 = ToBeGreeted().withPerson(Person(name = "Bob"))[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // async client[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val stub: HelloWorldStub        = HelloWorldGrpc.stub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val greetingF: Future[Greeting] = stub.sayHello(toBeGreeted)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    greetingF.foreach(response => println(s"ASYNC RESULT: ${response.message}"))[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // beware: blocking code below[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val blockingStub: HelloWorldBlockingStub = HelloWorldGrpc.blockingStub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val greeting: Greeting                   = blockingStub.sayHello(toBeGreeted)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    println(s"SYNC(BLOCKING) RESULT: ${greeting.message}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.HelloWorldGrpc.{ HelloWorldBlockingStub, HelloWorldStub }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.ToBeGreeted.Person[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.{ Greeting, HelloWorldGrpc, ToBeGreeted }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.ExecutionContext.Implicits.global[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.Future[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject HelloWorldClient {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val channel = ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .forAddress("localhost", 50051) // host and port of service[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .usePlaintext(true) // don't use encryption (for demo purposes)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      .build[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val person = Person([0m
+[0m[[0m[0mdebug[0m] [0m[0m      name = "Bob"[0m
+[0m[[0m[0mdebug[0m] [0m[0m    )[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val toBeGreeted = ToBeGreeted(Some(person))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // or use the generated builder methods[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // val toBeGreeted2 = ToBeGreeted().withPerson(Person(name = "Bob"))[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // async client[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val stub: HelloWorldStub        = HelloWorldGrpc.stub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val greetingF: Future[Greeting] = stub.sayHello(toBeGreeted)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    greetingF.foreach(response => println(s"ASYNC RESULT: ${response.message}"))[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    // beware: blocking code below[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val blockingStub: HelloWorldBlockingStub = HelloWorldGrpc.blockingStub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val greeting: Greeting                   = blockingStub.sayHello(toBeGreeted)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    println(s"SYNC(BLOCKING) RESULT: ${greeting.message}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\HelloWorldServer.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.{ Greeting, HelloWorldGrpc, ToBeGreeted }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.{ ExecutionContext, Future }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject HelloWorldServer extends GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  class HelloWorldService extends HelloWorldGrpc.HelloWorld {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    def sayHello(request: ToBeGreeted): Future[Greeting] = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      val greetedPerson = request.person match {[0m
+[0m[[0m[0mdebug[0m] [0m[0m        case Some(person) => person.name[0m
+[0m[[0m[0mdebug[0m] [0m[0m        case None         => "anonymous"[0m
+[0m[[0m[0mdebug[0m] [0m[0m      }[0m
+[0m[[0m[0mdebug[0m] [0m[0m      Future.successful(Greeting(message = s"Hello ${greetedPerson}!"))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val ssd = HelloWorldGrpc.bindService(new HelloWorldService(), ExecutionContext.global)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    runServer(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.helloworld.{ Greeting, HelloWorldGrpc, ToBeGreeted }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.{ ExecutionContext, Future }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject HelloWorldServer extends GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  class HelloWorldService extends HelloWorldGrpc.HelloWorld {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    def sayHello(request: ToBeGreeted): Future[Greeting] = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      val greetedPerson = request.person match {[0m
+[0m[[0m[0mdebug[0m] [0m[0m        case Some(person) => person.name[0m
+[0m[[0m[0mdebug[0m] [0m[0m        case None         => "anonymous"[0m
+[0m[[0m[0mdebug[0m] [0m[0m      }[0m
+[0m[[0m[0mdebug[0m] [0m[0m      Future.successful(Greeting(message = s"Hello ${greetedPerson}!"))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val ssd = HelloWorldGrpc.bindService(new HelloWorldService(), ExecutionContext.global)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    runServer(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\package.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage object hellogrpc {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Traversable[+A] = scala.collection.immutable.Traversable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Iterable[+A]    = scala.collection.immutable.Iterable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Seq[+A]         = scala.collection.immutable.Seq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage object hellogrpc {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Traversable[+A] = scala.collection.immutable.Traversable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Iterable[+A]    = scala.collection.immutable.Iterable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Seq[+A]         = scala.collection.immutable.Seq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\SumClient.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.sum.{ SumGrpc, SumRequest, SumResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.Scheduler.{ global => scheduler }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.duration._[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.util.Random[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject SumClient {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val client  = SumGrpc.stub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val responseObserver = new StreamObserver[SumResponse] {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onCompleted(): Unit         = println("ON_COMPLETED")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onNext(value: SumResponse): Unit =[0m
+[0m[[0m[0mdebug[0m] [0m[0m        println(s"ON_NEXT: Current sum: ${value.currentResult}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val requestObserver = client.add(responseObserver)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    scheduler.scheduleWithFixedDelay(0.seconds, 5.seconds) {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      val toBeAdded = Random.nextInt(11)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      println(s"Adding number: $toBeAdded")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      requestObserver.onNext(SumRequest(toBeAdded))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.ManagedChannelBuilder[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.sum.{ SumGrpc, SumRequest, SumResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.Scheduler.{ global => scheduler }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.duration._[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.util.Random[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject SumClient {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val channel = ManagedChannelBuilder.forAddress("localhost", 50051).usePlaintext(true).build[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val client  = SumGrpc.stub(channel)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val responseObserver = new StreamObserver[SumResponse] {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onCompleted(): Unit         = println("ON_COMPLETED")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      def onNext(value: SumResponse): Unit =[0m
+[0m[[0m[0mdebug[0m] [0m[0m        println(s"ON_NEXT: Current sum: ${value.currentResult}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val requestObserver = client.add(responseObserver)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m    scheduler.scheduleWithFixedDelay(0.seconds, 5.seconds) {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      val toBeAdded = Random.nextInt(11)[0m
+[0m[[0m[0mdebug[0m] [0m[0m      println(s"Adding number: $toBeAdded")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      requestObserver.onNext(SumRequest(toBeAdded))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\SumServer.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.sum.{ SumGrpc, SumRequest, SumResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.atomic.{ Atomic, AtomicInt }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.ExecutionContext[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject SumServer extends GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  class SumService extends SumGrpc.Sum {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    def add(responseObserver: StreamObserver[SumResponse]): StreamObserver[SumRequest] =[0m
+[0m[[0m[0mdebug[0m] [0m[0m      new StreamObserver[SumRequest] {[0m
+[0m[[0m[0mdebug[0m] [0m[0m        val currentSum: AtomicInt       = Atomic(0) // beware: stream observer is not thread-safe[0m
+[0m[[0m[0mdebug[0m] [0m[0m        def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")[0m
+[0m[[0m[0mdebug[0m] [0m[0m        def onCompleted(): Unit         = println("ON_COMPLETED")[0m
+[0m[[0m[0mdebug[0m] [0m[0m        def onNext(value: SumRequest): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m          println(s"ON_NEXT: adding value ${value.toAdd}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m          responseObserver.onNext(SumResponse(currentSum.addAndGet(value.toAdd)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m        }[0m
+[0m[[0m[0mdebug[0m] [0m[0m      }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val ssd = SumGrpc.bindService(new SumService(), ExecutionContext.global)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    runServer(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.grpc.stub.StreamObserver[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport io.ontherocks.hellogrpc.sum.{ SumGrpc, SumRequest, SumResponse }[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport monix.execution.atomic.{ Atomic, AtomicInt }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.concurrent.ExecutionContext[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject SumServer extends GrpcServer {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  class SumService extends SumGrpc.Sum {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    def add(responseObserver: StreamObserver[SumResponse]): StreamObserver[SumRequest] =[0m
+[0m[[0m[0mdebug[0m] [0m[0m      new StreamObserver[SumRequest] {[0m
+[0m[[0m[0mdebug[0m] [0m[0m        val currentSum: AtomicInt       = Atomic(0) // beware: stream observer is not thread-safe[0m
+[0m[[0m[0mdebug[0m] [0m[0m        def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")[0m
+[0m[[0m[0mdebug[0m] [0m[0m        def onCompleted(): Unit         = println("ON_COMPLETED")[0m
+[0m[[0m[0mdebug[0m] [0m[0m        def onNext(value: SumRequest): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m          println(s"ON_NEXT: adding value ${value.toAdd}")[0m
+[0m[[0m[0mdebug[0m] [0m[0m          responseObserver.onNext(SumResponse(currentSum.addAndGet(value.toAdd)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m        }[0m
+[0m[[0m[0mdebug[0m] [0m[0m      }[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def main(args: Array[String]): Unit = {[0m
+[0m[[0m[0mdebug[0m] [0m[0m    val ssd = SumGrpc.bindService(new SumService(), ExecutionContext.global)[0m
+[0m[[0m[0mdebug[0m] [0m[0m    runServer(ssd)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  }[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0minfo[0m] [0m[0mHeaders created for 8 files:[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\ClockClient.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\ClockServer.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\GrpcServer.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\HelloWorldClient.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\HelloWorldServer.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\package.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\SumClient.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\demo\src\main\scala\io\ontherocks\hellogrpc\SumServer.scala[0m

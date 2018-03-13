@@ -1,0 +1,195 @@
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\scala\io\ontherocks\hellogrpc\Birthday.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport com.trueaccord.scalapb.TypeMapper[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.util.Try[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mfinal case class Birthday(month: Int, day: Int)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m/**[0m
+[0m[[0m[0mdebug[0m] [0m[0m  * Demoes how to create a type mapper.[0m
+[0m[[0m[0mdebug[0m] [0m[0m  */[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject Birthday {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def base2custom(birthdayStr: String): Birthday =[0m
+[0m[[0m[0mdebug[0m] [0m[0m    Try {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      val b = birthdayStr.split("-")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      Birthday(Integer.parseInt(b(0)), Integer.parseInt(b(1)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }.getOrElse(Birthday(1, 1))[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def custom2base(birthday: Birthday): String = s"${birthday.month}-${birthday.day}"[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  implicit val typeMapper: TypeMapper[String, Birthday] = TypeMapper(base2custom)(custom2base)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport com.trueaccord.scalapb.TypeMapper[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mimport scala.util.Try[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mfinal case class Birthday(month: Int, day: Int)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m/**[0m
+[0m[[0m[0mdebug[0m] [0m[0m  * Demoes how to create a type mapper.[0m
+[0m[[0m[0mdebug[0m] [0m[0m  */[0m
+[0m[[0m[0mdebug[0m] [0m[0mobject Birthday {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def base2custom(birthdayStr: String): Birthday =[0m
+[0m[[0m[0mdebug[0m] [0m[0m    Try {[0m
+[0m[[0m[0mdebug[0m] [0m[0m      val b = birthdayStr.split("-")[0m
+[0m[[0m[0mdebug[0m] [0m[0m      Birthday(Integer.parseInt(b(0)), Integer.parseInt(b(1)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m    }.getOrElse(Birthday(1, 1))[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  def custom2base(birthday: Birthday): String = s"${birthday.month}-${birthday.day}"[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  implicit val typeMapper: TypeMapper[String, Birthday] = TypeMapper(base2custom)(custom2base)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\scala\io\ontherocks\hellogrpc\package.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage object hellogrpc {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Traversable[+A] = scala.collection.immutable.Traversable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Iterable[+A]    = scala.collection.immutable.Iterable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Seq[+A]         = scala.collection.immutable.Seq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage object hellogrpc {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Traversable[+A] = scala.collection.immutable.Traversable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Iterable[+A]    = scala.collection.immutable.Iterable[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type Seq[+A]         = scala.collection.immutable.Seq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A][0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAbout to create/update header for C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\scala\io\ontherocks\hellogrpc\RockingMessage.scala[0m
+[0m[[0m[0mdebug[0m] [0m[0mFirst line of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mText of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0m/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mtrait RockingMessage {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  val rocking = "I rock!"[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified text of file is:[0m
+[0m[[0m[0mdebug[0m] [0m[0mSome(/*[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Copyright 2017 Petra Bierleutgeb[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Licensed under the Apache License, Version 2.0 (the "License");[0m
+[0m[[0m[0mdebug[0m] [0m[0m * you may not use this file except in compliance with the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * You may obtain a copy of the License at[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m *     http://www.apache.org/licenses/LICENSE-2.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m *[0m
+[0m[[0m[0mdebug[0m] [0m[0m * Unless required by applicable law or agreed to in writing, software[0m
+[0m[[0m[0mdebug[0m] [0m[0m * distributed under the License is distributed on an "AS IS" BASIS,[0m
+[0m[[0m[0mdebug[0m] [0m[0m * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[0m
+[0m[[0m[0mdebug[0m] [0m[0m * See the License for the specific language governing permissions and[0m
+[0m[[0m[0mdebug[0m] [0m[0m * limitations under the License.[0m
+[0m[[0m[0mdebug[0m] [0m[0m */[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mpackage io.ontherocks.hellogrpc[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mtrait RockingMessage {[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m  val rocking = "I rock!"[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0m}[0m
+[0m[[0m[0mdebug[0m] [0m[0m)[0m
+[0m[[0m[0minfo[0m] [0m[0mHeaders created for 3 files:[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\scala\io\ontherocks\hellogrpc\Birthday.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\scala\io\ontherocks\hellogrpc\package.scala[0m
+[0m[[0m[0minfo[0m] [0m[0m  C:\Users\cleme\Programming\Scala\hello-grpc-scala-master\protocol\src\main\scala\io\ontherocks\hellogrpc\RockingMessage.scala[0m
