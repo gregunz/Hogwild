@@ -74,9 +74,8 @@ fabric.properties
 # End of https://www.gitignore.io/api/scala,intellij
 
 .idea
-target/.history
-target/streams
-target/protobuf_external
-target/scala-2.12/classes
-target/scala-2.12/resolution-cache
+target/*
+!target/scala-2.12/
+target/scala-2.12/*
+!target/scala-2.12/src_managed
 project/target
