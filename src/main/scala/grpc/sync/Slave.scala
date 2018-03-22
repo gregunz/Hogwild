@@ -1,8 +1,8 @@
-package grpc.async
+package grpc.sync
 
 import computations.SVM
 import computations.SVM.Gradient
-import grpc.async.SlaveServiceGrpc.SlaveServiceStub
+import grpc.sync.SlaveServiceGrpc.SlaveServiceStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
 

@@ -1,4 +1,4 @@
-package grpc.async
+package grpc.sync
 
 import io.grpc.{ServerBuilder, ServerServiceDefinition}
 

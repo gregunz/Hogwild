@@ -1,4 +1,4 @@
-package grpc.async
+package grpc.sync
 
 import java.util.concurrent.TimeUnit
 
@@ -16,10 +16,10 @@ object Master extends GrpcServer {
   private val instance = this
 
   val svm = SVM()
-  lazy val samples: Iterator[(Features, Label)] = Dataset.samples().toIterator
+  lazy val samples: Iterator[(Features, Label)] = Range(0, 10000000).map(i => Map(i->i.toDouble) -> true).toIterator//Dataset.samples().toIterator
 
   def load(): Unit = {
-    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(1, TimeUnit.MINUTES)))
+    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(2, TimeUnit.MINUTES)))
     if (tryLoading.isFailure) {
       println("Dataset loading failed!!")
       throw tryLoading.failed.get
@@ -51,15 +51,15 @@ object Master extends GrpcServer {
         def onCompleted(): Unit = println("ON_COMPLETED")
 
         def onNext(req: SlaveRequest): Unit = {
-          if (req.gradient.nonEmpty) {
-            instance.synchronized(
+          instance.synchronized {
+            if (req.gradient.nonEmpty) {
               svm.updateWeight(req.gradient)
-            )
-            println(s"[UPT]: new weights = ${svm.weights}}")
-          } else {
-            println("[NEW]: a slave wants to compute some gradients")
+              //println(s"[UPT]: new weights = ${svm.weights}}")
+            } else {
+              println("[NEW]: a slave wants to compute some gradients")
+            }
+            responseObserver.onNext(spawnSlaveResponse(svm.weights))
           }
-          responseObserver.onNext(spawnSlaveResponse(svm.weights))
         }
       }
   }
