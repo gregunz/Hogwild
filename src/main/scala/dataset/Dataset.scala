@@ -28,6 +28,25 @@ object Dataset {
     docIndexToLineIndex.map{case(k, v) => v -> k}
   }
 
+  lazy val docIndexToLabel: Map[Int, Label] = {
+    val labelPath = dataPath + "rcv1-v2.topics.qrels"
+    val labelOfInterest = "CCAT"
+    Source.fromFile(labelPath)
+      .getLines
+      .map{ line =>
+        line.split(" ").toList.filterNot(_.isEmpty).take(2) match {
+          case label :: id :: Nil => id.toInt -> (label == labelOfInterest)
+        }
+      }
+      .toList
+      .groupBy(_._1)
+      .mapValues{ _.exists(_._2)}
+  }
+
+  lazy val lineIndexToLabel: Map[Int, Label] = {
+    docIndexToLabel.map{case (k, v) => docIndexToLineIndex(k) -> v}
+  }
+
   private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
 
   private def parseLine(line: String): (Int, Features) = {
@@ -57,7 +76,7 @@ object Dataset {
       .getOrElse(startingIndexPerFile.size) - 1
     val lineInFileIndex = lineIndex - startingIndexPerFile(fileIndex)
     val source: BufferedSource = Source.fromFile(filePaths(fileIndex))
-    val line = source.getLines drop lineInFileIndex next
+    val line = source.getLines.drop(lineInFileIndex).next
 
     parseLine(line)._2
   }
@@ -66,8 +85,9 @@ object Dataset {
     true //TODO: should implement this
   }
 
-  def load: Unit = {
+  def load(): Unit = {
     lineIndexToDocIndex
+    lineIndexToLabel
   }
 
   def sample(withReplacement: Boolean = true): (Features, Label) = {
