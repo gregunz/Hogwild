@@ -83,4 +83,6 @@ project/target
 project/project/*
 
 data/*
+
+# For Mac users (a.k.a noobie)
 .DS_Store
