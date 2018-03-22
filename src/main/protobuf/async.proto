@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc;
+
+service SlaveService {
+    rpc UpdateWeights (stream SlaveRequest) returns (stream SlaveResponse) {}
+}
+
+message SlaveRequest {
+    map<uint32, double> gradient = 1;
+}
+
+message SlaveResponse {
+    map<uint32, double> features = 1;
+    bool label = 2;
+    map<uint32, double> weights = 3;
+}

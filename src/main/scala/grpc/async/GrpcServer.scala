@@ -1,4 +1,4 @@
-package demo.communication
+package grpc.async
 
 import io.grpc.{ServerBuilder, ServerServiceDefinition}
 
@@ -9,7 +9,7 @@ trait GrpcServer {
     */
   def runServer(ssd: ServerServiceDefinition): Unit = {
     val server = ServerBuilder
-      .forPort(50051)
+      .forPort(50050)
       .addService(ssd)
       .build
       .start
