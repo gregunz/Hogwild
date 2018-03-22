@@ -10,6 +10,6 @@ class DatasetTest extends FunSuite {
   }
 
   test("ID from labels are the same as vectors") {
-    assert((Dataset.dids -- Dataset.docIndexToLabel.keySet).isEmpty)
+    assert((Dataset.dids -- Dataset.didToLabel.keySet).isEmpty)
   }
 }

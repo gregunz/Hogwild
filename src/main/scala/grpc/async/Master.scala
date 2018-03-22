@@ -1,22 +1,38 @@
 package grpc.async
 
+import java.util.concurrent.TimeUnit
+
 import computations.SVM
-import computations.SVM.Weights
+import computations.SVM.{Features, Label, Weights}
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext}
+import scala.util.Try
 
 object Master extends GrpcServer {
 
   private val instance = this
 
   val svm = SVM()
+  lazy val samples: Iterator[(Features, Label)] = Dataset.samples().toIterator
+
+  def load(): Unit = {
+    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(1, TimeUnit.MINUTES)))
+    if (tryLoading.isFailure) {
+      println("Dataset loading failed!!")
+      throw tryLoading.failed.get
+    }
+    samples
+  }
 
   def main(args: Array[String]): Unit = {
-    val ssd = SlaveServiceGrpc.bindService(SlaveService, ExecutionContext.global)
+
     println("Loading...")
-    Dataset.load
+    load()
+    val ssd = SlaveServiceGrpc.bindService(SlaveService, ExecutionContext.global)
+
     println(">> READY <<")
     runServer(ssd)
   }
@@ -24,7 +40,7 @@ object Master extends GrpcServer {
   object SlaveService extends SlaveServiceGrpc.SlaveService {
 
     private def spawnSlaveResponse(weights: Weights): SlaveResponse = {
-      val (features, label) = Dataset.sample()
+      val (features, label) = samples.next
       SlaveResponse(features = features, label = label, weights = weights)
     }
 
