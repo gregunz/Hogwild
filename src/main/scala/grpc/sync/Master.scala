@@ -16,7 +16,7 @@ object Master extends GrpcServer {
   private val instance = this
 
   val svm = SVM()
-  lazy val samples: Iterator[(Features, Label)] = Range(0, 10000000).map(i => Map(i->i.toDouble) -> true).toIterator//Dataset.samples().toIterator
+  lazy val samples: Iterator[(Features, Label)] = Dataset.samples().toIterator
 
   def load(): Unit = {
     val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(2, TimeUnit.MINUTES)))
