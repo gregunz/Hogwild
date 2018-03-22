@@ -8,6 +8,9 @@ import io.grpc.stub.StreamObserver
 
 object Slave extends App {
 
+  val instance = this
+  var someGradient: Option[Gradient] = Some(Map.empty)
+
   val channel = ManagedChannelBuilder
     .forAddress("localhost", 50050) // host and port of service
     .usePlaintext(true) // don't use encryption (for demo purposes)
@@ -34,8 +37,6 @@ object Slave extends App {
     }
   }
 
-  val instance = this
-  var someGradient: Option[Gradient] = Some(Map.empty)
   val requestObserver = client.updateWeights(responseObserver)
 
   println(">> SPAWNED <<")
