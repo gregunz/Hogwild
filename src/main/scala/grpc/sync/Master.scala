@@ -2,11 +2,12 @@ package grpc.sync
 
 import java.util.concurrent.TimeUnit
 
-import computations.Label.Label
-import computations.SVM.{Counts, SparseVector}
-import computations.{Label, SVM}
+import computations.SVM
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
+import util.Label
+import util.Label.Label
+import util.Types.{Counts, SparseVector}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
@@ -14,21 +15,11 @@ import scala.util.Try
 
 object Master extends GrpcServer {
 
-  private val instance = this
-
+  lazy val samples: Iterator[(SparseVector, Label, Counts)] = Dataset.samples().toIterator
   val lambda: Double = 0.1
 
   val svm = SVM()
-  lazy val samples: Iterator[(SparseVector, Label, Counts)] = Dataset.samples().toIterator
-
-  def load(): Unit = {
-    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(10, TimeUnit.MINUTES)))
-    if (tryLoading.isFailure) {
-      println("Dataset loading failed!!")
-      throw tryLoading.failed.get
-    }
-    samples
-  }
+  private val instance = this
 
   def main(args: Array[String]): Unit = {
 
@@ -40,24 +31,28 @@ object Master extends GrpcServer {
     runServer(ssd)
   }
 
-  object SlaveService extends SlaveServiceGrpc.SlaveService {
-
-    private def spawnSlaveResponse(weights: SparseVector): SlaveResponse = {
-      val (feature, label, tidCounts) = samples.next
-      SlaveResponse(
-        feature = feature,
-        label = label == Label.CCAT,
-        weights = feature.map { case (k, _) => k -> weights.withDefaultValue(0d)(k) },
-        lambda = lambda,
-        tidCounts = tidCounts
-      )
+  def load(): Unit = {
+    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(10, TimeUnit.MINUTES)))
+    if (tryLoading.isFailure) {
+      println("Dataset loading failed!!")
+      throw tryLoading.failed.get
     }
+    samples
+  }
+
+  object SlaveService extends SlaveServiceGrpc.SlaveService {
 
     override def updateWeights(responseObserver: StreamObserver[SlaveResponse]): StreamObserver[SlaveRequest] =
       new StreamObserver[SlaveRequest] {
-        def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")
+        def onError(t: Throwable): Unit = {
+          println(s"ON_ERROR: $t")
+          sys.exit(1)
+        }
 
-        def onCompleted(): Unit = println("ON_COMPLETED")
+        def onCompleted(): Unit = {
+          println("ON_COMPLETED")
+          sys.exit(0)
+        }
 
         def onNext(req: SlaveRequest): Unit = {
           instance.synchronized {
@@ -71,6 +66,17 @@ object Master extends GrpcServer {
           }
         }
       }
+
+    private def spawnSlaveResponse(weights: SparseVector): SlaveResponse = {
+      val (feature, label, tidCounts) = samples.next
+      SlaveResponse(
+        feature = feature,
+        label = label == Label.CCAT,
+        weights = feature.map { case (k, _) => k -> weights.withDefaultValue(0d)(k) },
+        lambda = lambda,
+        tidCounts = tidCounts
+      )
+    }
   }
 
 }

@@ -1,27 +1,30 @@
 package grpc.sync
 
-import computations.SVM.SparseVector
-import computations.{Label, SVM}
+import computations.SVM
 import grpc.sync.SlaveServiceGrpc.SlaveServiceStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
+import util.Label
+import util.Types.SparseVector
 
 object Slave extends App {
 
   val instance = this
-  var someGradient: Option[SparseVector] = Some(Map.empty)
-
   val channel = ManagedChannelBuilder
     .forAddress("localhost", 50050) // host and port of service
     .usePlaintext(true) // don't use encryption (for demo purposes)
     .build
-
   val client: SlaveServiceStub = SlaveServiceGrpc.stub(channel)
-
   val responseObserver = new StreamObserver[SlaveResponse] {
-    def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")
+    def onError(t: Throwable): Unit = {
+      println(s"ON_ERROR: $t")
+      sys.exit(1)
+    }
 
-    def onCompleted(): Unit = println("ON_COMPLETED")
+    def onCompleted(): Unit = {
+      println("ON_COMPLETED")
+      sys.exit(0)
+    }
 
     def onNext(res: SlaveResponse): Unit = {
       val newGradient = SVM.computeStochasticGradient(
@@ -38,8 +41,8 @@ object Slave extends App {
       }
     }
   }
-
   val requestObserver = client.updateWeights(responseObserver)
+  var someGradient: Option[SparseVector] = Some(Map.empty)
 
   println(">> SPAWNED <<")
 

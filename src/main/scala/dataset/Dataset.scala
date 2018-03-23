@@ -1,8 +1,9 @@
 package dataset
 
-import computations.Label
-import computations.Label.Label
-import computations.SVM.{Counts, SparseVector}
+
+import util.Label
+import util.Label.Label
+import util.Types.{Counts, SparseVector}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

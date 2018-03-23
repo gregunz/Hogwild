@@ -1,8 +1,8 @@
 package computations
 
-import computations.Label.Label
+import util.Label.Label
 import computations.Operations.{dotProduct, pointWise}
-import computations.SVM._
+import util.Types.{Counts, LearningRate, SparseVector}
 
 
 case class SVM(stepSize: LearningRate = 0.1) {
@@ -17,12 +17,6 @@ case class SVM(stepSize: LearningRate = 0.1) {
 }
 
 object SVM {
-  type LearningRate = Double
-  type TID = Int
-  type SparseVector = Map[TID, Double]
-  type Counts = Map[TID, Int]
-
-
   def computeStochasticGradient(feature: SparseVector,
                                 label: Label,
                                 weights: SparseVector,

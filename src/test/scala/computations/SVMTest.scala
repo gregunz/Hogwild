@@ -1,6 +1,7 @@
 package computations
 
 import org.scalatest.FunSuite
+import util.Label
 
 class SVMTest extends FunSuite {
 
