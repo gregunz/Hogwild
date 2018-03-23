@@ -11,13 +11,7 @@ import scala.util.Random
 
 object Dataset {
 
-  private val dataPath = "data/"
-
-  private val filePaths: List[String] = (0 until 4).map(i => dataPath + filename(i)).toList
-
-  //  lazy val lineIndices: Set[Int] = lineIndexToDocIndex.keySet
   lazy val dids: Set[Int] = didToLineIndex.keySet
-
   lazy val tidCounts: Map[Int, Int] = {
     println("...loading tidCounts...")
     filePaths
@@ -28,24 +22,6 @@ object Dataset {
       .groupBy(tid => tid)
       .mapValues(_.size)
   }
-
-  private lazy val numLinesPerFile: List[Int] = filePaths.map(Source.fromFile).map(_.getLines.count(!_.isEmpty))
-
-  private lazy val startingIndexPerFile: List[Int] = {
-    println("...loading startingIndexPerFile...")
-    val numFiles = numLinesPerFile.size
-    0 :: (1 until numFiles).map(i => numLinesPerFile.dropRight(numFiles - i).sum).toList
-  }
-
-  private lazy val didToLineIndex: Map[Int, Int] = {
-    println("...loading didToLineIndex...")
-    filePaths.map(Source.fromFile).flatMap(_.getLines.map(_.split(" ").head.toInt)).zipWithIndex.toMap
-  }
-
-  //  lazy val lineIndexToDocIndex: Map[Int, Int] = {
-  //    docIndexToLineIndex.map{case(k, v) => v -> k}
-  //  }
-
   lazy val didToLabel: Map[Int, Label] = {
     println("...loading didToLabel...")
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
@@ -55,31 +31,25 @@ object Dataset {
       .map { line =>
         line.split(" ").toList.filterNot(_.isEmpty).take(2) match {
           case label :: id :: Nil => id.toInt -> (label == labelOfInterest)
+          case _ => throw new IllegalStateException("label file is corrupted")
         }
       }
       .toList
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-
-  //  lazy val lineIndexToLabel: Map[Int, Label] = {
-  //    docIndexToLabel.map{case (k, v) => didToLineIndex(k) -> v}
-  //  }
-
-  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
-
-  private def parseLine(line: String): (Int, SparseVector) = {
-    val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
-    val did: Int = lineSplitted.head.toInt
-    did -> pairsToDocument(lineSplitted.tail)
+  private lazy val numLinesPerFile: List[Int] = filePaths.map(Source.fromFile).map(_.getLines.count(!_.isEmpty))
+  private lazy val startingIndexPerFile: List[Int] = {
+    println("...loading startingIndexPerFile...")
+    val numFiles = numLinesPerFile.size
+    0 :: (1 until numFiles).map(i => numLinesPerFile.dropRight(numFiles - i).sum).toList
   }
-
-  private def pairsToDocument(lineSplitted: List[String]): SparseVector = {
-    lineSplitted.map(e => {
-      val pair: List[String] = e.split(":").map(_.trim).toList
-      pair.head.toInt -> pair.tail.head.toDouble
-    }).toMap
+  private lazy val didToLineIndex: Map[Int, Int] = {
+    println("...loading didToLineIndex...")
+    filePaths.map(Source.fromFile).flatMap(_.getLines.map(_.split(" ").head.toInt)).zipWithIndex.toMap
   }
+  private val dataPath = "data/"
+  private val filePaths: List[String] = (0 until 4).map(i => dataPath + filename(i)).toList
 
   def load(): Future[Unit] = {
     Future {
@@ -87,6 +57,28 @@ object Dataset {
       didToLineIndex
     }
 
+  }
+
+  def samples(withReplacement: Boolean = false): Stream[(SparseVector, Label, Counts)] = {
+    val docIndicesIndexSeq = dids.toIndexedSeq
+
+    def didToOutput(did: Int): (SparseVector, Label, Counts) = {
+      val feature = getFeature(did)
+      val tidCountsFiltered = feature.map { case (k, _) => k -> tidCounts.withDefaultValue(0)(k) }
+      (feature, getLabel(did), tidCountsFiltered)
+    }
+
+    if (!withReplacement) {
+      Stream.continually {
+        Random.shuffle(docIndicesIndexSeq).toStream.map(didToOutput)
+      }.flatten
+    } else {
+      Stream.continually {
+        val randomIndex = Random.nextInt(docIndicesIndexSeq.size)
+        val did = docIndicesIndexSeq(randomIndex)
+        didToOutput(did)
+      }
+    }
   }
 
   def getFeature(did: Int): SparseVector = {
@@ -112,26 +104,19 @@ object Dataset {
     didToLabel(index)
   }
 
-  def samples(withReplacement: Boolean = false): Stream[(SparseVector, Label, Counts)] = {
-    val docIndicesIndexSeq = dids.toIndexedSeq
-
-    def didToOutput(did: Int): (SparseVector, Label, Counts) = {
-      val feature = getFeature(did)
-      val tidCountsFiltered = feature.map { case (k, _) => k -> tidCounts.withDefaultValue(0)(k) }
-      (feature, getLabel(did), tidCountsFiltered)
-    }
-
-    if (!withReplacement) {
-      Stream.continually {
-        Random.shuffle(docIndicesIndexSeq).toStream.map(didToOutput)
-      }.flatten
-    } else {
-      Stream.continually {
-        val randomIndex = Random.nextInt(docIndicesIndexSeq.size)
-        val did = docIndicesIndexSeq(randomIndex)
-        didToOutput(did)
-      }
-    }
+  private def parseLine(line: String): (Int, SparseVector) = {
+    val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
+    val did: Int = lineSplitted.head.toInt
+    did -> pairsToDocument(lineSplitted.tail)
   }
+
+  private def pairsToDocument(lineSplitted: List[String]): SparseVector = {
+    lineSplitted.map(e => {
+      val pair: List[String] = e.split(":").map(_.trim).toList
+      pair.head.toInt -> pair.tail.head.toDouble
+    }).toMap
+  }
+
+  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
 
 }
