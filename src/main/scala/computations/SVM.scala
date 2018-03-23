@@ -1,7 +1,7 @@
 package computations
 
-import util.Label.Label
 import computations.Operations.{dotProduct, pointWise}
+import util.Label.Label
 import util.Types.{Counts, LearningRate, SparseVector}
 
 
