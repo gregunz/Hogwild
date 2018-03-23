@@ -24,16 +24,16 @@ object SVM {
   type Counts = Map[Int, Int]
 
 
-  def computeGradient(features: Feature,
-                      label: Label,
-                      weights: Weights,
-                      lambda: Double,
-                      tidCounts: Counts): Gradient = {
-    val gradRightPart = features.map { case (k, v) => k -> (lambda * weights.withDefaultValue(0d)(k) / tidCounts(k)) }
-    if (label.id * dotProduct(features, weights) >= 1) {
+  def computeStochasticGradient(feature: Feature,
+                                label: Label,
+                                weights: Weights,
+                                lambda: Double,
+                                tidCounts: Counts): Gradient = {
+    val gradRightPart = feature.map { case (k, v) => k -> (lambda * weights.withDefaultValue(0d)(k) / tidCounts(k)) }
+    if (label.id * dotProduct(feature, weights) >= 1) {
       gradRightPart
     } else {
-      pointWise(features.mapValues(_ * (-label.id)), gradRightPart, _ + _)
+      pointWise(feature.mapValues(_ * (-label.id)), gradRightPart, _ + _)
     }
   }
 

@@ -43,11 +43,11 @@ object Master extends GrpcServer {
   object SlaveService extends SlaveServiceGrpc.SlaveService {
 
     private def spawnSlaveResponse(weights: Weights): SlaveResponse = {
-      val (features, label, tidCounts) = samples.next
+      val (feature, label, tidCounts) = samples.next
       SlaveResponse(
-        features = features,
+        feature = feature,
         label = label == Label.CCAT,
-        weights = features.map{case (k, _) => k -> weights.withDefaultValue(0d)(k)},
+        weights = feature.map{case (k, _) => k -> weights.withDefaultValue(0d)(k)},
         lambda = lambda,
         tidCounts = tidCounts
       )

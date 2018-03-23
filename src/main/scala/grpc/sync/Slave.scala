@@ -24,8 +24,8 @@ object Slave extends App {
     def onCompleted(): Unit = println("ON_COMPLETED")
 
     def onNext(res: SlaveResponse): Unit = {
-      val newGradient = SVM.computeGradient(
-        features = res.features,
+      val newGradient = SVM.computeStochasticGradient(
+        feature = res.feature,
         label = Label(res.label),
         weights = res.weights,
         lambda = res.lambda,

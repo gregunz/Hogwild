@@ -11,7 +11,7 @@ message SlaveRequest {
 }
 
 message SlaveResponse {
-    map<uint32, double> features = 1;
+    map<uint32, double> feature = 1;
     bool label = 2;
     map<uint32, double> weights = 3;
     double lambda = 4;
