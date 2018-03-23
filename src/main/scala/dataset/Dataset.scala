@@ -2,7 +2,7 @@ package dataset
 
 import computations.Label
 import computations.Label.Label
-import computations.SVM.{Counts, Feature}
+import computations.SVM.{Counts, SparseVector}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -59,7 +59,7 @@ object Dataset {
       }
       .toList
       .groupBy(_._1)
-      .mapValues {v => Label(v.exists(_._2))}
+      .mapValues { v => Label(v.exists(_._2)) }
   }
 
   //  lazy val lineIndexToLabel: Map[Int, Label] = {
@@ -68,13 +68,13 @@ object Dataset {
 
   private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
 
-  private def parseLine(line: String): (Int, Feature) = {
+  private def parseLine(line: String): (Int, SparseVector) = {
     val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
     val did: Int = lineSplitted.head.toInt
     did -> pairsToDocument(lineSplitted.tail)
   }
 
-  private def pairsToDocument(lineSplitted: List[String]): Feature = {
+  private def pairsToDocument(lineSplitted: List[String]): SparseVector = {
     lineSplitted.map(e => {
       val pair: List[String] = e.split(":").map(_.trim).toList
       pair.head.toInt -> pair.tail.head.toDouble
@@ -89,7 +89,7 @@ object Dataset {
 
   }
 
-  def getFeature(did: Int): Feature = {
+  def getFeature(did: Int): SparseVector = {
     if (!didToLineIndex.contains(did)) {
       return Map.empty
     }
@@ -112,13 +112,15 @@ object Dataset {
     didToLabel(index)
   }
 
-  def samples(withReplacement: Boolean = false): Stream[(Feature, Label, Counts)] = {
+  def samples(withReplacement: Boolean = false): Stream[(SparseVector, Label, Counts)] = {
     val docIndicesIndexSeq = dids.toIndexedSeq
-    def didToOutput(did: Int): (Feature, Label, Counts) = {
+
+    def didToOutput(did: Int): (SparseVector, Label, Counts) = {
       val feature = getFeature(did)
-      val tidCountsFiltered = feature.map{case (k, _) => k -> tidCounts.withDefaultValue(0)(k)}
+      val tidCountsFiltered = feature.map { case (k, _) => k -> tidCounts.withDefaultValue(0)(k) }
       (feature, getLabel(did), tidCountsFiltered)
     }
+
     if (!withReplacement) {
       Stream.continually {
         Random.shuffle(docIndicesIndexSeq).toStream.map(didToOutput)

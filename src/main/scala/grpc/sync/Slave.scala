@@ -1,7 +1,7 @@
 package grpc.sync
 
+import computations.SVM.SparseVector
 import computations.{Label, SVM}
-import computations.SVM.Gradient
 import grpc.sync.SlaveServiceGrpc.SlaveServiceStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
@@ -9,7 +9,7 @@ import io.grpc.stub.StreamObserver
 object Slave extends App {
 
   val instance = this
-  var someGradient: Option[Gradient] = Some(Map.empty)
+  var someGradient: Option[SparseVector] = Some(Map.empty)
 
   val channel = ManagedChannelBuilder
     .forAddress("localhost", 50050) // host and port of service

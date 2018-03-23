@@ -3,7 +3,8 @@ syntax = "proto3";
 package grpc;
 
 service SlaveService {
-    rpc UpdateWeights (stream SlaveRequest) returns (stream SlaveResponse) {}
+    rpc UpdateWeights (stream SlaveRequest) returns (stream SlaveResponse) {
+    }
 }
 
 message SlaveRequest {

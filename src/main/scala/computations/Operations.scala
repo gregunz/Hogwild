@@ -1,14 +1,14 @@
 package computations
 
-import computations.SVM.{Feature, Weights}
+import computations.SVM.SparseVector
 
 object Operations {
 
-  def pointWise(feature: Feature, weights: Weights, op: (Double, Double) => Double): Feature = {
-    feature.map{ case(k, v) => k -> op(v, weights(k)) }
+  def pointWise(vect1: SparseVector, vect2: SparseVector, op: (Double, Double) => Double): SparseVector = {
+    vect1.map { case (k, v) => k -> op(v, vect2(k)) }
   }
 
-  def dotProduct(feature: Feature, weights: Weights): Double = {
-    pointWise(feature, weights, _ * _).values.sum
+  def dotProduct(vect1: SparseVector, vect2: SparseVector): Double = {
+    pointWise(vect1, vect2, _ * _).values.sum
   }
 }

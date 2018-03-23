@@ -3,8 +3,8 @@ package grpc.sync
 import java.util.concurrent.TimeUnit
 
 import computations.Label.Label
+import computations.SVM.{Counts, SparseVector}
 import computations.{Label, SVM}
-import computations.SVM.{Counts, Feature, Weights}
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
 
@@ -19,7 +19,7 @@ object Master extends GrpcServer {
   val lambda: Double = 0.1
 
   val svm = SVM()
-  lazy val samples: Iterator[(Feature, Label, Counts)] = Dataset.samples().toIterator
+  lazy val samples: Iterator[(SparseVector, Label, Counts)] = Dataset.samples().toIterator
 
   def load(): Unit = {
     val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(10, TimeUnit.MINUTES)))
@@ -42,12 +42,12 @@ object Master extends GrpcServer {
 
   object SlaveService extends SlaveServiceGrpc.SlaveService {
 
-    private def spawnSlaveResponse(weights: Weights): SlaveResponse = {
+    private def spawnSlaveResponse(weights: SparseVector): SlaveResponse = {
       val (feature, label, tidCounts) = samples.next
       SlaveResponse(
         feature = feature,
         label = label == Label.CCAT,
-        weights = feature.map{case (k, _) => k -> weights.withDefaultValue(0d)(k)},
+        weights = feature.map { case (k, _) => k -> weights.withDefaultValue(0d)(k) },
         lambda = lambda,
         tidCounts = tidCounts
       )
