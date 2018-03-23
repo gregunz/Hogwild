@@ -1,6 +1,6 @@
 package grpc.sync
 
-import computations.SVM
+import computations.{Label, SVM}
 import computations.SVM.Gradient
 import grpc.sync.SlaveServiceGrpc.SlaveServiceStub
 import io.grpc.ManagedChannelBuilder
@@ -26,8 +26,10 @@ object Slave extends App {
     def onNext(res: SlaveResponse): Unit = {
       val newGradient = SVM.computeGradient(
         features = res.features,
-        label = res.label,
-        weights = res.weights
+        label = Label(res.label),
+        weights = res.weights,
+        lambda = res.lambda,
+        tidCounts = res.tidCounts
       )
       println(s"[CPT]: computing done (gradient = $newGradient)")
       instance.synchronized {

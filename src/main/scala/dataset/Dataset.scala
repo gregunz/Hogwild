@@ -1,6 +1,8 @@
 package dataset
 
-import computations.SVM.{Features, Label}
+import computations.Label
+import computations.Label.Label
+import computations.SVM.{Counts, Feature}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -16,14 +18,27 @@ object Dataset {
   //  lazy val lineIndices: Set[Int] = lineIndexToDocIndex.keySet
   lazy val dids: Set[Int] = didToLineIndex.keySet
 
+  lazy val tidCounts: Map[Int, Int] = {
+    println("...loading tidCounts...")
+    filePaths
+      .flatMap(path =>
+        Source.fromFile(path)
+          .getLines()
+          .flatMap(line => parseLine(line)._2.keys))
+      .groupBy(tid => tid)
+      .mapValues(_.size)
+  }
+
   private lazy val numLinesPerFile: List[Int] = filePaths.map(Source.fromFile).map(_.getLines.count(!_.isEmpty))
 
   private lazy val startingIndexPerFile: List[Int] = {
+    println("...loading startingIndexPerFile...")
     val numFiles = numLinesPerFile.size
     0 :: (1 until numFiles).map(i => numLinesPerFile.dropRight(numFiles - i).sum).toList
   }
 
   private lazy val didToLineIndex: Map[Int, Int] = {
+    println("...loading didToLineIndex...")
     filePaths.map(Source.fromFile).flatMap(_.getLines.map(_.split(" ").head.toInt)).zipWithIndex.toMap
   }
 
@@ -32,6 +47,7 @@ object Dataset {
   //  }
 
   lazy val didToLabel: Map[Int, Label] = {
+    println("...loading didToLabel...")
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"
     Source.fromFile(labelPath)
@@ -43,9 +59,7 @@ object Dataset {
       }
       .toList
       .groupBy(_._1)
-      .mapValues {
-        _.exists(_._2)
-      }
+      .mapValues {v => Label(v.exists(_._2))}
   }
 
   //  lazy val lineIndexToLabel: Map[Int, Label] = {
@@ -54,13 +68,13 @@ object Dataset {
 
   private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
 
-  private def parseLine(line: String): (Int, Features) = {
+  private def parseLine(line: String): (Int, Feature) = {
     val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
     val did: Int = lineSplitted.head.toInt
     did -> pairsToDocument(lineSplitted.tail)
   }
 
-  private def pairsToDocument(lineSplitted: List[String]): Features = {
+  private def pairsToDocument(lineSplitted: List[String]): Feature = {
     lineSplitted.map(e => {
       val pair: List[String] = e.split(":").map(_.trim).toList
       pair.head.toInt -> pair.tail.head.toDouble
@@ -75,7 +89,7 @@ object Dataset {
 
   }
 
-  def getDoc(did: Int): Features = {
+  def getFeature(did: Int): Feature = {
     if (!didToLineIndex.contains(did)) {
       return Map.empty
     }
@@ -94,23 +108,26 @@ object Dataset {
     parseLine(line)._2
   }
 
-  def getLabel(index: Int, isDocumentIndex: Boolean = false): Label = {
+  def getLabel(index: Int): Label = {
     didToLabel(index)
   }
 
-  def samples(withReplacement: Boolean = false): Stream[(Features, Label)] = {
+  def samples(withReplacement: Boolean = false): Stream[(Feature, Label, Counts)] = {
     val docIndicesIndexSeq = dids.toIndexedSeq
+    def didToOutput(did: Int): (Feature, Label, Counts) = {
+      val feature = getFeature(did)
+      val tidCountsFiltered = feature.map{case (k, _) => k -> tidCounts.withDefaultValue(0)(k)}
+      (feature, getLabel(did), tidCountsFiltered)
+    }
     if (!withReplacement) {
       Stream.continually {
-        Random.shuffle(docIndicesIndexSeq).toStream.map { did =>
-          getDoc(did) -> getLabel(did, isDocumentIndex = true)
-        }
+        Random.shuffle(docIndicesIndexSeq).toStream.map(didToOutput)
       }.flatten
     } else {
       Stream.continually {
         val randomIndex = Random.nextInt(docIndicesIndexSeq.size)
         val did = docIndicesIndexSeq(randomIndex)
-        getDoc(did) -> getLabel(did)
+        didToOutput(did)
       }
     }
   }

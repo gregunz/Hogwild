@@ -2,8 +2,9 @@ package grpc.sync
 
 import java.util.concurrent.TimeUnit
 
-import computations.SVM
-import computations.SVM.{Features, Label, Weights}
+import computations.Label.Label
+import computations.{Label, SVM}
+import computations.SVM.{Counts, Feature, Weights}
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
 
@@ -15,11 +16,13 @@ object Master extends GrpcServer {
 
   private val instance = this
 
+  val lambda: Double = 0.1
+
   val svm = SVM()
-  lazy val samples: Iterator[(Features, Label)] = Dataset.samples().toIterator
+  lazy val samples: Iterator[(Feature, Label, Counts)] = Dataset.samples().toIterator
 
   def load(): Unit = {
-    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(2, TimeUnit.MINUTES)))
+    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(10, TimeUnit.MINUTES)))
     if (tryLoading.isFailure) {
       println("Dataset loading failed!!")
       throw tryLoading.failed.get
@@ -40,8 +43,14 @@ object Master extends GrpcServer {
   object SlaveService extends SlaveServiceGrpc.SlaveService {
 
     private def spawnSlaveResponse(weights: Weights): SlaveResponse = {
-      val (features, label) = samples.next
-      SlaveResponse(features = features, label = label, weights = weights)
+      val (features, label, tidCounts) = samples.next
+      SlaveResponse(
+        features = features,
+        label = label == Label.CCAT,
+        weights = features.map{case (k, _) => k -> weights.withDefaultValue(0d)(k)},
+        lambda = lambda,
+        tidCounts = tidCounts
+      )
     }
 
     override def updateWeights(responseObserver: StreamObserver[SlaveResponse]): StreamObserver[SlaveRequest] =
@@ -54,7 +63,7 @@ object Master extends GrpcServer {
           instance.synchronized {
             if (req.gradient.nonEmpty) {
               svm.updateWeight(req.gradient)
-              //println(s"[UPT]: new weights = ${svm.weights}}")
+              println(s"[UPT]: new weights = ${svm.weights}}")
             } else {
               println("[NEW]: a slave wants to compute some gradients")
             }
