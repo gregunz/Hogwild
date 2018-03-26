@@ -3,11 +3,12 @@ package grpc.sync
 import java.util.concurrent.TimeUnit
 
 import computations.SVM
+import database.DB
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
-import util.Label
-import util.Label.Label
-import util.Types.{Counts, SparseVector}
+import utils.Label
+import utils.Label.Label
+import utils.Types.{Counts, SparseVector}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
@@ -20,6 +21,11 @@ object Master extends GrpcServer {
 
   val svm = SVM()
   private val instance = this
+
+  private var i = 0
+  private val someDids = Dataset.dids.toIndexedSeq.take(10000)
+  private val someFeatures = someDids.map(Dataset.getFeature)
+  private val someLabels = someDids.map(Dataset.didToLabel)
 
   def main(args: Array[String]): Unit = {
 
@@ -38,6 +44,7 @@ object Master extends GrpcServer {
       throw tryLoading.failed.get
     }
     samples
+    println(Dataset.tidCounts.values.sum)
   }
 
   object SlaveService extends SlaveServiceGrpc.SlaveService {
@@ -46,19 +53,27 @@ object Master extends GrpcServer {
       new StreamObserver[SlaveRequest] {
         def onError(t: Throwable): Unit = {
           println(s"ON_ERROR: $t")
-          sys.exit(1)
         }
 
         def onCompleted(): Unit = {
           println("ON_COMPLETED")
-          sys.exit(0)
         }
 
         def onNext(req: SlaveRequest): Unit = {
           instance.synchronized {
             if (req.gradient.nonEmpty) {
+              if (i % 100 == 0) {
+                val loss = svm.loss(
+                  someFeatures,
+                  someLabels,
+                  lambda,
+                  Dataset.tidCounts
+                )
+                println(s"[UPT][$i]: loss = $loss}")
+              }
+              i += 1
+
               svm.updateWeight(req.gradient)
-              println(s"[UPT]: new weights = ${svm.weights}}")
             } else {
               println("[NEW]: a slave wants to compute some gradients")
             }
@@ -74,7 +89,7 @@ object Master extends GrpcServer {
         label = label == Label.CCAT,
         weights = feature.map { case (k, _) => k -> weights.withDefaultValue(0d)(k) },
         lambda = lambda,
-        tidCounts = tidCounts
+        tidCounts = feature.map { case (k, _) => k -> tidCounts.withDefaultValue(0)(k) }
       )
     }
   }

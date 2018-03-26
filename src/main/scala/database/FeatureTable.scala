@@ -1,15 +1,17 @@
 package database
 
-import slick.jdbc.PostgresProfile.api._
+import slick.jdbc.MySQLProfile.api._
 import slick.lifted.ProvenShape
 
-class FeatureTable(tag: Tag) extends Table[FeatureSchema](tag, "FEATURE") {
+class FeatureTable(tag: Tag) extends Table[FeatureSchema](tag, "feature") {
 
   def * : ProvenShape[FeatureSchema] = (did, tid, weight) <> (FeatureSchema.tupled, FeatureSchema.unapply)
 
-  def did: Rep[Long] = column[Long]("DID")
+  def weight: Rep[Double] = column[Double]("weight")
 
-  def tid: Rep[Long] = column[Long]("TID")
+  def pk = primaryKey("pk_did_tid", (did, tid))
 
-  def weight: Rep[Double] = column[Double]("WEIGHT")
+  def did: Rep[Int] = column[Int]("did")
+
+  def tid: Rep[Int] = column[Int]("tid")
 }

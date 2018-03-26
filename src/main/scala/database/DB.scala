@@ -1,65 +1,70 @@
 package database
 
-import slick.dbio.Effect.{Read, Schema, Write}
-
-import util.Types.{Counts, SparseVector}
-
+import slick.dbio.Effect.Schema
+import slick.jdbc.MySQLProfile.api._
+import slick.jdbc.meta.MTable
+import slick.lifted.TableQuery
+import slick.sql.FixedSqlAction
+import utils.Types.{Counts, SparseVector}
 
 import scala.concurrent._
 import scala.concurrent.duration._
-import slick.jdbc.PostgresProfile.api._
-import slick.lifted.TableQuery
-import slick.sql.{FixedSqlAction, FixedSqlStreamingAction}
-
-import scala.io.Source
-
-object DB extends App {
+import java.io.File
 
 
-  private def parseLine(line: String): (Int, SparseVector) = {
-    val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
-    val did: Int = lineSplitted.head.toInt
-    did -> pairsToDocument(lineSplitted.tail)
+object DB {
+
+  println("Reaching database...")
+  private val db = Database.forConfig("mysql")
+  private val featureTable = TableQuery[FeatureTable]
+
+  val isReady: Boolean = exec(MTable.getTables("feature")).nonEmpty
+  if(isReady) {
+    println(">> Database is ready <<")
+  } else {
+    setupDB()
   }
 
-  private def pairsToDocument(lineSplitted: List[String]): SparseVector = {
-    lineSplitted.map(e => {
-      val pair: List[String] = e.split(":").map(_.trim).toList
-      pair.head.toInt -> pair.tail.head.toDouble
-    }).toMap
+  lazy val tidCounts: Counts = {
+    println("[DB]: Fetching tidCounts...")
+    exec(queryTidCounts.result).toMap
+  }
+  lazy val dids: Set[Int] = {
+    println("[DB]: Fetching dids...")
+    exec({for {f <- featureTable} yield f.did}.distinct.result).toSet
   }
 
-  lazy val featureTable = TableQuery[FeatureTable]
+  def setupDB(): Unit = {
+    if (!isReady) {
+      println(">> SETTING UP DATABASE << (this takes some time)")
+      val createTableAction: FixedSqlAction[Unit, NoStream, Schema] = featureTable.schema.create
+      exec(createTableAction)
 
-  val createTableAction: FixedSqlAction[Unit, NoStream, Schema] = featureTable.schema.create
-
-  def insertAlbumsAction(lines:Seq[String]): FixedSqlAction[Option[Int], NoStream, Write] = featureTable ++=
-    lines.map(line => parseLine(line)).flatMap(x => x._2.map(y => FeatureSchema(x._1, y._1, y._2)))
-
-  def insertFile(filename:String): Unit = {
-    Source.fromFile(filename).getLines().sliding(1000, 1000).foreach(lines => exec(insertAlbumsAction(lines)))
+      // inserting features
+      val path = new File("data/output2.csv").getAbsolutePath
+      exec(insertFromCSV(path, "feature"))
+      println("LOADING DONE!")
+    }
   }
 
-  val selectAlbumsActions: FixedSqlStreamingAction[Seq[FeatureSchema], FeatureSchema, Read] = featureTable.result
+  def getFeature(did: Int): SparseVector = {
+    exec(queryFeature(did).result).toMap
+  }
 
-  val query = for {
-    f <- featureTable if f.did === 1523l
+  private def exec[T](action: DBIO[T]): T = {
+    Await.result(db.run(action), 15.minutes)
+  }
+
+  private def queryFeature(did: Int) = for {
+    f <- featureTable if f.did === did
   } yield f.tid -> f.weight
 
-  private val db = Database.forConfig("scalaxdb")
+  private def queryTidCounts = featureTable.groupBy(_.tid).map{ case(tid, ls) => tid -> ls.size }
 
-  private def exec[T](action: DBIO[T]): T =
-    Await.result(db.run(action), 1200.seconds)
-
-  exec(createTableAction)
-  println("Loading start")
-  val startTimeL = System.currentTimeMillis()
-  insertFile(s"data/lyrl2004_vectors_test_pt0.dat")
-  println("Final loading ended after "+(System.currentTimeMillis() - startTimeL)/1000+" seconds")
-  //exec(selectAlbumsActions)
-  val startTimeQ = System.currentTimeMillis()
-  println(exec(query.result).toMap)
-  println("Time to answer 1 query: "+(System.currentTimeMillis() - startTimeQ)+" milli-seconds")
-
+  private def insertFromCSV(path: String, into: String): DBIO[Int] = {
+    val mysqlPath = path.replace("\\", "\\\\")
+    throw new NotImplementedError("This is not yet working")
+    sqlu"LOAD DATA LOCAL INFILE ${mysqlPath} INTO TABLE ${into} FIELDS TERMINATED BY ','  LINES TERMINATED BY '\n'"
+  }
 
 }

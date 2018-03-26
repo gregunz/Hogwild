@@ -1,3 +1,3 @@
 package database
 
-case class FeatureSchema(did: Long, tid: Long, weight: Double)
+case class FeatureSchema(did: Int, tid: Int, weight: Double)

@@ -1,8 +1,8 @@
 package computations
 
 import computations.Operations.{dotProduct, pointWise}
-import util.Label.Label
-import util.Types.{Counts, LearningRate, SparseVector}
+import utils.Label.Label
+import utils.Types.{Counts, LearningRate, SparseVector}
 
 
 case class SVM(stepSize: LearningRate = 0.1) {
@@ -13,6 +13,16 @@ case class SVM(stepSize: LearningRate = 0.1) {
       val w_k = weights(k) - stepSize * gradient(k)
       weights = weights + (k -> w_k)
     }
+  }
+
+  def loss(features: IndexedSeq[SparseVector], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
+    require(features.size == labels.size)
+    features.zip(labels)
+      .map { case (f, l) =>
+        val hinge = Math.max(0, 1 - (l.id * Operations.dotProduct(f, weights)))
+        val reg = 0.5 * lambda * f.map { case (k, _) => Math.pow(weights.withDefaultValue(0d)(k), 2) / tidCounts(k) }.sum
+        hinge + reg
+      }.sum
   }
 }
 

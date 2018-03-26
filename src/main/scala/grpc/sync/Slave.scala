@@ -4,8 +4,8 @@ import computations.SVM
 import grpc.sync.SlaveServiceGrpc.SlaveServiceStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
-import util.Label
-import util.Types.SparseVector
+import utils.Label
+import utils.Types.SparseVector
 
 object Slave extends App {
 

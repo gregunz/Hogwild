@@ -1,4 +1,4 @@
-package util
+package utils
 
 object Label extends Enumeration {
   type Label = Value
