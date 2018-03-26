@@ -1,6 +1,6 @@
 package computations
 
-import util.Types.SparseVector
+import utils.Types.SparseVector
 
 object Operations {
 
