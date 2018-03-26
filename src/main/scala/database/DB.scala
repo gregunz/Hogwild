@@ -2,6 +2,7 @@ package database
 
 import java.io.File
 
+import database.DB.exec
 import database.models.{CountTable, FeatureTable, WeightTable}
 import slick.jdbc.MySQLProfile.api._
 import slick.jdbc.meta.MTable
@@ -21,7 +22,7 @@ object DB {
   private val countTable = TableQuery[CountTable]
   private val tables = Seq(featureTable, weightTable, countTable)
   private val tableNames = Seq("feature", "weight", "count")
-  private val tableFiles = Seq("features", "weights", "tid_counts")
+  // private val tableFiles = Seq("features", "weights", "tid_counts")
 
   setupDB()
 
@@ -38,20 +39,29 @@ object DB {
   }
 
   def setupDB(): Unit = {
-    tables.zip(tableNames).zip(tableFiles).foreach{ case ((table, name), file) =>
-      val tableExist = exec(MTable.getTables(name)).nonEmpty
-      if(!tableExist){
-        println(s"[DB]: CREATING Table $name")
-        exec(table.schema.create)
-        if(file.nonEmpty) {
-          println(s"[DB]: LOADING Table $name")
-          val path = new File(s"data/$file.csv").getAbsolutePath
-          exec(insertFromCSV(path, name))
-        }
+    //tables.zip(tableNames).zip(tableFiles).foreach{ case ((table, name), file) =>
+    tables.zip(tableNames).foreach{ case (table, name) =>
+      createTableIfNotExist(table, name)
+      /*
+      if(file.nonEmpty) {
+        println(s"[DB]: LOADING Table $name")
+        val path = new File(s"data/$file.csv").getAbsolutePath
+        exec(insertFromCSV(path, name))
       }
+      */
     }
 
     println("LOADING DONE!")
+  }
+
+  private def createTableIfNotExist[U, T <: Table[U]](table: TableQuery[T], name: String): Unit = {
+    val tableExist = exec(MTable.getTables(name)).nonEmpty
+    if (!tableExist) {
+      println(s"[DB]: CREATING Table $name")
+      weightTable
+      table
+      exec(table.schema.create)
+    }
   }
 
   def getFeature(did: Int): SparseVector = {

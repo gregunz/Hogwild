@@ -11,7 +11,7 @@ object Slave extends App {
 
   val instance = this
   val channel = ManagedChannelBuilder
-    .forAddress("localhost", 50050) // host and port of service
+    .forAddress("192.168.1.105", 50050) // host and port of service
     .usePlaintext(true) // don't use encryption (for demo purposes)
     .build
   val client: SlaveServiceStub = SlaveServiceGrpc.stub(channel)
