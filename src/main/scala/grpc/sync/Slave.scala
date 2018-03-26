@@ -34,7 +34,7 @@ object Slave extends App {
         lambda = res.lambda,
         tidCounts = res.tidCounts
       )
-      println(s"[CPT]: computing done (gradient = $newGradient)")
+      //println(s"[CPT]: computing done (gradient = $newGradient)")
       instance.synchronized {
         someGradient = Some(newGradient)
         instance.notify()

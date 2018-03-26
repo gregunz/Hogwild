@@ -23,7 +23,8 @@ object Master extends GrpcServer {
   private val instance = this
 
   private var i = 0
-  private val someDids = Dataset.dids.toIndexedSeq.take(10000)
+  private var time = System.currentTimeMillis()
+  private val someDids = Dataset.dids.toIndexedSeq.take(1000)
   private val someFeatures = someDids.map(Dataset.getFeature)
   private val someLabels = someDids.map(Dataset.didToLabel)
 
@@ -62,14 +63,16 @@ object Master extends GrpcServer {
         def onNext(req: SlaveRequest): Unit = {
           instance.synchronized {
             if (req.gradient.nonEmpty) {
-              if (i % 100 == 0) {
+              if (i % 10000 == 0) {
                 val loss = svm.loss(
                   someFeatures,
                   someLabels,
                   lambda,
                   Dataset.tidCounts
                 )
-                println(s"[UPT][$i]: loss = $loss}")
+                val duration = System.currentTimeMillis() - time
+                time = System.currentTimeMillis()
+                println(s"[UPT][$i][$duration]: loss = $loss}")
               }
               i += 1
 
