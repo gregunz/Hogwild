@@ -1,10 +1,10 @@
 package grpc.sync
 
-import computations.SVM
+import dataset.Dataset
 import grpc.sync.SlaveServiceGrpc.SlaveServiceStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
-import model.SparseNumVector
+import model.{SVM, SparseNumVector}
 import utils.Label
 
 import scala.util.Random
@@ -12,10 +12,13 @@ import scala.util.Random
 object Slave extends App {
 
   val id = Random.nextInt(Int.MaxValue)
-  var count = 0
+  val lambda = 0.1
   var someGradient: Option[SparseNumVector] = Some(SparseNumVector.empty)
 
   val instance = this
+
+  // FOR PRINTS
+  var count = 0
 
   val channel = ManagedChannelBuilder
     .forAddress("localhost", 50050) // host and port of service
@@ -36,17 +39,17 @@ object Slave extends App {
 
     def onNext(res: SlaveResponse): Unit = {
       val newGradient = SVM.computeStochasticGradient(
-        feature = SparseNumVector(res.feature),
-        label = Label(res.label),
+        feature = Dataset.getFeature(res.did),
+        label = Dataset.getLabel(res.did),
         weights = SparseNumVector(res.weights),
-        lambda = res.lambda,
-        tidCounts = res.tidCounts
+        lambda = lambda,
+        tidCounts = Dataset.tidCounts
       )
-      if(count % 500 == 0){
-        println(count)
+      if(count % 1000 == 0){
+        println(s"[CPT]: computing done since start = $count)")
       }
       count += 1
-      //      println(s"[CPT]: computing done (gradient = $newGradient)")
+
       instance.synchronized {
         someGradient = Some(newGradient)
         instance.notify()
@@ -60,7 +63,7 @@ object Slave extends App {
   while (!channel.isTerminated) {
     instance.synchronized {
       while (someGradient.isEmpty) wait()
-      requestObserver.onNext(SlaveRequest(id, someGradient.get.values))
+      requestObserver.onNext(SlaveRequest(someGradient.get.values))
       someGradient = None
     }
   }

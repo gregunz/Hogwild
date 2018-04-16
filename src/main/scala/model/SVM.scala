@@ -1,11 +1,10 @@
-package computations
+package model
 
-import model.SparseNumVector
 import utils.Label.Label
 import utils.Types.{Counts, LearningRate}
 
 
-case class SVM(stepSize: LearningRate = 0.1) {
+case class SVM(stepSize: LearningRate = 0.01) {
   var weights: SparseNumVector = SparseNumVector(Map.empty.withDefaultValue(0d))
 
   def updateWeight(gradient: SparseNumVector): Unit = {

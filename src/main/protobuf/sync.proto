@@ -8,14 +8,10 @@ service SlaveService {
 }
 
 message SlaveRequest {
-    uint32 id = 1;
     map<uint32, double> gradient = 2;
 }
 
 message SlaveResponse {
-    map<uint32, double> feature = 1;
-    bool label = 2;
-    map<uint32, double> weights = 3;
-    double lambda = 4;
-    map<uint32, uint32> tidCounts = 5;
+    uint32 did = 1;
+    map<uint32, double> weights = 2;
 }

@@ -1,9 +1,8 @@
 package grpc.sync
 
-import computations.SVM
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
-import model.{SlavesHandler, SparseNumVector}
+import model.{SVM, SlavesHandler, SparseNumVector}
 import utils.Label
 import utils.Label.Label
 import utils.Types.TID
@@ -13,13 +12,14 @@ import scala.concurrent.ExecutionContext
 
 object Master extends GrpcServer {
 
-  lazy val samples: Iterator[(SparseNumVector, Label, Map[TID, Int])] = Dataset.samples().toIterator
-  val lambda: Double = 0.1
+  lazy val samples: Iterator[Int] = Dataset.samples().toIterator
 
+  val lambda: Double = 0.1
   val svm = SVM()
-  private val instance = this
 
   val slavesHandler = new SlavesHandler
+
+  val instance = this
 
   /* TO COMPUTE & PRINT LOSSES */
   val someDids: Set[TID] = Dataset.didSet.take(500)
@@ -46,10 +46,12 @@ object Master extends GrpcServer {
       new StreamObserver[SlaveRequest] {
         def onError(t: Throwable): Unit = {
           println(s"ON_ERROR: $t")
+          slavesHandler.removeSlave()
         }
 
         def onCompleted(): Unit = {
           println("ON_COMPLETED")
+          slavesHandler.removeSlave()
         }
 
         def onNext(req: SlaveRequest): Unit = {
@@ -68,24 +70,27 @@ object Master extends GrpcServer {
             i += 1
 
             instance.synchronized{
-              svm.updateWeight(SparseNumVector(req.gradient))
+              slavesHandler.addGradient(SparseNumVector(req.gradient))
+              if(slavesHandler.isWaitingOnSomeSlave){
+                  wait()
+              } else {
+                svm.updateWeight(slavesHandler.getMeanGradient)
+                notifyAll()
+              }
             }
           } else {
-            slavesHandler.addSlave(req.id)
             println("[NEW]: a slave wants to compute some gradients")
+            slavesHandler.addSlave()
           }
           responseObserver.onNext(spawnSlaveResponse(svm.weights))
         }
       }
 
     private def spawnSlaveResponse(weights: SparseNumVector): SlaveResponse = {
-      val (feature, label, tidCounts) = samples.next
+      val did = samples.next
       SlaveResponse(
-        feature = feature.values,
-        label = label == Label.CCAT,
-        weights = feature.mapTo { case (k, _) => weights.values.withDefaultValue(0d)(k) }.values,
-        lambda = lambda,
-        tidCounts = tidCounts
+        did = did,
+        weights = Dataset.getFeature(did).mapTo { case (k, _) => weights.values.withDefaultValue(0d)(k) }.values
       )
     }
   }

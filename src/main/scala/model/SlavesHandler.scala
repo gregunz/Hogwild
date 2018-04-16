@@ -1,16 +1,32 @@
 package model
 
+import scala.collection.mutable
+
 
 class SlavesHandler {
-  private var slaves: Set[Int] = Set()
+  private var numSlaves = 0
+  private var gradients: List[SparseNumVector] = List()
 
-  def addSlave(id: Int): Unit = {
-    slaves += id
+  def addSlave(): Unit = {
+    numSlaves += 1
   }
 
-  def removeSlave(id: Int): Unit = {
-    slaves -= id
+  def removeSlave(): Unit = {
+    numSlaves += 1
   }
 
-  def getSlaves: Set[Int] = slaves
+  def isWaitingOnSomeSlave: Boolean = {
+    gradients.size < numSlaves
+  }
+
+  def addGradient(gradient: SparseNumVector): Unit = {
+    gradients ::= gradient
+  }
+
+  def getMeanGradient: SparseNumVector = {
+    val meanGradient = gradients.reduce(_ + _).mapTo((k,v) => v / gradients.size)
+    gradients = List()
+    meanGradient
+  }
+
 }

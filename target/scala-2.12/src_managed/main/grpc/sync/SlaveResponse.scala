@@ -7,21 +7,15 @@ package grpc.sync
 
 @SerialVersionUID(0L)
 final case class SlaveResponse(
-    feature: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty,
-    label: _root_.scala.Boolean = false,
-    weights: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty,
-    lambda: _root_.scala.Double = 0.0,
-    tidCounts: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Int] = scala.collection.immutable.Map.empty
+    did: _root_.scala.Int = 0,
+    weights: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty
     ) extends scalapb.GeneratedMessage with scalapb.Message[SlaveResponse] with scalapb.lenses.Updatable[SlaveResponse] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
     private[this] def __computeSerializedValue(): _root_.scala.Int = {
       var __size = 0
-      feature.foreach(feature => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.SlaveResponse._typemapper_feature.toBase(feature).serializedSize) + grpc.sync.SlaveResponse._typemapper_feature.toBase(feature).serializedSize)
-      if (label != false) { __size += _root_.com.google.protobuf.CodedOutputStream.computeBoolSize(2, label) }
+      if (did != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(1, did) }
       weights.foreach(weights => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.SlaveResponse._typemapper_weights.toBase(weights).serializedSize) + grpc.sync.SlaveResponse._typemapper_weights.toBase(weights).serializedSize)
-      if (lambda != 0.0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeDoubleSize(4, lambda) }
-      tidCounts.foreach(tidCounts => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.SlaveResponse._typemapper_tidCounts.toBase(tidCounts).serializedSize) + grpc.sync.SlaveResponse._typemapper_tidCounts.toBase(tidCounts).serializedSize)
       __size
     }
     final override def serializedSize: _root_.scala.Int = {
@@ -33,103 +27,57 @@ final case class SlaveResponse(
       read
     }
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
-      feature.foreach { __v =>
-        _output__.writeTag(1, 2)
-        _output__.writeUInt32NoTag(grpc.sync.SlaveResponse._typemapper_feature.toBase(__v).serializedSize)
-        grpc.sync.SlaveResponse._typemapper_feature.toBase(__v).writeTo(_output__)
-      };
       {
-        val __v = label
-        if (__v != false) {
-          _output__.writeBool(2, __v)
+        val __v = did
+        if (__v != 0) {
+          _output__.writeUInt32(1, __v)
         }
       };
       weights.foreach { __v =>
-        _output__.writeTag(3, 2)
+        _output__.writeTag(2, 2)
         _output__.writeUInt32NoTag(grpc.sync.SlaveResponse._typemapper_weights.toBase(__v).serializedSize)
         grpc.sync.SlaveResponse._typemapper_weights.toBase(__v).writeTo(_output__)
       };
-      {
-        val __v = lambda
-        if (__v != 0.0) {
-          _output__.writeDouble(4, __v)
-        }
-      };
-      tidCounts.foreach { __v =>
-        _output__.writeTag(5, 2)
-        _output__.writeUInt32NoTag(grpc.sync.SlaveResponse._typemapper_tidCounts.toBase(__v).serializedSize)
-        grpc.sync.SlaveResponse._typemapper_tidCounts.toBase(__v).writeTo(_output__)
-      };
     }
     def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.SlaveResponse = {
-      val __feature = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.feature)
-      var __label = this.label
+      var __did = this.did
       val __weights = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.weights)
-      var __lambda = this.lambda
-      val __tidCounts = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Int] ++= this.tidCounts)
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
         _tag__ match {
           case 0 => _done__ = true
-          case 10 =>
-            __feature += grpc.sync.SlaveResponse._typemapper_feature.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.SlaveResponse.FeatureEntry.defaultInstance))
-          case 16 =>
-            __label = _input__.readBool()
-          case 26 =>
+          case 8 =>
+            __did = _input__.readUInt32()
+          case 18 =>
             __weights += grpc.sync.SlaveResponse._typemapper_weights.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.SlaveResponse.WeightsEntry.defaultInstance))
-          case 33 =>
-            __lambda = _input__.readDouble()
-          case 42 =>
-            __tidCounts += grpc.sync.SlaveResponse._typemapper_tidCounts.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.SlaveResponse.TidCountsEntry.defaultInstance))
           case tag => _input__.skipField(tag)
         }
       }
       grpc.sync.SlaveResponse(
-          feature = __feature.result(),
-          label = __label,
-          weights = __weights.result(),
-          lambda = __lambda,
-          tidCounts = __tidCounts.result()
+          did = __did,
+          weights = __weights.result()
       )
     }
-    def clearFeature = copy(feature = scala.collection.immutable.Map.empty)
-    def addFeature(__vs: (_root_.scala.Int, _root_.scala.Double)*): SlaveResponse = addAllFeature(__vs)
-    def addAllFeature(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): SlaveResponse = copy(feature = feature ++ __vs)
-    def withFeature(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): SlaveResponse = copy(feature = __v)
-    def withLabel(__v: _root_.scala.Boolean): SlaveResponse = copy(label = __v)
+    def withDid(__v: _root_.scala.Int): SlaveResponse = copy(did = __v)
     def clearWeights = copy(weights = scala.collection.immutable.Map.empty)
     def addWeights(__vs: (_root_.scala.Int, _root_.scala.Double)*): SlaveResponse = addAllWeights(__vs)
     def addAllWeights(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): SlaveResponse = copy(weights = weights ++ __vs)
     def withWeights(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): SlaveResponse = copy(weights = __v)
-    def withLambda(__v: _root_.scala.Double): SlaveResponse = copy(lambda = __v)
-    def clearTidCounts = copy(tidCounts = scala.collection.immutable.Map.empty)
-    def addTidCounts(__vs: (_root_.scala.Int, _root_.scala.Int)*): SlaveResponse = addAllTidCounts(__vs)
-    def addAllTidCounts(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Int)]): SlaveResponse = copy(tidCounts = tidCounts ++ __vs)
-    def withTidCounts(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Int]): SlaveResponse = copy(tidCounts = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 1 => feature.map(grpc.sync.SlaveResponse._typemapper_feature.toBase)(_root_.scala.collection.breakOut)
-        case 2 => {
-          val __t = label
-          if (__t != false) __t else null
+        case 1 => {
+          val __t = did
+          if (__t != 0) __t else null
         }
-        case 3 => weights.map(grpc.sync.SlaveResponse._typemapper_weights.toBase)(_root_.scala.collection.breakOut)
-        case 4 => {
-          val __t = lambda
-          if (__t != 0.0) __t else null
-        }
-        case 5 => tidCounts.map(grpc.sync.SlaveResponse._typemapper_tidCounts.toBase)(_root_.scala.collection.breakOut)
+        case 2 => weights.map(grpc.sync.SlaveResponse._typemapper_weights.toBase)(_root_.scala.collection.breakOut)
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 1 => _root_.scalapb.descriptors.PRepeated(feature.map(grpc.sync.SlaveResponse._typemapper_feature.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
-        case 2 => _root_.scalapb.descriptors.PBoolean(label)
-        case 3 => _root_.scalapb.descriptors.PRepeated(weights.map(grpc.sync.SlaveResponse._typemapper_weights.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
-        case 4 => _root_.scalapb.descriptors.PDouble(lambda)
-        case 5 => _root_.scalapb.descriptors.PRepeated(tidCounts.map(grpc.sync.SlaveResponse._typemapper_tidCounts.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 1 => _root_.scalapb.descriptors.PInt(did)
+        case 2 => _root_.scalapb.descriptors.PRepeated(weights.map(grpc.sync.SlaveResponse._typemapper_weights.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
@@ -142,22 +90,16 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveRe
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
     grpc.sync.SlaveResponse(
-      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.FeatureEntry]].map(grpc.sync.SlaveResponse._typemapper_feature.toCustom)(_root_.scala.collection.breakOut),
-      __fieldsMap.getOrElse(__fields.get(1), false).asInstanceOf[_root_.scala.Boolean],
-      __fieldsMap.getOrElse(__fields.get(2), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.WeightsEntry]].map(grpc.sync.SlaveResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut),
-      __fieldsMap.getOrElse(__fields.get(3), 0.0).asInstanceOf[_root_.scala.Double],
-      __fieldsMap.getOrElse(__fields.get(4), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.TidCountsEntry]].map(grpc.sync.SlaveResponse._typemapper_tidCounts.toCustom)(_root_.scala.collection.breakOut)
+      __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
+      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.WeightsEntry]].map(grpc.sync.SlaveResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
     )
   }
   implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.SlaveResponse] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
       grpc.sync.SlaveResponse(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.FeatureEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.SlaveResponse._typemapper_feature.toCustom)(_root_.scala.collection.breakOut),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Boolean]).getOrElse(false),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(3).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.WeightsEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.SlaveResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(4).get).map(_.as[_root_.scala.Double]).getOrElse(0.0),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(5).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.TidCountsEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.SlaveResponse._typemapper_tidCounts.toCustom)(_root_.scala.collection.breakOut)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.SlaveResponse.WeightsEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.SlaveResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -166,136 +108,16 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveRe
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 1 => __out = grpc.sync.SlaveResponse.FeatureEntry
-      case 3 => __out = grpc.sync.SlaveResponse.WeightsEntry
-      case 5 => __out = grpc.sync.SlaveResponse.TidCountsEntry
+      case 2 => __out = grpc.sync.SlaveResponse.WeightsEntry
     }
     __out
   }
   lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq[_root_.scalapb.GeneratedMessageCompanion[_]](
-    _root_.grpc.sync.SlaveResponse.FeatureEntry,
-    _root_.grpc.sync.SlaveResponse.WeightsEntry,
-    _root_.grpc.sync.SlaveResponse.TidCountsEntry
+    _root_.grpc.sync.SlaveResponse.WeightsEntry
   )
   def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
   lazy val defaultInstance = grpc.sync.SlaveResponse(
   )
-  @SerialVersionUID(0L)
-  final case class FeatureEntry(
-      key: _root_.scala.Int = 0,
-      value: _root_.scala.Double = 0.0
-      ) extends scalapb.GeneratedMessage with scalapb.Message[FeatureEntry] with scalapb.lenses.Updatable[FeatureEntry] {
-      @transient
-      private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
-      private[this] def __computeSerializedValue(): _root_.scala.Int = {
-        var __size = 0
-        if (key != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(1, key) }
-        if (value != 0.0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeDoubleSize(2, value) }
-        __size
-      }
-      final override def serializedSize: _root_.scala.Int = {
-        var read = __serializedSizeCachedValue
-        if (read == 0) {
-          read = __computeSerializedValue()
-          __serializedSizeCachedValue = read
-        }
-        read
-      }
-      def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
-        {
-          val __v = key
-          if (__v != 0) {
-            _output__.writeUInt32(1, __v)
-          }
-        };
-        {
-          val __v = value
-          if (__v != 0.0) {
-            _output__.writeDouble(2, __v)
-          }
-        };
-      }
-      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.SlaveResponse.FeatureEntry = {
-        var __key = this.key
-        var __value = this.value
-        var _done__ = false
-        while (!_done__) {
-          val _tag__ = _input__.readTag()
-          _tag__ match {
-            case 0 => _done__ = true
-            case 8 =>
-              __key = _input__.readUInt32()
-            case 17 =>
-              __value = _input__.readDouble()
-            case tag => _input__.skipField(tag)
-          }
-        }
-        grpc.sync.SlaveResponse.FeatureEntry(
-            key = __key,
-            value = __value
-        )
-      }
-      def withKey(__v: _root_.scala.Int): FeatureEntry = copy(key = __v)
-      def withValue(__v: _root_.scala.Double): FeatureEntry = copy(value = __v)
-      def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
-        (__fieldNumber: @_root_.scala.unchecked) match {
-          case 1 => {
-            val __t = key
-            if (__t != 0) __t else null
-          }
-          case 2 => {
-            val __t = value
-            if (__t != 0.0) __t else null
-          }
-        }
-      }
-      def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
-        require(__field.containingMessage eq companion.scalaDescriptor)
-        (__field.number: @_root_.scala.unchecked) match {
-          case 1 => _root_.scalapb.descriptors.PInt(key)
-          case 2 => _root_.scalapb.descriptors.PDouble(value)
-        }
-      }
-      def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-      def companion = grpc.sync.SlaveResponse.FeatureEntry
-  }
-  
-  object FeatureEntry extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveResponse.FeatureEntry] {
-    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.SlaveResponse.FeatureEntry] = this
-    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.SlaveResponse.FeatureEntry = {
-      require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
-      val __fields = javaDescriptor.getFields
-      grpc.sync.SlaveResponse.FeatureEntry(
-        __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
-        __fieldsMap.getOrElse(__fields.get(1), 0.0).asInstanceOf[_root_.scala.Double]
-      )
-    }
-    implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.SlaveResponse.FeatureEntry] = _root_.scalapb.descriptors.Reads{
-      case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
-        require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-        grpc.sync.SlaveResponse.FeatureEntry(
-          __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
-          __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Double]).getOrElse(0.0)
-        )
-      case _ => throw new RuntimeException("Expected PMessage")
-    }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.SlaveResponse.javaDescriptor.getNestedTypes.get(0)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.SlaveResponse.scalaDescriptor.nestedMessages(0)
-    def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
-    lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
-    def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-    lazy val defaultInstance = grpc.sync.SlaveResponse.FeatureEntry(
-    )
-    implicit class FeatureEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.SlaveResponse.FeatureEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.SlaveResponse.FeatureEntry](_l) {
-      def key: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.key)((c_, f_) => c_.copy(key = f_))
-      def value: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Double] = field(_.value)((c_, f_) => c_.copy(value = f_))
-    }
-    final val KEY_FIELD_NUMBER = 1
-    final val VALUE_FIELD_NUMBER = 2
-    implicit val keyValueMapper: _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.FeatureEntry, (_root_.scala.Int, _root_.scala.Double)] =
-      _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.FeatureEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => grpc.sync.SlaveResponse.FeatureEntry(__p._1, __p._2))
-  }
-  
   @SerialVersionUID(0L)
   final case class WeightsEntry(
       key: _root_.scala.Int = 0,
@@ -395,8 +217,8 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveRe
         )
       case _ => throw new RuntimeException("Expected PMessage")
     }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.SlaveResponse.javaDescriptor.getNestedTypes.get(1)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.SlaveResponse.scalaDescriptor.nestedMessages(1)
+    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.SlaveResponse.javaDescriptor.getNestedTypes.get(0)
+    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.SlaveResponse.scalaDescriptor.nestedMessages(0)
     def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
     lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
     def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
@@ -412,138 +234,12 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveRe
       _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => grpc.sync.SlaveResponse.WeightsEntry(__p._1, __p._2))
   }
   
-  @SerialVersionUID(0L)
-  final case class TidCountsEntry(
-      key: _root_.scala.Int = 0,
-      value: _root_.scala.Int = 0
-      ) extends scalapb.GeneratedMessage with scalapb.Message[TidCountsEntry] with scalapb.lenses.Updatable[TidCountsEntry] {
-      @transient
-      private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
-      private[this] def __computeSerializedValue(): _root_.scala.Int = {
-        var __size = 0
-        if (key != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(1, key) }
-        if (value != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(2, value) }
-        __size
-      }
-      final override def serializedSize: _root_.scala.Int = {
-        var read = __serializedSizeCachedValue
-        if (read == 0) {
-          read = __computeSerializedValue()
-          __serializedSizeCachedValue = read
-        }
-        read
-      }
-      def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
-        {
-          val __v = key
-          if (__v != 0) {
-            _output__.writeUInt32(1, __v)
-          }
-        };
-        {
-          val __v = value
-          if (__v != 0) {
-            _output__.writeUInt32(2, __v)
-          }
-        };
-      }
-      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.SlaveResponse.TidCountsEntry = {
-        var __key = this.key
-        var __value = this.value
-        var _done__ = false
-        while (!_done__) {
-          val _tag__ = _input__.readTag()
-          _tag__ match {
-            case 0 => _done__ = true
-            case 8 =>
-              __key = _input__.readUInt32()
-            case 16 =>
-              __value = _input__.readUInt32()
-            case tag => _input__.skipField(tag)
-          }
-        }
-        grpc.sync.SlaveResponse.TidCountsEntry(
-            key = __key,
-            value = __value
-        )
-      }
-      def withKey(__v: _root_.scala.Int): TidCountsEntry = copy(key = __v)
-      def withValue(__v: _root_.scala.Int): TidCountsEntry = copy(value = __v)
-      def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
-        (__fieldNumber: @_root_.scala.unchecked) match {
-          case 1 => {
-            val __t = key
-            if (__t != 0) __t else null
-          }
-          case 2 => {
-            val __t = value
-            if (__t != 0) __t else null
-          }
-        }
-      }
-      def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
-        require(__field.containingMessage eq companion.scalaDescriptor)
-        (__field.number: @_root_.scala.unchecked) match {
-          case 1 => _root_.scalapb.descriptors.PInt(key)
-          case 2 => _root_.scalapb.descriptors.PInt(value)
-        }
-      }
-      def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-      def companion = grpc.sync.SlaveResponse.TidCountsEntry
-  }
-  
-  object TidCountsEntry extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveResponse.TidCountsEntry] {
-    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.SlaveResponse.TidCountsEntry] = this
-    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.SlaveResponse.TidCountsEntry = {
-      require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
-      val __fields = javaDescriptor.getFields
-      grpc.sync.SlaveResponse.TidCountsEntry(
-        __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
-        __fieldsMap.getOrElse(__fields.get(1), 0).asInstanceOf[_root_.scala.Int]
-      )
-    }
-    implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.SlaveResponse.TidCountsEntry] = _root_.scalapb.descriptors.Reads{
-      case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
-        require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-        grpc.sync.SlaveResponse.TidCountsEntry(
-          __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
-          __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Int]).getOrElse(0)
-        )
-      case _ => throw new RuntimeException("Expected PMessage")
-    }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.SlaveResponse.javaDescriptor.getNestedTypes.get(2)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.SlaveResponse.scalaDescriptor.nestedMessages(2)
-    def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
-    lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
-    def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-    lazy val defaultInstance = grpc.sync.SlaveResponse.TidCountsEntry(
-    )
-    implicit class TidCountsEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.SlaveResponse.TidCountsEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.SlaveResponse.TidCountsEntry](_l) {
-      def key: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.key)((c_, f_) => c_.copy(key = f_))
-      def value: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.value)((c_, f_) => c_.copy(value = f_))
-    }
-    final val KEY_FIELD_NUMBER = 1
-    final val VALUE_FIELD_NUMBER = 2
-    implicit val keyValueMapper: _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.TidCountsEntry, (_root_.scala.Int, _root_.scala.Int)] =
-      _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.TidCountsEntry, (_root_.scala.Int, _root_.scala.Int)](__m => (__m.key, __m.value))(__p => grpc.sync.SlaveResponse.TidCountsEntry(__p._1, __p._2))
-  }
-  
   implicit class SlaveResponseLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.SlaveResponse]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.SlaveResponse](_l) {
-    def feature: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.feature)((c_, f_) => c_.copy(feature = f_))
-    def label: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Boolean] = field(_.label)((c_, f_) => c_.copy(label = f_))
+    def did: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.did)((c_, f_) => c_.copy(did = f_))
     def weights: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.weights)((c_, f_) => c_.copy(weights = f_))
-    def lambda: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Double] = field(_.lambda)((c_, f_) => c_.copy(lambda = f_))
-    def tidCounts: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Int]] = field(_.tidCounts)((c_, f_) => c_.copy(tidCounts = f_))
   }
-  final val FEATURE_FIELD_NUMBER = 1
-  final val LABEL_FIELD_NUMBER = 2
-  final val WEIGHTS_FIELD_NUMBER = 3
-  final val LAMBDA_FIELD_NUMBER = 4
-  final val TIDCOUNTS_FIELD_NUMBER = 5
-  @transient
-  private val _typemapper_feature: _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.FeatureEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.FeatureEntry, (_root_.scala.Int, _root_.scala.Double)]]
+  final val DID_FIELD_NUMBER = 1
+  final val WEIGHTS_FIELD_NUMBER = 2
   @transient
   private val _typemapper_weights: _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)]]
-  @transient
-  private val _typemapper_tidCounts: _root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.TidCountsEntry, (_root_.scala.Int, _root_.scala.Int)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.SlaveResponse.TidCountsEntry, (_root_.scala.Int, _root_.scala.Int)]]
 }

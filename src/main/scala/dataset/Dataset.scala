@@ -17,14 +17,14 @@ object Dataset {
     List(dataPath + "vectors_test_samples.dat")
   }
 
-  lazy val didSet: Set[TID] = features.keySet
+  lazy val didSet: Set[Int] = features.keySet
   lazy val tidCounts: Counts = {
     println("...loading tidCounts...")
     features.flatMap(_._2.values.keys)
       .groupBy(tid => tid)
       .mapValues(_.size)
   }
-  lazy val labels: Map[TID, Label] = {
+  lazy val labels: Map[Int, Label] = {
     println("...loading labels...")
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"
@@ -40,7 +40,7 @@ object Dataset {
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-  lazy val features: Map[TID, SparseNumVector] = {
+  lazy val features: Map[Int, SparseNumVector] = {
     println("...loading features...")
     filePaths
       .flatMap { path =>
@@ -56,24 +56,17 @@ object Dataset {
     tidCounts
   }
 
-  def samples(withReplacement: Boolean = false): Stream[(SparseNumVector, Label, Map[TID, Int])] = {
+  def samples(withReplacement: Boolean = false): Stream[Int] = {
     val docIndicesIndexSeq = didSet.toIndexedSeq
-
-    def didToOutput(did: Int): (SparseNumVector, Label, Map[TID, Int]) = {
-      val feature = getFeature(did)
-      val tidCountsFiltered = feature.values.map { case (k, _) => k -> tidCounts(k) }
-      (feature, getLabel(did), tidCountsFiltered)
-    }
-
     if (!withReplacement) {
       Stream.continually {
-        Random.shuffle(docIndicesIndexSeq).toStream.map(didToOutput)
+        Random.shuffle(docIndicesIndexSeq).toStream
       }.flatten
     } else {
       Stream.continually {
         val randomIndex = Random.nextInt(docIndicesIndexSeq.size)
         val did = docIndicesIndexSeq(randomIndex)
-        didToOutput(did)
+        did
       }
     }
   }
