@@ -5,7 +5,7 @@ Team : Grégoire Clément, Maxime Delisle, Sylvain Beaud
 
 We have added a JPG file which simply represents our design choices so far.
 
-![Design_Milestone1.jpeg](Design_Milestone1.jpeg)
+![Design_Milestone1.jpeg][design]
 [Dataset available here][dataset]
 
 [design]: https://imgur.com/R7I3OYk
