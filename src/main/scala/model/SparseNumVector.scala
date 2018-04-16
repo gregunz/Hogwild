@@ -13,7 +13,7 @@ case class SparseNumVector(values: Map[TID, Double]){
   }
 
   def dotProduct(that: SparseNumVector): Double = {
-    (this + that).values.values.sum
+    this.pointWise(that, _ * _).values.values.sum
   }
 
   def pointWise(that: SparseNumVector, op: (Double, Double) => Double): SparseNumVector = {

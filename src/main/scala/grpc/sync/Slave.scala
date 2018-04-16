@@ -35,7 +35,7 @@ object Slave extends App {
         tidCounts = Dataset.tidCounts
       )
       count += 1
-      if (count % 1000 == 0) {
+      if (count % 500 == 0) {
         println(s"[CPT]: computing done since start = $count)")
       }
 

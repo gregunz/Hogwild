@@ -62,7 +62,7 @@ object Master extends GrpcServer {
                   instance.wait()
               } else {
                 svm.updateWeight(slavesHandler.getMeanGradient)
-                if (i % 1000 == 0) {
+                if (i % 500 == 0) {
                   val loss = svm.loss(
                     someFeatures,
                     someLabels,
