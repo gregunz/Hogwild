@@ -8,7 +8,8 @@ service SlaveService {
 }
 
 message SlaveRequest {
-    map<uint32, double> gradient = 1;
+    uint32 id = 1;
+    map<uint32, double> gradient = 2;
 }
 
 message SlaveResponse {

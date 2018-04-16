@@ -14,7 +14,7 @@ object Dataset {
   private final val filePaths: List[String] = {
     // at the moment, can hold the whole data in memory => subset of data only
     //(0 until 4).map(i => dataPath + filename(i)).toList
-    List(dataPath + filename(0))
+    List(dataPath + "vectors_test_samples.dat")
   }
 
   lazy val didSet: Set[TID] = features.keySet

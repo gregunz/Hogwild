@@ -3,11 +3,12 @@ package grpc.sync
 import computations.SVM
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
-import model.SparseNumVector
+import model.{SlavesHandler, SparseNumVector}
 import utils.Label
 import utils.Label.Label
 import utils.Types.TID
 
+import scala.collection.immutable
 import scala.concurrent.ExecutionContext
 
 object Master extends GrpcServer {
@@ -17,18 +18,19 @@ object Master extends GrpcServer {
 
   val svm = SVM()
   private val instance = this
-  private val someDids = Dataset.didSet.take(500)
-  private val someFeatures = Dataset.features.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
-  private val someLabels = Dataset.labels.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
-  private var i = 0
-  private var time = System.currentTimeMillis()
+
+  val slavesHandler = new SlavesHandler
+
+  /* TO COMPUTE & PRINT LOSSES */
+  val someDids: Set[TID] = Dataset.didSet.take(500)
+  val someFeatures: immutable.IndexedSeq[SparseNumVector] = Dataset.features.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
+  val someLabels: immutable.IndexedSeq[Label] = Dataset.labels.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
+  var i = 0
+  var time: Long = System.currentTimeMillis()
 
   def main(args: Array[String]): Unit = {
-
-    println("Loading...")
     load()
     val ssd = SlaveServiceGrpc.bindService(SlaveService, ExecutionContext.global)
-
     println(">> READY <<")
     runServer(ssd)
   }
@@ -65,8 +67,11 @@ object Master extends GrpcServer {
             }
             i += 1
 
-            svm.updateWeight(SparseNumVector(req.gradient))
+            instance.synchronized{
+              svm.updateWeight(SparseNumVector(req.gradient))
+            }
           } else {
+            slavesHandler.addSlave(req.id)
             println("[NEW]: a slave wants to compute some gradients")
           }
           responseObserver.onNext(spawnSlaveResponse(svm.weights))

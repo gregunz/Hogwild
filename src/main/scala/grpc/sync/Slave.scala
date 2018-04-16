@@ -7,8 +7,11 @@ import io.grpc.stub.StreamObserver
 import model.SparseNumVector
 import utils.Label
 
+import scala.util.Random
+
 object Slave extends App {
 
+  val id = Random.nextInt(Int.MaxValue)
   var count = 0
   var someGradient: Option[SparseNumVector] = Some(SparseNumVector.empty)
 
@@ -57,7 +60,7 @@ object Slave extends App {
   while (!channel.isTerminated) {
     instance.synchronized {
       while (someGradient.isEmpty) wait()
-      requestObserver.onNext(SlaveRequest(someGradient.get.values))
+      requestObserver.onNext(SlaveRequest(id, someGradient.get.values))
       someGradient = None
     }
   }

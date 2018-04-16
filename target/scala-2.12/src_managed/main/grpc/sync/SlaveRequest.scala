@@ -7,12 +7,14 @@ package grpc.sync
 
 @SerialVersionUID(0L)
 final case class SlaveRequest(
+    id: _root_.scala.Int = 0,
     gradient: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty
     ) extends scalapb.GeneratedMessage with scalapb.Message[SlaveRequest] with scalapb.lenses.Updatable[SlaveRequest] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
     private[this] def __computeSerializedValue(): _root_.scala.Int = {
       var __size = 0
+      if (id != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(1, id) }
       gradient.foreach(gradient => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.SlaveRequest._typemapper_gradient.toBase(gradient).serializedSize) + grpc.sync.SlaveRequest._typemapper_gradient.toBase(gradient).serializedSize)
       __size
     }
@@ -25,41 +27,57 @@ final case class SlaveRequest(
       read
     }
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
+      {
+        val __v = id
+        if (__v != 0) {
+          _output__.writeUInt32(1, __v)
+        }
+      };
       gradient.foreach { __v =>
-        _output__.writeTag(1, 2)
+        _output__.writeTag(2, 2)
         _output__.writeUInt32NoTag(grpc.sync.SlaveRequest._typemapper_gradient.toBase(__v).serializedSize)
         grpc.sync.SlaveRequest._typemapper_gradient.toBase(__v).writeTo(_output__)
       };
     }
     def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.SlaveRequest = {
+      var __id = this.id
       val __gradient = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.gradient)
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
         _tag__ match {
           case 0 => _done__ = true
-          case 10 =>
+          case 8 =>
+            __id = _input__.readUInt32()
+          case 18 =>
             __gradient += grpc.sync.SlaveRequest._typemapper_gradient.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.SlaveRequest.GradientEntry.defaultInstance))
           case tag => _input__.skipField(tag)
         }
       }
       grpc.sync.SlaveRequest(
+          id = __id,
           gradient = __gradient.result()
       )
     }
+    def withId(__v: _root_.scala.Int): SlaveRequest = copy(id = __v)
     def clearGradient = copy(gradient = scala.collection.immutable.Map.empty)
     def addGradient(__vs: (_root_.scala.Int, _root_.scala.Double)*): SlaveRequest = addAllGradient(__vs)
     def addAllGradient(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): SlaveRequest = copy(gradient = gradient ++ __vs)
     def withGradient(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): SlaveRequest = copy(gradient = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 1 => gradient.map(grpc.sync.SlaveRequest._typemapper_gradient.toBase)(_root_.scala.collection.breakOut)
+        case 1 => {
+          val __t = id
+          if (__t != 0) __t else null
+        }
+        case 2 => gradient.map(grpc.sync.SlaveRequest._typemapper_gradient.toBase)(_root_.scala.collection.breakOut)
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 1 => _root_.scalapb.descriptors.PRepeated(gradient.map(grpc.sync.SlaveRequest._typemapper_gradient.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 1 => _root_.scalapb.descriptors.PInt(id)
+        case 2 => _root_.scalapb.descriptors.PRepeated(gradient.map(grpc.sync.SlaveRequest._typemapper_gradient.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
@@ -72,14 +90,16 @@ object SlaveRequest extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveReq
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
     grpc.sync.SlaveRequest(
-      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.SlaveRequest.GradientEntry]].map(grpc.sync.SlaveRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
+      __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
+      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.SlaveRequest.GradientEntry]].map(grpc.sync.SlaveRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
     )
   }
   implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.SlaveRequest] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
       grpc.sync.SlaveRequest(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.SlaveRequest.GradientEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.SlaveRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.SlaveRequest.GradientEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.SlaveRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -88,7 +108,7 @@ object SlaveRequest extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveReq
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 1 => __out = grpc.sync.SlaveRequest.GradientEntry
+      case 2 => __out = grpc.sync.SlaveRequest.GradientEntry
     }
     __out
   }
@@ -215,9 +235,11 @@ object SlaveRequest extends scalapb.GeneratedMessageCompanion[grpc.sync.SlaveReq
   }
   
   implicit class SlaveRequestLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.SlaveRequest]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.SlaveRequest](_l) {
+    def id: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.id)((c_, f_) => c_.copy(id = f_))
     def gradient: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.gradient)((c_, f_) => c_.copy(gradient = f_))
   }
-  final val GRADIENT_FIELD_NUMBER = 1
+  final val ID_FIELD_NUMBER = 1
+  final val GRADIENT_FIELD_NUMBER = 2
   @transient
   private val _typemapper_gradient: _root_.scalapb.TypeMapper[grpc.sync.SlaveRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.SlaveRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }
