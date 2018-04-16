@@ -4,7 +4,7 @@ Team : Grégoire Clément, Maxime Delisle, Sylvain Beaud
 
 ## Description
 Data should be placed in the root of the project in a "data" folder.
-At the moment, as we are working on our machines (laptops), we are only loading a subset of the data in memory named (the file "samples.dat").
+At the moment, as we are working on our machines (laptops), we are only loading a subset of the data in memory (which is in the file "samples.dat").
 Otherwise, keep the files (vectors and labels) named as on the website linked below.
 
 We have added a JPG file which simply represents our design choices so far. 
