@@ -18,8 +18,8 @@ object Master extends GrpcServer {
   val svm = SVM()
   private val instance = this
   private val someDids = Dataset.didSet.take(500)
-  private val someFeatures = Dataset.features.filter{case (k, v) => someDids(k)}.values.toIndexedSeq
-  private val someLabels = Dataset.labels.filter{case (k, v) => someDids(k)}.values.toIndexedSeq
+  private val someFeatures = Dataset.features.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
+  private val someLabels = Dataset.labels.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
   private var i = 0
   private var time = System.currentTimeMillis()
 
@@ -51,27 +51,25 @@ object Master extends GrpcServer {
         }
 
         def onNext(req: SlaveRequest): Unit = {
-          instance.synchronized {
-            if (req.gradient.nonEmpty) {
-              if (i % 1000 == 0) {
-                val loss = svm.loss(
-                  someFeatures,
-                  someLabels,
-                  lambda,
-                  Dataset.tidCounts
-                )
-                val duration = System.currentTimeMillis() - time
-                time = System.currentTimeMillis()
-                println(s"[UPT][$i][$duration]: loss = $loss}")
-              }
-              i += 1
-
-              svm.updateWeight(SparseNumVector(req.gradient))
-            } else {
-              println("[NEW]: a slave wants to compute some gradients")
+          if (req.gradient.nonEmpty) {
+            if (i % 1000 == 0) {
+              val loss = svm.loss(
+                someFeatures,
+                someLabels,
+                lambda,
+                Dataset.tidCounts
+              )
+              val duration = System.currentTimeMillis() - time
+              time = System.currentTimeMillis()
+              println(s"[UPT][$i][$duration]: loss = $loss}")
             }
-            responseObserver.onNext(spawnSlaveResponse(svm.weights))
+            i += 1
+
+            svm.updateWeight(SparseNumVector(req.gradient))
+          } else {
+            println("[NEW]: a slave wants to compute some gradients")
           }
+          responseObserver.onNext(spawnSlaveResponse(svm.weights))
         }
       }
 

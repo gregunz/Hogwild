@@ -10,7 +10,7 @@ import utils.Label
 object Slave extends App {
 
   var count = 0
-  var someGradient: Option[SparseNumVector] = Some(SparseNumVector(Map.empty))
+  var someGradient: Option[SparseNumVector] = Some(SparseNumVector.empty)
 
   val instance = this
 
