@@ -12,9 +12,10 @@ object Dataset {
 
   private final val dataPath = "data/"
   private final val filePaths: List[String] = {
-    // at the moment, can hold the whole data in memory => subset of data only
+    List(dataPath + "samples.dat")
+
+    // de-comment this to load the whole data in memory
     //(0 until 4).map(i => dataPath + filename(i)).toList
-    List(dataPath + "vectors_test_samples.dat")
   }
 
   lazy val didSet: Set[Int] = features.keySet
