@@ -17,8 +17,8 @@ case class SparseNumVector(values: Map[TID, Double]){
   }
 
   def pointWise(that: SparseNumVector, op: (Double, Double) => Double): SparseNumVector = {
-    val keys = this.values.keySet intersect that.values.keySet
-    SparseNumVector(keys.map(k => k -> op(this.values(k), that.values(k))).toMap)
+    val keys = this.values.keySet union that.values.keySet
+    SparseNumVector(keys.map(k => k -> op(this.values.getOrElse(k, 0d), that.values.getOrElse(k, 0d))).toMap)
   }
 
 }

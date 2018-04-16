@@ -3,7 +3,6 @@ package grpc.sync
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
 import model.{SVM, SlavesHandler, SparseNumVector}
-import utils.Label
 import utils.Label.Label
 import utils.Types.TID
 
@@ -19,7 +18,6 @@ object Master extends GrpcServer {
 
   val slavesHandler = new SlavesHandler
 
-  val instance = this
 
   /* TO COMPUTE & PRINT LOSSES */
   val someDids: Set[TID] = Dataset.didSet.take(500)
@@ -42,6 +40,8 @@ object Master extends GrpcServer {
 
   object SlaveService extends SlaveServiceGrpc.SlaveService {
 
+    val instance = this
+
     override def updateWeights(responseObserver: StreamObserver[SlaveResponse]): StreamObserver[SlaveRequest] =
       new StreamObserver[SlaveRequest] {
         def onError(t: Throwable): Unit = {
@@ -56,26 +56,25 @@ object Master extends GrpcServer {
 
         def onNext(req: SlaveRequest): Unit = {
           if (req.gradient.nonEmpty) {
-            if (i % 1000 == 0) {
-              val loss = svm.loss(
-                someFeatures,
-                someLabels,
-                lambda,
-                Dataset.tidCounts
-              )
-              val duration = System.currentTimeMillis() - time
-              time = System.currentTimeMillis()
-              println(s"[UPT][$i][$duration]: loss = $loss}")
-            }
-            i += 1
-
-            instance.synchronized{
+            instance.synchronized {
               slavesHandler.addGradient(SparseNumVector(req.gradient))
               if(slavesHandler.isWaitingOnSomeSlave){
-                  wait()
+                  instance.wait()
               } else {
                 svm.updateWeight(slavesHandler.getMeanGradient)
-                notifyAll()
+                if (i % 1000 == 0) {
+                  val loss = svm.loss(
+                    someFeatures,
+                    someLabels,
+                    lambda,
+                    Dataset.tidCounts
+                  )
+                  val duration = System.currentTimeMillis() - time
+                  time = System.currentTimeMillis()
+                  println(s"[UPT][$i][$duration]: loss = $loss}")
+                }
+                i += 1
+                instance.notifyAll()
               }
             }
           } else {
