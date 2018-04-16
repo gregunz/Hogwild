@@ -6,10 +6,10 @@ class DatasetTest extends FunSuite {
 
   test("number of IDs is correct") {
     val officialTotal = 781265
-    assert(Dataset.dids.size === officialTotal)
+    assert(Dataset.didSet.size === officialTotal)
   }
 
   test("ID from labels are the same as vectors") {
-    assert((Dataset.dids -- Dataset.didToLabel.keySet).isEmpty)
+    assert((Dataset.didSet -- Dataset.labels.keySet).isEmpty)
   }
 }

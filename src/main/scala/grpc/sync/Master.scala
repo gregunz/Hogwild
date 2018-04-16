@@ -1,31 +1,27 @@
 package grpc.sync
 
-import java.util.concurrent.TimeUnit
-
 import computations.SVM
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
+import model.SparseNumVector
 import utils.Label
 import utils.Label.Label
-import utils.Types.{Counts, SparseVector}
+import utils.Types.TID
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext}
-import scala.util.Try
+import scala.concurrent.ExecutionContext
 
 object Master extends GrpcServer {
 
-  lazy val samples: Iterator[(SparseVector, Label, Counts)] = Dataset.samples().toIterator
+  lazy val samples: Iterator[(SparseNumVector, Label, Map[TID, Int])] = Dataset.samples().toIterator
   val lambda: Double = 0.1
 
   val svm = SVM()
   private val instance = this
-
+  private val someDids = Dataset.didSet.take(500)
+  private val someFeatures = Dataset.features.filter{case (k, v) => someDids(k)}.values.toIndexedSeq
+  private val someLabels = Dataset.labels.filter{case (k, v) => someDids(k)}.values.toIndexedSeq
   private var i = 0
   private var time = System.currentTimeMillis()
-  private val someDids = Dataset.dids.toIndexedSeq.take(1000)
-  private val someFeatures = someDids.map(Dataset.getFeature)
-  private val someLabels = someDids.map(Dataset.didToLabel)
 
   def main(args: Array[String]): Unit = {
 
@@ -38,13 +34,8 @@ object Master extends GrpcServer {
   }
 
   def load(): Unit = {
-    val tryLoading = Try(Await.ready(Dataset.load(), Duration.create(10, TimeUnit.MINUTES)))
-    if (tryLoading.isFailure) {
-      println("Dataset loading failed!!")
-      throw tryLoading.failed.get
-    }
+    Dataset.load()
     samples
-    println(Dataset.tidCounts.values.sum)
   }
 
   object SlaveService extends SlaveServiceGrpc.SlaveService {
@@ -62,7 +53,7 @@ object Master extends GrpcServer {
         def onNext(req: SlaveRequest): Unit = {
           instance.synchronized {
             if (req.gradient.nonEmpty) {
-              if (i % 10000 == 0) {
+              if (i % 1000 == 0) {
                 val loss = svm.loss(
                   someFeatures,
                   someLabels,
@@ -75,7 +66,7 @@ object Master extends GrpcServer {
               }
               i += 1
 
-              svm.updateWeight(req.gradient)
+              svm.updateWeight(SparseNumVector(req.gradient))
             } else {
               println("[NEW]: a slave wants to compute some gradients")
             }
@@ -84,14 +75,14 @@ object Master extends GrpcServer {
         }
       }
 
-    private def spawnSlaveResponse(weights: SparseVector): SlaveResponse = {
+    private def spawnSlaveResponse(weights: SparseNumVector): SlaveResponse = {
       val (feature, label, tidCounts) = samples.next
       SlaveResponse(
-        feature = feature,
+        feature = feature.values,
         label = label == Label.CCAT,
-        weights = feature.map { case (k, _) => k -> weights.withDefaultValue(0d)(k) },
+        weights = feature.mapTo { case (k, _) => weights.values.withDefaultValue(0d)(k) }.values,
         lambda = lambda,
-        tidCounts = feature.map { case (k, _) => k -> tidCounts.withDefaultValue(0)(k) }
+        tidCounts = tidCounts
       )
     }
   }

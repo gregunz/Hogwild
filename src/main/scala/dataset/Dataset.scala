@@ -1,29 +1,31 @@
 package dataset
 
-import utils.Label.Label
-import utils.Types.{Counts, SparseVector}
+import model.SparseNumVector
 import utils.Label
+import utils.Label.Label
+import utils.Types.{Counts, TID}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.io.{BufferedSource, Source}
+import scala.io.Source
 import scala.util.Random
 
 object Dataset {
 
-  lazy val dids: Set[Int] = didToLineIndex.keySet
-  lazy val tidCounts: Map[Int, Int] = {
+  private final val dataPath = "data/"
+  private final val filePaths: List[String] = {
+    // at the moment, can hold the whole data in memory => subset of data only
+    //(0 until 4).map(i => dataPath + filename(i)).toList
+    List(dataPath + filename(0))
+  }
+
+  lazy val didSet: Set[TID] = features.keySet
+  lazy val tidCounts: Counts = {
     println("...loading tidCounts...")
-    filePaths
-      .flatMap(path =>
-        Source.fromFile(path)
-          .getLines()
-          .flatMap(line => parseLine(line)._2.keys))
+    features.flatMap(_._2.values.keys)
       .groupBy(tid => tid)
       .mapValues(_.size)
   }
-  lazy val didToLabel: Map[Int, Label] = {
-    println("...loading didToLabel...")
+  lazy val labels: Map[TID, Label] = {
+    println("...loading labels...")
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"
     Source.fromFile(labelPath)
@@ -38,33 +40,28 @@ object Dataset {
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-  private lazy val numLinesPerFile: List[Int] = filePaths.map(Source.fromFile).map(_.getLines.count(!_.isEmpty))
-  private lazy val startingIndexPerFile: List[Int] = {
-    println("...loading startingIndexPerFile...")
-    val numFiles = numLinesPerFile.size
-    0 :: (1 until numFiles).map(i => numLinesPerFile.dropRight(numFiles - i).sum).toList
-  }
-  private lazy val didToLineIndex: Map[Int, Int] = {
-    println("...loading didToLineIndex...")
-    filePaths.map(Source.fromFile).flatMap(_.getLines.map(_.split(" ").head.toInt)).zipWithIndex.toMap
-  }
-  private val dataPath = "data/"
-  private val filePaths: List[String] = (0 until 4).map(i => dataPath + filename(i)).toList
-
-  def load(): Future[Unit] = {
-    Future {
-      didToLabel
-      didToLineIndex
-    }
-
+  lazy val features: Map[TID, SparseNumVector] = {
+    println("...loading features...")
+    filePaths
+      .flatMap { path =>
+        Source.fromFile(path)
+          .getLines()
+          .map { line => parseLine(line) }
+      }.toMap
   }
 
-  def samples(withReplacement: Boolean = false): Stream[(SparseVector, Label, Counts)] = {
-    val docIndicesIndexSeq = dids.toIndexedSeq
+  def load(): Unit = {
+    labels
+    features
+    tidCounts
+  }
 
-    def didToOutput(did: Int): (SparseVector, Label, Counts) = {
+  def samples(withReplacement: Boolean = false): Stream[(SparseNumVector, Label, Map[TID, Int])] = {
+    val docIndicesIndexSeq = didSet.toIndexedSeq
+
+    def didToOutput(did: Int): (SparseNumVector, Label, Map[TID, Int]) = {
       val feature = getFeature(did)
-      val tidCountsFiltered = feature.map { case (k, _) => k -> tidCounts.withDefaultValue(0)(k) }
+      val tidCountsFiltered = feature.values.map { case (k, _) => k -> tidCounts(k) }
       (feature, getLabel(did), tidCountsFiltered)
     }
 
@@ -81,40 +78,26 @@ object Dataset {
     }
   }
 
-  def getFeature(did: Int): SparseVector = {
-    if (!didToLineIndex.contains(did)) {
-      return Map.empty
-    }
-    val lineIndex = didToLineIndex(did)
-    require(lineIndex < numLinesPerFile.sum)
-
-    val fileIndex = startingIndexPerFile
-      .zipWithIndex.tail
-      .find(_._1 > lineIndex)
-      .map(_._2)
-      .getOrElse(startingIndexPerFile.size) - 1
-    val lineInFileIndex = lineIndex - startingIndexPerFile(fileIndex)
-    val source: BufferedSource = Source.fromFile(filePaths(fileIndex))
-    val line = source.getLines.drop(lineInFileIndex).next
-
-    parseLine(line)._2
+  def getFeature(did: Int): SparseNumVector = {
+    features(did)
   }
 
   def getLabel(index: Int): Label = {
-    didToLabel(index)
+    labels(index)
   }
 
-  private def parseLine(line: String): (Int, SparseVector) = {
+  private def parseLine(line: String): (Int, SparseNumVector) = {
     val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
     val did: Int = lineSplitted.head.toInt
-    did -> pairsToDocument(lineSplitted.tail)
+    did -> pairsToVector(lineSplitted.tail)
   }
 
-  private def pairsToDocument(lineSplitted: List[String]): SparseVector = {
-    lineSplitted.map(e => {
-      val pair: List[String] = e.split(":").map(_.trim).toList
-      pair.head.toInt -> pair.tail.head.toDouble
-    }).toMap
+  private def pairsToVector(lineSplitted: List[String]): SparseNumVector = {
+    SparseNumVector(
+      lineSplitted.map(e => {
+        val pair: List[String] = e.split(":").map(_.trim).toList
+        pair.head.toInt -> pair.tail.head.toDouble
+      }).toMap)
   }
 
   private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
