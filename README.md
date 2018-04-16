@@ -3,7 +3,9 @@ Hogwild! implementation : "A Lock-Free Approach to Parallelizing Stochastic Grad
 
 Team : Grégoire Clément, Maxime Delisle, Sylvain Beaud
 
-We have added a JPG file which simply represents our design choices so far.
+We have added a JPG file which simply represents our design choices so far. 
+This sketch does NOT fully detail our implementation but gives a quick overview of it.
+(Design_Milestone1.jpeg)
 
 ![Design_Milestone1.jpeg][design]
 [Dataset available here][dataset]
