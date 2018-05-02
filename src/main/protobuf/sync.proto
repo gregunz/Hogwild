@@ -24,10 +24,14 @@ message SlaveResponse {
 message WorkerBroadcast {
     uint32 my_id = 1;
     string msg = 2;
-    uint32 counter = 3;
+    uint32 port = 3;
+    uint32 counter = 4;
 }
 
-message WorkerBroadcast2 {
+message WorkerBroadcast_test {
+    map<uint32, double> gradientUpdates = 1;
+}
+message WorkerBroadcast_final {
     map<uint32, double> weigthsPartition = 1;
     map<uint32, double> weightsAggregate = 2;
 }

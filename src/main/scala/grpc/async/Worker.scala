@@ -16,9 +16,21 @@ object Worker extends GrpcServer {
 
   lazy val samples: Iterator[Int] = Dataset.samples().toIterator
 
+  val connectionsHandler = new ConnectionsHandler
+  var id_to_send = -1
+
   val instance = this
   var count = 0
+
+  val lambda: Double = 0.1
   val svm = SVM()
+
+  /* TO COMPUTE & PRINT LOSSES */
+  val someDids: Set[TID] = Dataset.didSet.take(500)
+  val someFeatures: immutable.IndexedSeq[SparseNumVector] = Dataset.features.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
+  val someLabels: immutable.IndexedSeq[Label] = Dataset.labels.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
+  var i = 0
+  var time: Long = System.currentTimeMillis()
 
   def main(args: Array[String]): Unit = {
     println("Please enter a worker ID")
@@ -51,43 +63,43 @@ object Worker extends GrpcServer {
           .usePlaintext(true)
           .build
       )
+      portNumbers.foreach( connectionsHandler.addWorker(_))
 
       val clients: List[WorkerServiceStub] = channels.map(WorkerServiceGrpc.stub(_))
 
-
-      val channel = ManagedChannelBuilder
-        .forAddress("localhost", portNumber)
-        .usePlaintext(true)
-        .build
-      val client: WorkerServiceStub = WorkerServiceGrpc.stub(channel)
-
       val HelloMessage = new StreamObserver[WorkerBroadcast] {
-        override def onError(t: Throwable): Unit = {
+        def onError(t: Throwable): Unit = {
           println(s"ON_ERROR: $t")
           sys.exit(1)
         }
 
-        override def onCompleted(): Unit = {
+        def onCompleted(): Unit = {
           println("ON_COMPLETED")
-          channel.shutdown()
           sys.exit(0)
         }
 
-        override def onNext(message: WorkerBroadcast): Unit = {
-          if (message.counter > 30) {
+        def onNext(message: WorkerBroadcast): Unit = {
+          id_to_send = WorkerID
+          //println(id_to_send)
+          if (message.counter > 300) {
             println(s"All messages have been received, Terminating")
-            this.onCompleted()
-            channel.shutdown
+            this.onCompleted
           }
         }
       }
 
+
+
       val messageObservers = clients.map( client => client.updateWeights(HelloMessage) )
 
-      while (activeWorker) {
 
-        println(count)
-        messageObservers.foreach(observer => observer.onNext(WorkerBroadcast(WorkerID, "Test", count)))
+
+
+      while (activeWorker) {
+        println(id_to_send)
+        //println(count)
+
+        messageObservers.foreach(observer => observer.onNext(WorkerBroadcast(id_to_send, "Test", portNumber, count)))
 
       }
 
@@ -119,21 +131,45 @@ object Worker extends GrpcServer {
 
     override def updateWeights(responseObserver: StreamObserver[WorkerBroadcast]): StreamObserver[WorkerBroadcast] =
       new StreamObserver[WorkerBroadcast] {
-        override def onError(t: Throwable): Unit = {
+        def onError(t: Throwable): Unit = {
           println(s"ON_ERROR: $t")
         }
 
-        override def onCompleted(): Unit = {
+        def onCompleted(): Unit = {
           println("ON_COMPLETED")
         }
 
-        override def onNext(message: WorkerBroadcast): Unit = {
+        def onNext(message: WorkerBroadcast): Unit = {
+          if (message.myId != -1) {
+            instance.synchronized {
+              connectionsHandler.addTest(message.myId)
+              if (connectionsHandler.isWaitingOnSomeUpdates) {
+                instance.wait()
+              } else {
+                //svm.updateWeight(connectionsHandler.getMeanGradient)
+                if (i % 500 == 0) {
+
+                  val loss = connectionsHandler.getTest
+                  val duration = System.currentTimeMillis() - time
+                  time = System.currentTimeMillis()
+                  println(s"[UPT][$i][$duration]: loss = $loss}")
+                }
+                i += 1
+                instance.notifyAll()
+              }
+            }
+          } else {
+            if (!(connectionsHandler.getPorts contains message.port)) {
+              println("[NEW]: a new worker has arrived !")
+              connectionsHandler.addWorker(message.port)
+            }
+          }
           val workerId = message.myId
           val content = message.msg
-          val counter = message.counter
+          val port = message.port
           count += 1
-          println(s"[MSG $counter] Worker $workerId says : $content")
-          responseObserver.onNext(WorkerBroadcast(myId = 0, msg = "My_updates", counter = count))
+          //println(s"[MSG $counter] Worker $workerId says : $content")
+          responseObserver.onNext(WorkerBroadcast(myId = 0, msg = "My_updates", port = 0, counter = count))
 
         }
       }

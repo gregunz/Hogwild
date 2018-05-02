@@ -6,16 +6,16 @@
 package grpc.sync
 
 @SerialVersionUID(0L)
-final case class WorkerBroadcast2(
+final case class WorkerBroadcast_final(
     weigthsPartition: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty,
     weightsAggregate: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty
-    ) extends scalapb.GeneratedMessage with scalapb.Message[WorkerBroadcast2] with scalapb.lenses.Updatable[WorkerBroadcast2] {
+    ) extends scalapb.GeneratedMessage with scalapb.Message[WorkerBroadcast_final] with scalapb.lenses.Updatable[WorkerBroadcast_final] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
     private[this] def __computeSerializedValue(): _root_.scala.Int = {
       var __size = 0
-      weigthsPartition.foreach(weigthsPartition => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toBase(weigthsPartition).serializedSize) + grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toBase(weigthsPartition).serializedSize)
-      weightsAggregate.foreach(weightsAggregate => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toBase(weightsAggregate).serializedSize) + grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toBase(weightsAggregate).serializedSize)
+      weigthsPartition.foreach(weigthsPartition => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toBase(weigthsPartition).serializedSize) + grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toBase(weigthsPartition).serializedSize)
+      weightsAggregate.foreach(weightsAggregate => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toBase(weightsAggregate).serializedSize) + grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toBase(weightsAggregate).serializedSize)
       __size
     }
     final override def serializedSize: _root_.scala.Int = {
@@ -29,16 +29,16 @@ final case class WorkerBroadcast2(
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
       weigthsPartition.foreach { __v =>
         _output__.writeTag(1, 2)
-        _output__.writeUInt32NoTag(grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toBase(__v).serializedSize)
-        grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toBase(__v).writeTo(_output__)
+        _output__.writeUInt32NoTag(grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toBase(__v).serializedSize)
+        grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toBase(__v).writeTo(_output__)
       };
       weightsAggregate.foreach { __v =>
         _output__.writeTag(2, 2)
-        _output__.writeUInt32NoTag(grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toBase(__v).serializedSize)
-        grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toBase(__v).writeTo(_output__)
+        _output__.writeUInt32NoTag(grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toBase(__v).serializedSize)
+        grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toBase(__v).writeTo(_output__)
       };
     }
-    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerBroadcast2 = {
+    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerBroadcast_final = {
       val __weigthsPartition = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.weigthsPartition)
       val __weightsAggregate = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.weightsAggregate)
       var _done__ = false
@@ -47,77 +47,77 @@ final case class WorkerBroadcast2(
         _tag__ match {
           case 0 => _done__ = true
           case 10 =>
-            __weigthsPartition += grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry.defaultInstance))
+            __weigthsPartition += grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry.defaultInstance))
           case 18 =>
-            __weightsAggregate += grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.WorkerBroadcast2.WeightsAggregateEntry.defaultInstance))
+            __weightsAggregate += grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry.defaultInstance))
           case tag => _input__.skipField(tag)
         }
       }
-      grpc.sync.WorkerBroadcast2(
+      grpc.sync.WorkerBroadcast_final(
           weigthsPartition = __weigthsPartition.result(),
           weightsAggregate = __weightsAggregate.result()
       )
     }
     def clearWeigthsPartition = copy(weigthsPartition = scala.collection.immutable.Map.empty)
-    def addWeigthsPartition(__vs: (_root_.scala.Int, _root_.scala.Double)*): WorkerBroadcast2 = addAllWeigthsPartition(__vs)
-    def addAllWeigthsPartition(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): WorkerBroadcast2 = copy(weigthsPartition = weigthsPartition ++ __vs)
-    def withWeigthsPartition(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerBroadcast2 = copy(weigthsPartition = __v)
+    def addWeigthsPartition(__vs: (_root_.scala.Int, _root_.scala.Double)*): WorkerBroadcast_final = addAllWeigthsPartition(__vs)
+    def addAllWeigthsPartition(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): WorkerBroadcast_final = copy(weigthsPartition = weigthsPartition ++ __vs)
+    def withWeigthsPartition(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerBroadcast_final = copy(weigthsPartition = __v)
     def clearWeightsAggregate = copy(weightsAggregate = scala.collection.immutable.Map.empty)
-    def addWeightsAggregate(__vs: (_root_.scala.Int, _root_.scala.Double)*): WorkerBroadcast2 = addAllWeightsAggregate(__vs)
-    def addAllWeightsAggregate(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): WorkerBroadcast2 = copy(weightsAggregate = weightsAggregate ++ __vs)
-    def withWeightsAggregate(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerBroadcast2 = copy(weightsAggregate = __v)
+    def addWeightsAggregate(__vs: (_root_.scala.Int, _root_.scala.Double)*): WorkerBroadcast_final = addAllWeightsAggregate(__vs)
+    def addAllWeightsAggregate(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): WorkerBroadcast_final = copy(weightsAggregate = weightsAggregate ++ __vs)
+    def withWeightsAggregate(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerBroadcast_final = copy(weightsAggregate = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 1 => weigthsPartition.map(grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toBase)(_root_.scala.collection.breakOut)
-        case 2 => weightsAggregate.map(grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toBase)(_root_.scala.collection.breakOut)
+        case 1 => weigthsPartition.map(grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toBase)(_root_.scala.collection.breakOut)
+        case 2 => weightsAggregate.map(grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toBase)(_root_.scala.collection.breakOut)
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 1 => _root_.scalapb.descriptors.PRepeated(weigthsPartition.map(grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
-        case 2 => _root_.scalapb.descriptors.PRepeated(weightsAggregate.map(grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 1 => _root_.scalapb.descriptors.PRepeated(weigthsPartition.map(grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 2 => _root_.scalapb.descriptors.PRepeated(weightsAggregate.map(grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-    def companion = grpc.sync.WorkerBroadcast2
+    def companion = grpc.sync.WorkerBroadcast_final
 }
 
-object WorkerBroadcast2 extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast2] {
-  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast2] = this
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.WorkerBroadcast2 = {
+object WorkerBroadcast_final extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast_final] {
+  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast_final] = this
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.WorkerBroadcast_final = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
-    grpc.sync.WorkerBroadcast2(
-      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry]].map(grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toCustom)(_root_.scala.collection.breakOut),
-      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry]].map(grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toCustom)(_root_.scala.collection.breakOut)
+    grpc.sync.WorkerBroadcast_final(
+      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry]].map(grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toCustom)(_root_.scala.collection.breakOut),
+      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry]].map(grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toCustom)(_root_.scala.collection.breakOut)
     )
   }
-  implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerBroadcast2] = _root_.scalapb.descriptors.Reads{
+  implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerBroadcast_final] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-      grpc.sync.WorkerBroadcast2(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerBroadcast2._typemapper_weigthsPartition.toCustom)(_root_.scala.collection.breakOut),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerBroadcast2._typemapper_weightsAggregate.toCustom)(_root_.scala.collection.breakOut)
+      grpc.sync.WorkerBroadcast_final(
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerBroadcast_final._typemapper_weigthsPartition.toCustom)(_root_.scala.collection.breakOut),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerBroadcast_final._typemapper_weightsAggregate.toCustom)(_root_.scala.collection.breakOut)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
-  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = SyncProto.javaDescriptor.getMessageTypes.get(3)
-  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = SyncProto.scalaDescriptor.messages(3)
+  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = SyncProto.javaDescriptor.getMessageTypes.get(4)
+  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = SyncProto.scalaDescriptor.messages(4)
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 1 => __out = grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry
-      case 2 => __out = grpc.sync.WorkerBroadcast2.WeightsAggregateEntry
+      case 1 => __out = grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry
+      case 2 => __out = grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry
     }
     __out
   }
   lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq[_root_.scalapb.GeneratedMessageCompanion[_]](
-    _root_.grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry,
-    _root_.grpc.sync.WorkerBroadcast2.WeightsAggregateEntry
+    _root_.grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry,
+    _root_.grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry
   )
   def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-  lazy val defaultInstance = grpc.sync.WorkerBroadcast2(
+  lazy val defaultInstance = grpc.sync.WorkerBroadcast_final(
   )
   @SerialVersionUID(0L)
   final case class WeigthsPartitionEntry(
@@ -154,7 +154,7 @@ object WorkerBroadcast2 extends scalapb.GeneratedMessageCompanion[grpc.sync.Work
           }
         };
       }
-      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry = {
+      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry = {
         var __key = this.key
         var __value = this.value
         var _done__ = false
@@ -169,7 +169,7 @@ object WorkerBroadcast2 extends scalapb.GeneratedMessageCompanion[grpc.sync.Work
             case tag => _input__.skipField(tag)
           }
         }
-        grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry(
+        grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry(
             key = __key,
             value = __value
         )
@@ -196,43 +196,43 @@ object WorkerBroadcast2 extends scalapb.GeneratedMessageCompanion[grpc.sync.Work
         }
       }
       def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-      def companion = grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry
+      def companion = grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry
   }
   
-  object WeigthsPartitionEntry extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry] {
-    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry] = this
-    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry = {
+  object WeigthsPartitionEntry extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry] {
+    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry] = this
+    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry = {
       require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
       val __fields = javaDescriptor.getFields
-      grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry(
+      grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry(
         __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
         __fieldsMap.getOrElse(__fields.get(1), 0.0).asInstanceOf[_root_.scala.Double]
       )
     }
-    implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry] = _root_.scalapb.descriptors.Reads{
+    implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry] = _root_.scalapb.descriptors.Reads{
       case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
         require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-        grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry(
+        grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry(
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Double]).getOrElse(0.0)
         )
       case _ => throw new RuntimeException("Expected PMessage")
     }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.WorkerBroadcast2.javaDescriptor.getNestedTypes.get(0)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.WorkerBroadcast2.scalaDescriptor.nestedMessages(0)
+    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.WorkerBroadcast_final.javaDescriptor.getNestedTypes.get(0)
+    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.WorkerBroadcast_final.scalaDescriptor.nestedMessages(0)
     def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
     lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
     def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-    lazy val defaultInstance = grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry(
+    lazy val defaultInstance = grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry(
     )
-    implicit class WeigthsPartitionEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry](_l) {
+    implicit class WeigthsPartitionEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry](_l) {
       def key: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.key)((c_, f_) => c_.copy(key = f_))
       def value: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Double] = field(_.value)((c_, f_) => c_.copy(value = f_))
     }
     final val KEY_FIELD_NUMBER = 1
     final val VALUE_FIELD_NUMBER = 2
-    implicit val keyValueMapper: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)] =
-      _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry(__p._1, __p._2))
+    implicit val keyValueMapper: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)] =
+      _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry(__p._1, __p._2))
   }
   
   @SerialVersionUID(0L)
@@ -270,7 +270,7 @@ object WorkerBroadcast2 extends scalapb.GeneratedMessageCompanion[grpc.sync.Work
           }
         };
       }
-      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerBroadcast2.WeightsAggregateEntry = {
+      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry = {
         var __key = this.key
         var __value = this.value
         var _done__ = false
@@ -285,7 +285,7 @@ object WorkerBroadcast2 extends scalapb.GeneratedMessageCompanion[grpc.sync.Work
             case tag => _input__.skipField(tag)
           }
         }
-        grpc.sync.WorkerBroadcast2.WeightsAggregateEntry(
+        grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry(
             key = __key,
             value = __value
         )
@@ -312,53 +312,53 @@ object WorkerBroadcast2 extends scalapb.GeneratedMessageCompanion[grpc.sync.Work
         }
       }
       def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-      def companion = grpc.sync.WorkerBroadcast2.WeightsAggregateEntry
+      def companion = grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry
   }
   
-  object WeightsAggregateEntry extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry] {
-    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry] = this
-    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.WorkerBroadcast2.WeightsAggregateEntry = {
+  object WeightsAggregateEntry extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry] {
+    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry] = this
+    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry = {
       require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
       val __fields = javaDescriptor.getFields
-      grpc.sync.WorkerBroadcast2.WeightsAggregateEntry(
+      grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry(
         __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
         __fieldsMap.getOrElse(__fields.get(1), 0.0).asInstanceOf[_root_.scala.Double]
       )
     }
-    implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry] = _root_.scalapb.descriptors.Reads{
+    implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry] = _root_.scalapb.descriptors.Reads{
       case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
         require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-        grpc.sync.WorkerBroadcast2.WeightsAggregateEntry(
+        grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry(
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Double]).getOrElse(0.0)
         )
       case _ => throw new RuntimeException("Expected PMessage")
     }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.WorkerBroadcast2.javaDescriptor.getNestedTypes.get(1)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.WorkerBroadcast2.scalaDescriptor.nestedMessages(1)
+    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.sync.WorkerBroadcast_final.javaDescriptor.getNestedTypes.get(1)
+    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.sync.WorkerBroadcast_final.scalaDescriptor.nestedMessages(1)
     def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
     lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
     def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-    lazy val defaultInstance = grpc.sync.WorkerBroadcast2.WeightsAggregateEntry(
+    lazy val defaultInstance = grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry(
     )
-    implicit class WeightsAggregateEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerBroadcast2.WeightsAggregateEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerBroadcast2.WeightsAggregateEntry](_l) {
+    implicit class WeightsAggregateEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry](_l) {
       def key: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.key)((c_, f_) => c_.copy(key = f_))
       def value: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Double] = field(_.value)((c_, f_) => c_.copy(value = f_))
     }
     final val KEY_FIELD_NUMBER = 1
     final val VALUE_FIELD_NUMBER = 2
-    implicit val keyValueMapper: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)] =
-      _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => grpc.sync.WorkerBroadcast2.WeightsAggregateEntry(__p._1, __p._2))
+    implicit val keyValueMapper: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)] =
+      _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry(__p._1, __p._2))
   }
   
-  implicit class WorkerBroadcast2Lens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerBroadcast2]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerBroadcast2](_l) {
+  implicit class WorkerBroadcast_finalLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerBroadcast_final]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerBroadcast_final](_l) {
     def weigthsPartition: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.weigthsPartition)((c_, f_) => c_.copy(weigthsPartition = f_))
     def weightsAggregate: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.weightsAggregate)((c_, f_) => c_.copy(weightsAggregate = f_))
   }
   final val WEIGTHSPARTITION_FIELD_NUMBER = 1
   final val WEIGHTSAGGREGATE_FIELD_NUMBER = 2
   @transient
-  private val _typemapper_weigthsPartition: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)]]
+  private val _typemapper_weigthsPartition: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeigthsPartitionEntry, (_root_.scala.Int, _root_.scala.Double)]]
   @transient
-  private val _typemapper_weightsAggregate: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast2.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)]]
+  private val _typemapper_weightsAggregate: _root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.WorkerBroadcast_final.WeightsAggregateEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }

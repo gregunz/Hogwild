@@ -9,6 +9,7 @@ package grpc.sync
 final case class WorkerBroadcast(
     myId: _root_.scala.Int = 0,
     msg: _root_.scala.Predef.String = "",
+    port: _root_.scala.Int = 0,
     counter: _root_.scala.Int = 0
     ) extends scalapb.GeneratedMessage with scalapb.Message[WorkerBroadcast] with scalapb.lenses.Updatable[WorkerBroadcast] {
     @transient
@@ -17,7 +18,8 @@ final case class WorkerBroadcast(
       var __size = 0
       if (myId != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(1, myId) }
       if (msg != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(2, msg) }
-      if (counter != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(3, counter) }
+      if (port != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(3, port) }
+      if (counter != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(4, counter) }
       __size
     }
     final override def serializedSize: _root_.scala.Int = {
@@ -42,15 +44,22 @@ final case class WorkerBroadcast(
         }
       };
       {
-        val __v = counter
+        val __v = port
         if (__v != 0) {
           _output__.writeUInt32(3, __v)
+        }
+      };
+      {
+        val __v = counter
+        if (__v != 0) {
+          _output__.writeUInt32(4, __v)
         }
       };
     }
     def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerBroadcast = {
       var __myId = this.myId
       var __msg = this.msg
+      var __port = this.port
       var __counter = this.counter
       var _done__ = false
       while (!_done__) {
@@ -62,6 +71,8 @@ final case class WorkerBroadcast(
           case 18 =>
             __msg = _input__.readString()
           case 24 =>
+            __port = _input__.readUInt32()
+          case 32 =>
             __counter = _input__.readUInt32()
           case tag => _input__.skipField(tag)
         }
@@ -69,11 +80,13 @@ final case class WorkerBroadcast(
       grpc.sync.WorkerBroadcast(
           myId = __myId,
           msg = __msg,
+          port = __port,
           counter = __counter
       )
     }
     def withMyId(__v: _root_.scala.Int): WorkerBroadcast = copy(myId = __v)
     def withMsg(__v: _root_.scala.Predef.String): WorkerBroadcast = copy(msg = __v)
+    def withPort(__v: _root_.scala.Int): WorkerBroadcast = copy(port = __v)
     def withCounter(__v: _root_.scala.Int): WorkerBroadcast = copy(counter = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
@@ -86,6 +99,10 @@ final case class WorkerBroadcast(
           if (__t != "") __t else null
         }
         case 3 => {
+          val __t = port
+          if (__t != 0) __t else null
+        }
+        case 4 => {
           val __t = counter
           if (__t != 0) __t else null
         }
@@ -96,7 +113,8 @@ final case class WorkerBroadcast(
       (__field.number: @_root_.scala.unchecked) match {
         case 1 => _root_.scalapb.descriptors.PInt(myId)
         case 2 => _root_.scalapb.descriptors.PString(msg)
-        case 3 => _root_.scalapb.descriptors.PInt(counter)
+        case 3 => _root_.scalapb.descriptors.PInt(port)
+        case 4 => _root_.scalapb.descriptors.PInt(counter)
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
@@ -111,7 +129,8 @@ object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[grpc.sync.Worke
     grpc.sync.WorkerBroadcast(
       __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
       __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[_root_.scala.Predef.String],
-      __fieldsMap.getOrElse(__fields.get(2), 0).asInstanceOf[_root_.scala.Int]
+      __fieldsMap.getOrElse(__fields.get(2), 0).asInstanceOf[_root_.scala.Int],
+      __fieldsMap.getOrElse(__fields.get(3), 0).asInstanceOf[_root_.scala.Int]
     )
   }
   implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerBroadcast] = _root_.scalapb.descriptors.Reads{
@@ -120,7 +139,8 @@ object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[grpc.sync.Worke
       grpc.sync.WorkerBroadcast(
         __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
         __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Predef.String]).getOrElse(""),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(3).get).map(_.as[_root_.scala.Int]).getOrElse(0)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(3).get).map(_.as[_root_.scala.Int]).getOrElse(0),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(4).get).map(_.as[_root_.scala.Int]).getOrElse(0)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -134,9 +154,11 @@ object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[grpc.sync.Worke
   implicit class WorkerBroadcastLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerBroadcast]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerBroadcast](_l) {
     def myId: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.myId)((c_, f_) => c_.copy(myId = f_))
     def msg: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Predef.String] = field(_.msg)((c_, f_) => c_.copy(msg = f_))
+    def port: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.port)((c_, f_) => c_.copy(port = f_))
     def counter: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.counter)((c_, f_) => c_.copy(counter = f_))
   }
   final val MY_ID_FIELD_NUMBER = 1
   final val MSG_FIELD_NUMBER = 2
-  final val COUNTER_FIELD_NUMBER = 3
+  final val PORT_FIELD_NUMBER = 3
+  final val COUNTER_FIELD_NUMBER = 4
 }
