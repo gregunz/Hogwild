@@ -20,10 +20,10 @@ class ConnectionsHandler {
     println(s"Worker on port $portNumber has been removed")
   }
 
-  def getPorts(): Set[Int] = portNumbers
+  def getPorts: Set[Int] = portNumbers
 
   def isWaitingOnSomeUpdates: Boolean = {
-    gradients.size < numConnections
+    gradients.lengthCompare(numConnections) == 0
   }
 
   def addGradient(gradient: SparseNumVector): Unit = {

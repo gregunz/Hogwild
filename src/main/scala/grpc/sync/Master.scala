@@ -71,7 +71,7 @@ object Master extends GrpcServer {
                   )
                   val duration = System.currentTimeMillis() - time
                   time = System.currentTimeMillis()
-                  println(s"[UPT][$i][$duration]: loss = $loss}")
+                  println(s"[UPT][$i][$duration]: loss = $loss")
                 }
                 i += 1
                 instance.notifyAll()

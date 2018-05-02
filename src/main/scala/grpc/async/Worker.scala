@@ -5,12 +5,10 @@ import grpc.sync.WorkerServiceGrpc.WorkerServiceStub
 import grpc.sync.{WorkerBroadcast, WorkerServiceGrpc}
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
-import model.{GrpcServer, SVM, SlavesHandler, SparseNumVector}
-import utils.Label.Label
-import utils.Types.TID
+import model.{GrpcServer, SVM}
 
-import scala.collection.immutable
 import scala.concurrent.ExecutionContext
+import scala.io.StdIn
 
 object Worker extends GrpcServer {
 
@@ -32,7 +30,8 @@ object Worker extends GrpcServer {
 
   def main(args: Array[String]): Unit = {
     println("Please enter a worker ID")
-    val WorkerId = readInt()
+    val WorkerId = StdIn.readInt()
+    id_to_send = WorkerId
     println(WorkerId)
     load()
 
@@ -62,7 +61,7 @@ object Worker extends GrpcServer {
           .usePlaintext(true)
           .build
       )
-      portNumbers.foreach( connectionsHandler.addWorker(_))
+      portNumbers.foreach(connectionsHandler.addWorker)
 
       val clients: List[WorkerServiceStub] = channels.map(WorkerServiceGrpc.stub(_))
 
@@ -84,7 +83,7 @@ object Worker extends GrpcServer {
           //println(id_to_send)
           if (message.counter > 30000) {
             println(s"All messages have been received, Terminating")
-            this.onCompleted
+            this.onCompleted()
           }
         }
       }
@@ -128,8 +127,7 @@ object Worker extends GrpcServer {
         }
 
         def onNext(message: WorkerBroadcast): Unit = {
-          // TODO Resolve this : message.myId is always -1 Why ?
-          println(message.myId)
+          println("------>", message.myId)
           if (message.myId != -1) {
             connectionsHandler.addTest(message.myId)
             if (i % 500 == 0) {
