@@ -7,6 +7,11 @@ service SlaveService {
     }
 }
 
+service WorkerService {
+    rpc UpdateWeights (stream WorkerBroadcast) returns (stream WorkerBroadcast) {
+    }
+}
+
 message SlaveRequest {
     map<uint32, double> gradient = 2;
 }
@@ -14,4 +19,15 @@ message SlaveRequest {
 message SlaveResponse {
     uint32 did = 1;
     map<uint32, double> weights = 2;
+}
+
+message WorkerBroadcast {
+    uint32 my_id = 1;
+    string msg = 2;
+    uint32 counter = 3;
+}
+
+message WorkerBroadcast2 {
+    map<uint32, double> weigthsPartition = 1;
+    map<uint32, double> weightsAggregate = 2;
 }

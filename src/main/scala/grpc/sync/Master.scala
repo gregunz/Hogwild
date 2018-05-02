@@ -2,7 +2,7 @@ package grpc.sync
 
 import dataset.Dataset
 import io.grpc.stub.StreamObserver
-import model.{SVM, SlavesHandler, SparseNumVector}
+import model.{GrpcServer, SVM, SlavesHandler, SparseNumVector}
 import utils.Label.Label
 import utils.Types.TID
 
@@ -30,7 +30,7 @@ object Master extends GrpcServer {
     load()
     val ssd = SlaveServiceGrpc.bindService(SlaveService, ExecutionContext.global)
     println(">> READY <<")
-    runServer(ssd)
+    runServer(ssd, 50050)
   }
 
   def load(): Unit = {

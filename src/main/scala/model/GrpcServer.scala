@@ -1,4 +1,4 @@
-package grpc.sync
+package model
 
 import io.grpc.{ServerBuilder, ServerServiceDefinition}
 
@@ -7,9 +7,9 @@ trait GrpcServer {
   /**
     * Just for demo purposes
     */
-  def runServer(ssd: ServerServiceDefinition): Unit = {
+  def runServer(ssd: ServerServiceDefinition, portNumber: Int): Unit = {
     val server = ServerBuilder
-      .forPort(50050)
+      .forPort(portNumber)
       .addService(ssd)
       .build
       .start
@@ -21,5 +21,4 @@ trait GrpcServer {
 
     server.awaitTermination()
   }
-
 }

@@ -12,7 +12,7 @@ class SlavesHandler {
   }
 
   def removeSlave(): Unit = {
-    numSlaves += 1
+    numSlaves -= 1
   }
 
   def isWaitingOnSomeSlave: Boolean = {
