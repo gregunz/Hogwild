@@ -25,11 +25,9 @@ object Worker extends GrpcServer {
   val lambda: Double = 0.1
   val svm = SVM()
 
-  /* TO COMPUTE & PRINT LOSSES */
-  val someDids: Set[TID] = Dataset.didSet.take(500)
-  val someFeatures: immutable.IndexedSeq[SparseNumVector] = Dataset.features.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
-  val someLabels: immutable.IndexedSeq[Label] = Dataset.labels.filter { case (k, v) => someDids(k) }.values.toIndexedSeq
   var i = 0
+  var j = 0
+
   var time: Long = System.currentTimeMillis()
 
   def main(args: Array[String]): Unit = {
@@ -55,6 +53,7 @@ object Worker extends GrpcServer {
 
     if (WorkerID > 1) {
 
+      // TODO : change this Default ports for the moment
       val portNumbers = List(50050, 50051)
 
       val channels = portNumbers.map( portNumber =>
@@ -80,45 +79,34 @@ object Worker extends GrpcServer {
 
         def onNext(message: WorkerBroadcast): Unit = {
           id_to_send = WorkerID
+          count = message.counter + 1
+          println(count)
           //println(id_to_send)
-          if (message.counter > 300) {
+          if (message.counter > 30000) {
             println(s"All messages have been received, Terminating")
             this.onCompleted
           }
         }
       }
 
-
-
       val messageObservers = clients.map( client => client.updateWeights(HelloMessage) )
 
-
-
-
       while (activeWorker) {
-        println(id_to_send)
-        //println(count)
 
-        messageObservers.foreach(observer => observer.onNext(WorkerBroadcast(id_to_send, "Test", portNumber, count)))
+        j += 1
 
-      }
+        if (j % 10000 == 0) {
+          count += 1
+          if (id_to_send != -1) {
+            println("Hello accepted : Id changed")
+            println(id_to_send)
+          }
+          messageObservers.foreach(observer => observer.onNext(WorkerBroadcast(id_to_send, "Test", portNumber, count)))
 
-      /*
-      while (!channel.isShutdown) {
-        if (count > 300) {
-          println(s"All messages have been received, Terminating")
-          channel.shutdown()
-        } else {
-          //count += 1
-          println(count)
-          messageObserver.onNext(WorkerBroadcast(WorkerID, "Test", count))
         }
       }
-      */
 
       println(s"Channel on port $portNumber has been shut down")
-      sys.exit(0)
-
     }
 
     println(">> SERVER READY <<")
@@ -140,24 +128,17 @@ object Worker extends GrpcServer {
         }
 
         def onNext(message: WorkerBroadcast): Unit = {
+          // TODO Resolve this : message.myId is always -1 Why ?
+          println(message.myId)
           if (message.myId != -1) {
-            instance.synchronized {
-              connectionsHandler.addTest(message.myId)
-              if (connectionsHandler.isWaitingOnSomeUpdates) {
-                instance.wait()
-              } else {
-                //svm.updateWeight(connectionsHandler.getMeanGradient)
-                if (i % 500 == 0) {
-
-                  val loss = connectionsHandler.getTest
-                  val duration = System.currentTimeMillis() - time
-                  time = System.currentTimeMillis()
-                  println(s"[UPT][$i][$duration]: loss = $loss}")
-                }
-                i += 1
-                instance.notifyAll()
-              }
+            connectionsHandler.addTest(message.myId)
+            if (i % 500 == 0) {
+              val loss = connectionsHandler.getTest
+              val duration = System.currentTimeMillis() - time
+              time = System.currentTimeMillis()
+              println(s"[UPT][$i][$duration]: loss = $loss}")
             }
+            i += 1
           } else {
             if (!(connectionsHandler.getPorts contains message.port)) {
               println("[NEW]: a new worker has arrived !")
@@ -165,11 +146,13 @@ object Worker extends GrpcServer {
             }
           }
           val workerId = message.myId
+          println(workerId)
           val content = message.msg
           val port = message.port
-          count += 1
-          //println(s"[MSG $counter] Worker $workerId says : $content")
-          responseObserver.onNext(WorkerBroadcast(myId = 0, msg = "My_updates", port = 0, counter = count))
+          val counter = message.counter
+          count = message.counter + 1
+          println(s"[MSG $counter] Worker $workerId says : $content")
+          responseObserver.onNext(WorkerBroadcast(myId = 0, msg = "My_updates", port = 5005, counter = count))
 
         }
       }
