@@ -8,8 +8,25 @@ service SlaveService {
 }
 
 service WorkerService {
+    rpc Identification (InformationRequest) returns (InformationResponse) {
+    }
+    rpc Ready(Worker_address) returns (Workers_details) {
+    }
     rpc UpdateWeights (stream WorkerBroadcast) returns (stream WorkerBroadcast) {
     }
+}
+
+message Empty {
+
+}
+
+message Workers_details {
+    repeated Worker_address items = 1;
+}
+
+message Worker_address {
+    string address = 1;
+    uint32 port = 2;
 }
 
 message SlaveRequest {
@@ -19,6 +36,14 @@ message SlaveRequest {
 message SlaveResponse {
     uint32 did = 1;
     map<uint32, double> weights = 2;
+}
+
+message InformationRequest {
+    string address = 1;
+}
+
+message InformationResponse {
+    uint32 port = 1;
 }
 
 message WorkerBroadcast {

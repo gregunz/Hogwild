@@ -2,12 +2,12 @@ package  grpc.async
 
 import dataset.Dataset
 import grpc.sync.WorkerServiceGrpc.WorkerServiceStub
-import grpc.sync.{WorkerBroadcast, WorkerServiceGrpc}
+import grpc.sync._
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
 import model.{GrpcServer, SVM}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.io.StdIn
 
 object Worker extends GrpcServer {
@@ -61,7 +61,7 @@ object Worker extends GrpcServer {
           .usePlaintext(true)
           .build
       )
-      portNumbers.foreach(connectionsHandler.addWorker)
+      portNumbers.foreach(connectionsHandler.addWorker("",_))
 
       val clients: List[WorkerServiceStub] = channels.map(WorkerServiceGrpc.stub(_))
 
@@ -77,12 +77,13 @@ object Worker extends GrpcServer {
         }
 
         def onNext(message: WorkerBroadcast): Unit = {
-          id_to_send = WorkerID
+
           count = message.counter + 1
           println(count)
           //println(id_to_send)
-          if (message.counter > 30000) {
-            println(s"All messages have been received, Terminating")
+          if (message.counter > 300) {
+            println(s"Message received")
+            println(message.msg, message.myId, message.counter, message.port)
             this.onCompleted()
           }
         }
@@ -93,7 +94,7 @@ object Worker extends GrpcServer {
       while (activeWorker) {
 
         j += 1
-
+        //activeWorker = false
         if (j % 10000 == 0) {
           count += 1
           if (id_to_send != -1) {
@@ -101,7 +102,9 @@ object Worker extends GrpcServer {
             println(id_to_send)
           }
           messageObservers.foreach(observer => observer.onNext(WorkerBroadcast(id_to_send, "Test", portNumber, count)))
-
+        }
+        if(count > 50) {
+          return
         }
       }
 
@@ -140,7 +143,7 @@ object Worker extends GrpcServer {
           } else {
             if (!(connectionsHandler.getPorts contains message.port)) {
               println("[NEW]: a new worker has arrived !")
-              connectionsHandler.addWorker(message.port)
+              connectionsHandler.addWorker("",message.port)
             }
           }
           val workerId = message.myId
@@ -154,5 +157,9 @@ object Worker extends GrpcServer {
 
         }
       }
+
+    override def identification(request: InformationRequest): Future[InformationResponse] = ???
+
+    override def ready(request: Worker_address): Future[Workers_details] = ???
   }
 }

@@ -8,7 +8,7 @@ class ConnectionsHandler {
   private var gradients: List[SparseNumVector] = List()
   private var ids: List[Int] = List()
 
-  def addWorker(portNumber: Int): Unit = {
+  def addWorker(address: String, portNumber: Int): Unit = {
     numConnections += 1
     portNumbers = portNumbers + portNumber
     println(s"New worker added on port $portNumber")
