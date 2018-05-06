@@ -14,7 +14,7 @@ class ConnectionsHandler {
     println(s"New worker added on port $portNumber")
   }
 
-  def removeWorker(portNumber: Int): Unit = {
+  def removeWorker(address: String, portNumber: Int): Unit = {
     numConnections -= 1
     portNumbers = portNumbers - portNumber
     println(s"Worker on port $portNumber has been removed")
@@ -38,8 +38,14 @@ class ConnectionsHandler {
 
 
   def getMeanGradient: SparseNumVector = {
-    val meanGradient = gradients.reduce(_ + _).mapTo((k,v) => v / gradients.size)
+    val meanGradient = gradients.reduce(_ + _).mapTo((k, v) => v / gradients.size)
     gradients = List()
+    meanGradient
+  }
+
+  def getMeanOfNLatestGradient(n: Int): SparseNumVector = {
+    val size = math.min(gradients.size, n)
+    val meanGradient = gradients.takeRight(size).reduce(_ + _).mapTo((k, v) => v / size)
     meanGradient
   }
 }
