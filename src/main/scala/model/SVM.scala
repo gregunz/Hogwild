@@ -13,15 +13,19 @@ case class SVM(stepSize: LearningRate = 0.01) {
     * @param gradient
     * @return weights update
     */
-  def updateWeight(gradient: SparseNumVector): SparseNumVector = {
-    SparseNumVector(
+  def updateWeights(gradient: SparseNumVector): SparseNumVector = {
+    val weightsUpdate = SparseNumVector(
       gradient.values.keySet.map { k =>
         val weightUpdate = - stepSize * gradient.values(k)
-        val newWeight = weights.values(k) + weightUpdate
-        weights = SparseNumVector(weights.values + (k -> newWeight))
         k -> weightUpdate
       }.toMap
     )
+    addWeightsUpdate(weightsUpdate)
+    weightsUpdate
+  }
+
+  def addWeightsUpdate(weightsUpdate: SparseNumVector): Unit = {
+    weights += weightsUpdate
   }
 
   def loss(features: IndexedSeq[SparseNumVector], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
