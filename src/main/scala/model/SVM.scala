@@ -5,13 +5,23 @@ import utils.Types.{Counts, LearningRate}
 
 
 case class SVM(stepSize: LearningRate = 0.01) {
-  var weights: SparseNumVector = SparseNumVector(Map.empty.withDefaultValue(0d))
+  var weights: SparseNumVector = SparseNumVector.empty
 
-  def updateWeight(gradient: SparseNumVector): Unit = {
-    gradient.values.keySet.foreach { k =>
-      val w_k = weights.values(k) - stepSize * gradient.values(k)
-      weights = SparseNumVector(weights.values + (k -> w_k))
-    }
+  /**
+    * update the weights of the model and return the weights coordinates by how much they've changed
+    *
+    * @param gradient
+    * @return weights update
+    */
+  def updateWeight(gradient: SparseNumVector): SparseNumVector = {
+    SparseNumVector(
+      gradient.values.keySet.map { k =>
+        val weightUpdate = - stepSize * gradient.values(k)
+        val newWeight = weights.values(k) + weightUpdate
+        weights = SparseNumVector(weights.values + (k -> newWeight))
+        k -> weightUpdate
+      }.toMap
+    )
   }
 
   def loss(features: IndexedSeq[SparseNumVector], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
