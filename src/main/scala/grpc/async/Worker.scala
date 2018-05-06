@@ -105,6 +105,7 @@ object Worker extends GrpcServer {
         // here we broadcast the weights update
         val n = 500
         if (counts % n == 0) {
+          val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeighsUpdate()
           // TODO: SEND GRADIENT TO CHANNELS HERE
           channels.foreach(channel => {
             val client: WorkerServiceStub = WorkerServiceGrpc.stub(channel)
