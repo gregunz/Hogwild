@@ -31,4 +31,5 @@ message InformationResponse {
 
 message WorkerBroadcast {
     map<uint32, double> weightsUpdate = 1;
+    uint32 workerId = 2;
 }

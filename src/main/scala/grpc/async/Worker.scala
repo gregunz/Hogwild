@@ -34,7 +34,7 @@ object Worker extends GrpcServer {
 
 
   def main(args: Array[String]): Unit = {
-    println("Please enter a worker ID, 0 or 1")
+    println("Please enter a worker ID, type 0 to lauch the coordinator")
     val workerID = StdIn.readInt()
     load()
     establishCommunications(workerID)
@@ -77,12 +77,12 @@ object Worker extends GrpcServer {
       }(ExecutionContext.global)
 
       // Tell coordinator that server is ready and ask for other worker that are ready
-      val addresses = blockingStub.ready(WorkerAddress(localIpAddress, identificationResponse.port))
+      var addresses = blockingStub.ready(WorkerAddress(localIpAddress, identificationResponse.port))
       // Drop first entry because it is us
-      val workerAddresses = addresses.workerAdresses
+      var workerAddresses = addresses.workerAdresses
 
       // Create a channel for every worker that has a running server
-      val channels = workerAddresses.map(x => ManagedChannelBuilder
+      var channels = workerAddresses.map(x => ManagedChannelBuilder
         .forAddress(x.address, x.port)
         .usePlaintext(true)
         .build)
@@ -109,6 +109,29 @@ object Worker extends GrpcServer {
           // TODO: SEND GRADIENT TO CHANNELS HERE
           channels.foreach(channel => {
             val client: WorkerServiceStub = WorkerServiceGrpc.stub(channel)
+
+
+            val updateToSend = new StreamObserver[WorkerBroadcast] {
+
+              override def onError(t: Throwable): Unit = {
+                println(s"ON_ERROR: $t")
+                sys.exit(1)
+              }
+
+              override def onCompleted(): Unit = {
+                println("ON_COMPLETED")
+                sys.exit(0)
+              }
+
+              override def onNext(receivedUpdate: WorkerBroadcast): Unit = {
+                val receivedWeights = SparseNumVector(receivedUpdate.weightsUpdate)
+                svm.addWeightsUpdate(receivedWeights)
+              }
+            }
+
+            val broadcast = client.updateWeights(updateToSend)
+            broadcast.onNext(WorkerBroadcast(Some(weigthsUpdateToBroadcast).get.values, workerID))
+            println(s"Update sent to $client")
             // TODO: open channel and send 500 most recent gradient
           })
 
@@ -150,6 +173,8 @@ object Worker extends GrpcServer {
         }
 
         override def onNext(broadcast: WorkerBroadcast): Unit = {
+          val receivedId = broadcast.workerId
+          println(s"Update received from worker $receivedId")
           svm.addWeightsUpdate(SparseNumVector(broadcast.weightsUpdate))
         }
       }
