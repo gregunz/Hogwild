@@ -17,9 +17,9 @@ object Launcher {
     var workerID = 1
 
     if (nodeType == "coord") {
-      Coordinator.main(Array(workingMode))
+      Coordinator.launch(Array(workingMode))
     } else if (nodeType == "worker") {
-      Worker.main(Array(workingMode, workerID.toString))
+      Worker.launch(Array(workingMode, workerID.toString))
       workerID += 1
     }
   }

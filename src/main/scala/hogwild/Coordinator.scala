@@ -28,7 +28,7 @@ object Coordinator extends GrpcServer {
   var i = 0
   var time: Long = System.currentTimeMillis()
 
-  def main(args: Array[String]): Unit = {
+  def launch(args: Array[String]): Unit = {
     val workingMode = args(0) match {
       case "sync" => WorkingMode.SYNC
       case "async" => WorkingMode.ASYNC
