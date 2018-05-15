@@ -2,21 +2,23 @@ syntax = "proto3";
 
 package hogwild;
 
-service SlaveService {
-    rpc UpdateWeights (stream SlaveRequest) returns (stream SlaveResponse) {
+// Worker Service for the synchronous version
+service WorkerServiceSync {
+    rpc UpdateWeights (stream WorkerRequest) returns (stream WorkerResponse) {
     }
 }
 
-message SlaveRequest {
+message WorkerRequest {
     map<uint32, double> gradient = 2;
 }
 
-message SlaveResponse {
+message WorkerResponse {
     uint32 did = 1;
     map<uint32, double> weights = 2;
 }
 
-service WorkerService {
+// Worker Service for the asynchronous version
+service WorkerServiceAsync {
     rpc Identification (InformationRequest) returns (InformationResponse) {}
     rpc Ready(WorkerAddress) returns (WorkersDetails) {}
     rpc UpdateWeights (stream WorkerBroadcast) returns (stream WorkerBroadcast) {}

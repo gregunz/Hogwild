@@ -1,5 +1,7 @@
 package hogwild
 
+import utils.WorkingMode
+
 object Launcher {
 
   def main(args: Array[String]): Unit = {
@@ -12,17 +14,14 @@ object Launcher {
     val workingMode = args(0)
     val nodeType = args(1)
 
-    if (workingMode == "async") {
-      println("Asynchronous mode selected")
-      Worker.main(Array(workingMode, nodeType))
+    var workerID = 1
 
-    } else if (workingMode == "sync") {
-      println("Synchronous mode selected")
-
-    } else {
-
+    if (nodeType == "coord") {
+      Coordinator.main(Array(workingMode))
+    } else if (nodeType == "worker") {
+      Worker.main(Array(workingMode, workerID.toString))
+      workerID += 1
     }
-
   }
 
 

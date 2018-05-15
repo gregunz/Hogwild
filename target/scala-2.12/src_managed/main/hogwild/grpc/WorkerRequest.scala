@@ -6,14 +6,14 @@
 package hogwild.grpc
 
 @SerialVersionUID(0L)
-final case class SlaveRequest(
+final case class WorkerRequest(
     gradient: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty
-    ) extends scalapb.GeneratedMessage with scalapb.Message[SlaveRequest] with scalapb.lenses.Updatable[SlaveRequest] {
+    ) extends scalapb.GeneratedMessage with scalapb.Message[WorkerRequest] with scalapb.lenses.Updatable[WorkerRequest] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
     private[this] def __computeSerializedValue(): _root_.scala.Int = {
       var __size = 0
-      gradient.foreach(gradient => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(hogwild.grpc.SlaveRequest._typemapper_gradient.toBase(gradient).serializedSize) + hogwild.grpc.SlaveRequest._typemapper_gradient.toBase(gradient).serializedSize)
+      gradient.foreach(gradient => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(hogwild.grpc.WorkerRequest._typemapper_gradient.toBase(gradient).serializedSize) + hogwild.grpc.WorkerRequest._typemapper_gradient.toBase(gradient).serializedSize)
       __size
     }
     final override def serializedSize: _root_.scala.Int = {
@@ -27,11 +27,11 @@ final case class SlaveRequest(
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
       gradient.foreach { __v =>
         _output__.writeTag(2, 2)
-        _output__.writeUInt32NoTag(hogwild.grpc.SlaveRequest._typemapper_gradient.toBase(__v).serializedSize)
-        hogwild.grpc.SlaveRequest._typemapper_gradient.toBase(__v).writeTo(_output__)
+        _output__.writeUInt32NoTag(hogwild.grpc.WorkerRequest._typemapper_gradient.toBase(__v).serializedSize)
+        hogwild.grpc.WorkerRequest._typemapper_gradient.toBase(__v).writeTo(_output__)
       };
     }
-    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.SlaveRequest = {
+    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.WorkerRequest = {
       val __gradient = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.gradient)
       var _done__ = false
       while (!_done__) {
@@ -39,47 +39,47 @@ final case class SlaveRequest(
         _tag__ match {
           case 0 => _done__ = true
           case 18 =>
-            __gradient += hogwild.grpc.SlaveRequest._typemapper_gradient.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, hogwild.grpc.SlaveRequest.GradientEntry.defaultInstance))
+            __gradient += hogwild.grpc.WorkerRequest._typemapper_gradient.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, hogwild.grpc.WorkerRequest.GradientEntry.defaultInstance))
           case tag => _input__.skipField(tag)
         }
       }
-      hogwild.grpc.SlaveRequest(
+      hogwild.grpc.WorkerRequest(
           gradient = __gradient.result()
       )
     }
     def clearGradient = copy(gradient = scala.collection.immutable.Map.empty)
-    def addGradient(__vs: (_root_.scala.Int, _root_.scala.Double)*): SlaveRequest = addAllGradient(__vs)
-    def addAllGradient(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): SlaveRequest = copy(gradient = gradient ++ __vs)
-    def withGradient(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): SlaveRequest = copy(gradient = __v)
+    def addGradient(__vs: (_root_.scala.Int, _root_.scala.Double)*): WorkerRequest = addAllGradient(__vs)
+    def addAllGradient(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): WorkerRequest = copy(gradient = gradient ++ __vs)
+    def withGradient(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerRequest = copy(gradient = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 2 => gradient.map(hogwild.grpc.SlaveRequest._typemapper_gradient.toBase)(_root_.scala.collection.breakOut)
+        case 2 => gradient.map(hogwild.grpc.WorkerRequest._typemapper_gradient.toBase)(_root_.scala.collection.breakOut)
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 2 => _root_.scalapb.descriptors.PRepeated(gradient.map(hogwild.grpc.SlaveRequest._typemapper_gradient.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 2 => _root_.scalapb.descriptors.PRepeated(gradient.map(hogwild.grpc.WorkerRequest._typemapper_gradient.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-    def companion = hogwild.grpc.SlaveRequest
+    def companion = hogwild.grpc.WorkerRequest
 }
 
-object SlaveRequest extends scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveRequest] {
-  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveRequest] = this
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.SlaveRequest = {
+object WorkerRequest extends scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerRequest] {
+  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerRequest] = this
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.WorkerRequest = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
-    hogwild.grpc.SlaveRequest(
-      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[hogwild.grpc.SlaveRequest.GradientEntry]].map(hogwild.grpc.SlaveRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
+    hogwild.grpc.WorkerRequest(
+      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[hogwild.grpc.WorkerRequest.GradientEntry]].map(hogwild.grpc.WorkerRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
     )
   }
-  implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.SlaveRequest] = _root_.scalapb.descriptors.Reads{
+  implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.WorkerRequest] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-      hogwild.grpc.SlaveRequest(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[hogwild.grpc.SlaveRequest.GradientEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(hogwild.grpc.SlaveRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
+      hogwild.grpc.WorkerRequest(
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[hogwild.grpc.WorkerRequest.GradientEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(hogwild.grpc.WorkerRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -88,15 +88,15 @@ object SlaveRequest extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slave
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 2 => __out = hogwild.grpc.SlaveRequest.GradientEntry
+      case 2 => __out = hogwild.grpc.WorkerRequest.GradientEntry
     }
     __out
   }
   lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq[_root_.scalapb.GeneratedMessageCompanion[_]](
-    _root_.hogwild.grpc.SlaveRequest.GradientEntry
+    _root_.hogwild.grpc.WorkerRequest.GradientEntry
   )
   def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-  lazy val defaultInstance = hogwild.grpc.SlaveRequest(
+  lazy val defaultInstance = hogwild.grpc.WorkerRequest(
   )
   @SerialVersionUID(0L)
   final case class GradientEntry(
@@ -133,7 +133,7 @@ object SlaveRequest extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slave
           }
         };
       }
-      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.SlaveRequest.GradientEntry = {
+      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.WorkerRequest.GradientEntry = {
         var __key = this.key
         var __value = this.value
         var _done__ = false
@@ -148,7 +148,7 @@ object SlaveRequest extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slave
             case tag => _input__.skipField(tag)
           }
         }
-        hogwild.grpc.SlaveRequest.GradientEntry(
+        hogwild.grpc.WorkerRequest.GradientEntry(
             key = __key,
             value = __value
         )
@@ -175,49 +175,49 @@ object SlaveRequest extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slave
         }
       }
       def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-      def companion = hogwild.grpc.SlaveRequest.GradientEntry
+      def companion = hogwild.grpc.WorkerRequest.GradientEntry
   }
   
-  object GradientEntry extends scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveRequest.GradientEntry] {
-    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveRequest.GradientEntry] = this
-    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.SlaveRequest.GradientEntry = {
+  object GradientEntry extends scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerRequest.GradientEntry] {
+    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerRequest.GradientEntry] = this
+    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.WorkerRequest.GradientEntry = {
       require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
       val __fields = javaDescriptor.getFields
-      hogwild.grpc.SlaveRequest.GradientEntry(
+      hogwild.grpc.WorkerRequest.GradientEntry(
         __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
         __fieldsMap.getOrElse(__fields.get(1), 0.0).asInstanceOf[_root_.scala.Double]
       )
     }
-    implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.SlaveRequest.GradientEntry] = _root_.scalapb.descriptors.Reads{
+    implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.WorkerRequest.GradientEntry] = _root_.scalapb.descriptors.Reads{
       case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
         require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-        hogwild.grpc.SlaveRequest.GradientEntry(
+        hogwild.grpc.WorkerRequest.GradientEntry(
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Double]).getOrElse(0.0)
         )
       case _ => throw new RuntimeException("Expected PMessage")
     }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = hogwild.grpc.SlaveRequest.javaDescriptor.getNestedTypes.get(0)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = hogwild.grpc.SlaveRequest.scalaDescriptor.nestedMessages(0)
+    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = hogwild.grpc.WorkerRequest.javaDescriptor.getNestedTypes.get(0)
+    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = hogwild.grpc.WorkerRequest.scalaDescriptor.nestedMessages(0)
     def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
     lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
     def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-    lazy val defaultInstance = hogwild.grpc.SlaveRequest.GradientEntry(
+    lazy val defaultInstance = hogwild.grpc.WorkerRequest.GradientEntry(
     )
-    implicit class GradientEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.SlaveRequest.GradientEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.SlaveRequest.GradientEntry](_l) {
+    implicit class GradientEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.WorkerRequest.GradientEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.WorkerRequest.GradientEntry](_l) {
       def key: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.key)((c_, f_) => c_.copy(key = f_))
       def value: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Double] = field(_.value)((c_, f_) => c_.copy(value = f_))
     }
     final val KEY_FIELD_NUMBER = 1
     final val VALUE_FIELD_NUMBER = 2
-    implicit val keyValueMapper: _root_.scalapb.TypeMapper[hogwild.grpc.SlaveRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)] =
-      _root_.scalapb.TypeMapper[hogwild.grpc.SlaveRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => hogwild.grpc.SlaveRequest.GradientEntry(__p._1, __p._2))
+    implicit val keyValueMapper: _root_.scalapb.TypeMapper[hogwild.grpc.WorkerRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)] =
+      _root_.scalapb.TypeMapper[hogwild.grpc.WorkerRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => hogwild.grpc.WorkerRequest.GradientEntry(__p._1, __p._2))
   }
   
-  implicit class SlaveRequestLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.SlaveRequest]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.SlaveRequest](_l) {
+  implicit class WorkerRequestLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.WorkerRequest]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.WorkerRequest](_l) {
     def gradient: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.gradient)((c_, f_) => c_.copy(gradient = f_))
   }
   final val GRADIENT_FIELD_NUMBER = 2
   @transient
-  private val _typemapper_gradient: _root_.scalapb.TypeMapper[hogwild.grpc.SlaveRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[hogwild.grpc.SlaveRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)]]
+  private val _typemapper_gradient: _root_.scalapb.TypeMapper[hogwild.grpc.WorkerRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[hogwild.grpc.WorkerRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }

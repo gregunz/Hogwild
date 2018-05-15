@@ -6,16 +6,16 @@
 package hogwild.grpc
 
 @SerialVersionUID(0L)
-final case class SlaveResponse(
+final case class WorkerResponse(
     did: _root_.scala.Int = 0,
     weights: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty
-    ) extends scalapb.GeneratedMessage with scalapb.Message[SlaveResponse] with scalapb.lenses.Updatable[SlaveResponse] {
+    ) extends scalapb.GeneratedMessage with scalapb.Message[WorkerResponse] with scalapb.lenses.Updatable[WorkerResponse] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
     private[this] def __computeSerializedValue(): _root_.scala.Int = {
       var __size = 0
       if (did != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(1, did) }
-      weights.foreach(weights => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(hogwild.grpc.SlaveResponse._typemapper_weights.toBase(weights).serializedSize) + hogwild.grpc.SlaveResponse._typemapper_weights.toBase(weights).serializedSize)
+      weights.foreach(weights => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(hogwild.grpc.WorkerResponse._typemapper_weights.toBase(weights).serializedSize) + hogwild.grpc.WorkerResponse._typemapper_weights.toBase(weights).serializedSize)
       __size
     }
     final override def serializedSize: _root_.scala.Int = {
@@ -35,11 +35,11 @@ final case class SlaveResponse(
       };
       weights.foreach { __v =>
         _output__.writeTag(2, 2)
-        _output__.writeUInt32NoTag(hogwild.grpc.SlaveResponse._typemapper_weights.toBase(__v).serializedSize)
-        hogwild.grpc.SlaveResponse._typemapper_weights.toBase(__v).writeTo(_output__)
+        _output__.writeUInt32NoTag(hogwild.grpc.WorkerResponse._typemapper_weights.toBase(__v).serializedSize)
+        hogwild.grpc.WorkerResponse._typemapper_weights.toBase(__v).writeTo(_output__)
       };
     }
-    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.SlaveResponse = {
+    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.WorkerResponse = {
       var __did = this.did
       val __weights = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.weights)
       var _done__ = false
@@ -50,56 +50,56 @@ final case class SlaveResponse(
           case 8 =>
             __did = _input__.readUInt32()
           case 18 =>
-            __weights += hogwild.grpc.SlaveResponse._typemapper_weights.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, hogwild.grpc.SlaveResponse.WeightsEntry.defaultInstance))
+            __weights += hogwild.grpc.WorkerResponse._typemapper_weights.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, hogwild.grpc.WorkerResponse.WeightsEntry.defaultInstance))
           case tag => _input__.skipField(tag)
         }
       }
-      hogwild.grpc.SlaveResponse(
+      hogwild.grpc.WorkerResponse(
           did = __did,
           weights = __weights.result()
       )
     }
-    def withDid(__v: _root_.scala.Int): SlaveResponse = copy(did = __v)
+    def withDid(__v: _root_.scala.Int): WorkerResponse = copy(did = __v)
     def clearWeights = copy(weights = scala.collection.immutable.Map.empty)
-    def addWeights(__vs: (_root_.scala.Int, _root_.scala.Double)*): SlaveResponse = addAllWeights(__vs)
-    def addAllWeights(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): SlaveResponse = copy(weights = weights ++ __vs)
-    def withWeights(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): SlaveResponse = copy(weights = __v)
+    def addWeights(__vs: (_root_.scala.Int, _root_.scala.Double)*): WorkerResponse = addAllWeights(__vs)
+    def addAllWeights(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): WorkerResponse = copy(weights = weights ++ __vs)
+    def withWeights(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerResponse = copy(weights = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
         case 1 => {
           val __t = did
           if (__t != 0) __t else null
         }
-        case 2 => weights.map(hogwild.grpc.SlaveResponse._typemapper_weights.toBase)(_root_.scala.collection.breakOut)
+        case 2 => weights.map(hogwild.grpc.WorkerResponse._typemapper_weights.toBase)(_root_.scala.collection.breakOut)
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
         case 1 => _root_.scalapb.descriptors.PInt(did)
-        case 2 => _root_.scalapb.descriptors.PRepeated(weights.map(hogwild.grpc.SlaveResponse._typemapper_weights.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 2 => _root_.scalapb.descriptors.PRepeated(weights.map(hogwild.grpc.WorkerResponse._typemapper_weights.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-    def companion = hogwild.grpc.SlaveResponse
+    def companion = hogwild.grpc.WorkerResponse
 }
 
-object SlaveResponse extends scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveResponse] {
-  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveResponse] = this
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.SlaveResponse = {
+object WorkerResponse extends scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerResponse] {
+  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerResponse] = this
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.WorkerResponse = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
-    hogwild.grpc.SlaveResponse(
+    hogwild.grpc.WorkerResponse(
       __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
-      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[hogwild.grpc.SlaveResponse.WeightsEntry]].map(hogwild.grpc.SlaveResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
+      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[hogwild.grpc.WorkerResponse.WeightsEntry]].map(hogwild.grpc.WorkerResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
     )
   }
-  implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.SlaveResponse] = _root_.scalapb.descriptors.Reads{
+  implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.WorkerResponse] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-      hogwild.grpc.SlaveResponse(
+      hogwild.grpc.WorkerResponse(
         __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[hogwild.grpc.SlaveResponse.WeightsEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(hogwild.grpc.SlaveResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[hogwild.grpc.WorkerResponse.WeightsEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(hogwild.grpc.WorkerResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -108,15 +108,15 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slav
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 2 => __out = hogwild.grpc.SlaveResponse.WeightsEntry
+      case 2 => __out = hogwild.grpc.WorkerResponse.WeightsEntry
     }
     __out
   }
   lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq[_root_.scalapb.GeneratedMessageCompanion[_]](
-    _root_.hogwild.grpc.SlaveResponse.WeightsEntry
+    _root_.hogwild.grpc.WorkerResponse.WeightsEntry
   )
   def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-  lazy val defaultInstance = hogwild.grpc.SlaveResponse(
+  lazy val defaultInstance = hogwild.grpc.WorkerResponse(
   )
   @SerialVersionUID(0L)
   final case class WeightsEntry(
@@ -153,7 +153,7 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slav
           }
         };
       }
-      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.SlaveResponse.WeightsEntry = {
+      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.WorkerResponse.WeightsEntry = {
         var __key = this.key
         var __value = this.value
         var _done__ = false
@@ -168,7 +168,7 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slav
             case tag => _input__.skipField(tag)
           }
         }
-        hogwild.grpc.SlaveResponse.WeightsEntry(
+        hogwild.grpc.WorkerResponse.WeightsEntry(
             key = __key,
             value = __value
         )
@@ -195,51 +195,51 @@ object SlaveResponse extends scalapb.GeneratedMessageCompanion[hogwild.grpc.Slav
         }
       }
       def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-      def companion = hogwild.grpc.SlaveResponse.WeightsEntry
+      def companion = hogwild.grpc.WorkerResponse.WeightsEntry
   }
   
-  object WeightsEntry extends scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveResponse.WeightsEntry] {
-    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.SlaveResponse.WeightsEntry] = this
-    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.SlaveResponse.WeightsEntry = {
+  object WeightsEntry extends scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerResponse.WeightsEntry] {
+    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerResponse.WeightsEntry] = this
+    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.WorkerResponse.WeightsEntry = {
       require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
       val __fields = javaDescriptor.getFields
-      hogwild.grpc.SlaveResponse.WeightsEntry(
+      hogwild.grpc.WorkerResponse.WeightsEntry(
         __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
         __fieldsMap.getOrElse(__fields.get(1), 0.0).asInstanceOf[_root_.scala.Double]
       )
     }
-    implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.SlaveResponse.WeightsEntry] = _root_.scalapb.descriptors.Reads{
+    implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.WorkerResponse.WeightsEntry] = _root_.scalapb.descriptors.Reads{
       case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
         require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-        hogwild.grpc.SlaveResponse.WeightsEntry(
+        hogwild.grpc.WorkerResponse.WeightsEntry(
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Double]).getOrElse(0.0)
         )
       case _ => throw new RuntimeException("Expected PMessage")
     }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = hogwild.grpc.SlaveResponse.javaDescriptor.getNestedTypes.get(0)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = hogwild.grpc.SlaveResponse.scalaDescriptor.nestedMessages(0)
+    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = hogwild.grpc.WorkerResponse.javaDescriptor.getNestedTypes.get(0)
+    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = hogwild.grpc.WorkerResponse.scalaDescriptor.nestedMessages(0)
     def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
     lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
     def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-    lazy val defaultInstance = hogwild.grpc.SlaveResponse.WeightsEntry(
+    lazy val defaultInstance = hogwild.grpc.WorkerResponse.WeightsEntry(
     )
-    implicit class WeightsEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.SlaveResponse.WeightsEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.SlaveResponse.WeightsEntry](_l) {
+    implicit class WeightsEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.WorkerResponse.WeightsEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.WorkerResponse.WeightsEntry](_l) {
       def key: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.key)((c_, f_) => c_.copy(key = f_))
       def value: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Double] = field(_.value)((c_, f_) => c_.copy(value = f_))
     }
     final val KEY_FIELD_NUMBER = 1
     final val VALUE_FIELD_NUMBER = 2
-    implicit val keyValueMapper: _root_.scalapb.TypeMapper[hogwild.grpc.SlaveResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)] =
-      _root_.scalapb.TypeMapper[hogwild.grpc.SlaveResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => hogwild.grpc.SlaveResponse.WeightsEntry(__p._1, __p._2))
+    implicit val keyValueMapper: _root_.scalapb.TypeMapper[hogwild.grpc.WorkerResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)] =
+      _root_.scalapb.TypeMapper[hogwild.grpc.WorkerResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => hogwild.grpc.WorkerResponse.WeightsEntry(__p._1, __p._2))
   }
   
-  implicit class SlaveResponseLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.SlaveResponse]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.SlaveResponse](_l) {
+  implicit class WorkerResponseLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.WorkerResponse]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.WorkerResponse](_l) {
     def did: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.did)((c_, f_) => c_.copy(did = f_))
     def weights: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.weights)((c_, f_) => c_.copy(weights = f_))
   }
   final val DID_FIELD_NUMBER = 1
   final val WEIGHTS_FIELD_NUMBER = 2
   @transient
-  private val _typemapper_weights: _root_.scalapb.TypeMapper[hogwild.grpc.SlaveResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[hogwild.grpc.SlaveResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)]]
+  private val _typemapper_weights: _root_.scalapb.TypeMapper[hogwild.grpc.WorkerResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[hogwild.grpc.WorkerResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }
