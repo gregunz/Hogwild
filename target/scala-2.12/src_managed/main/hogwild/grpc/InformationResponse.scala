@@ -3,7 +3,7 @@
 //
 // Protofile syntax: PROTO3
 
-package grpc.async
+package hogwild.grpc
 
 @SerialVersionUID(0L)
 final case class InformationResponse(
@@ -32,7 +32,7 @@ final case class InformationResponse(
         }
       };
     }
-    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.async.InformationResponse = {
+    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.InformationResponse = {
       var __port = this.port
       var _done__ = false
       while (!_done__) {
@@ -44,7 +44,7 @@ final case class InformationResponse(
           case tag => _input__.skipField(tag)
         }
       }
-      grpc.async.InformationResponse(
+      hogwild.grpc.InformationResponse(
           port = __port
       )
     }
@@ -64,34 +64,34 @@ final case class InformationResponse(
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-    def companion = grpc.async.InformationResponse
+    def companion = hogwild.grpc.InformationResponse
 }
 
-object InformationResponse extends scalapb.GeneratedMessageCompanion[grpc.async.InformationResponse] {
-  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.async.InformationResponse] = this
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.async.InformationResponse = {
+object InformationResponse extends scalapb.GeneratedMessageCompanion[hogwild.grpc.InformationResponse] {
+  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.InformationResponse] = this
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.InformationResponse = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
-    grpc.async.InformationResponse(
+    hogwild.grpc.InformationResponse(
       __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int]
     )
   }
-  implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.async.InformationResponse] = _root_.scalapb.descriptors.Reads{
+  implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.InformationResponse] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-      grpc.async.InformationResponse(
+      hogwild.grpc.InformationResponse(
         __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
-  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = AsyncProto.javaDescriptor.getMessageTypes.get(4)
-  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = AsyncProto.scalaDescriptor.messages(4)
+  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = GrpcProto.javaDescriptor.getMessageTypes.get(6)
+  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = GrpcProto.scalaDescriptor.messages(6)
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
   lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
   def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-  lazy val defaultInstance = grpc.async.InformationResponse(
+  lazy val defaultInstance = hogwild.grpc.InformationResponse(
   )
-  implicit class InformationResponseLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.async.InformationResponse]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.async.InformationResponse](_l) {
+  implicit class InformationResponseLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.InformationResponse]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.InformationResponse](_l) {
     def port: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.port)((c_, f_) => c_.copy(port = f_))
   }
   final val PORT_FIELD_NUMBER = 1

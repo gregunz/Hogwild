@@ -1,14 +1,15 @@
-package  grpc.async
+package hogwild
 
 import java.net._
 
 import dataset.Dataset
-import grpc.async.WorkerServiceGrpc.WorkerServiceStub
+import hogwild.grpc.WorkerServiceGrpc.WorkerServiceStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
 import model._
 import utils.Label.Label
 import utils.Types.TID
+import hogwild.grpc._
 
 import scala.collection.immutable
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,10 +35,16 @@ object Worker extends GrpcServer {
 
 
   def main(args: Array[String]): Unit = {
-    println("Please enter a worker ID, type 0 to lauch the coordinator")
-    val workerID = StdIn.readInt()
-    load()
-    establishCommunications(workerID)
+    println(args(0))
+    if (args(0) == "async") {
+      println("Please enter a worker ID, type 0 to lauch the coordinator")
+      val workerID = StdIn.readInt()
+      load()
+      establishCommunications(workerID)
+    } else {
+      println("Sync")
+    }
+
   }
 
   def load(): Unit = {

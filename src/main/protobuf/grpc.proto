@@ -1,7 +1,20 @@
 syntax = "proto3";
 
-package grpc;
+package hogwild;
 
+service SlaveService {
+    rpc UpdateWeights (stream SlaveRequest) returns (stream SlaveResponse) {
+    }
+}
+
+message SlaveRequest {
+    map<uint32, double> gradient = 2;
+}
+
+message SlaveResponse {
+    uint32 did = 1;
+    map<uint32, double> weights = 2;
+}
 
 service WorkerService {
     rpc Identification (InformationRequest) returns (InformationResponse) {}

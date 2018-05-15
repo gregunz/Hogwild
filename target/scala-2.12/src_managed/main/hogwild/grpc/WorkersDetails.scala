@@ -3,11 +3,11 @@
 //
 // Protofile syntax: PROTO3
 
-package grpc.async
+package hogwild.grpc
 
 @SerialVersionUID(0L)
 final case class WorkersDetails(
-    workerAdresses: _root_.scala.collection.Seq[grpc.async.WorkerAddress] = _root_.scala.collection.Seq.empty
+    workerAdresses: _root_.scala.collection.Seq[hogwild.grpc.WorkerAddress] = _root_.scala.collection.Seq.empty
     ) extends scalapb.GeneratedMessage with scalapb.Message[WorkersDetails] with scalapb.lenses.Updatable[WorkersDetails] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
@@ -31,26 +31,26 @@ final case class WorkersDetails(
         __v.writeTo(_output__)
       };
     }
-    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.async.WorkersDetails = {
-      val __workerAdresses = (_root_.scala.collection.immutable.Vector.newBuilder[grpc.async.WorkerAddress] ++= this.workerAdresses)
+    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.WorkersDetails = {
+      val __workerAdresses = (_root_.scala.collection.immutable.Vector.newBuilder[hogwild.grpc.WorkerAddress] ++= this.workerAdresses)
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
         _tag__ match {
           case 0 => _done__ = true
           case 10 =>
-            __workerAdresses += _root_.scalapb.LiteParser.readMessage(_input__, grpc.async.WorkerAddress.defaultInstance)
+            __workerAdresses += _root_.scalapb.LiteParser.readMessage(_input__, hogwild.grpc.WorkerAddress.defaultInstance)
           case tag => _input__.skipField(tag)
         }
       }
-      grpc.async.WorkersDetails(
+      hogwild.grpc.WorkersDetails(
           workerAdresses = __workerAdresses.result()
       )
     }
     def clearWorkerAdresses = copy(workerAdresses = _root_.scala.collection.Seq.empty)
-    def addWorkerAdresses(__vs: grpc.async.WorkerAddress*): WorkersDetails = addAllWorkerAdresses(__vs)
-    def addAllWorkerAdresses(__vs: TraversableOnce[grpc.async.WorkerAddress]): WorkersDetails = copy(workerAdresses = workerAdresses ++ __vs)
-    def withWorkerAdresses(__v: _root_.scala.collection.Seq[grpc.async.WorkerAddress]): WorkersDetails = copy(workerAdresses = __v)
+    def addWorkerAdresses(__vs: hogwild.grpc.WorkerAddress*): WorkersDetails = addAllWorkerAdresses(__vs)
+    def addAllWorkerAdresses(__vs: TraversableOnce[hogwild.grpc.WorkerAddress]): WorkersDetails = copy(workerAdresses = workerAdresses ++ __vs)
+    def withWorkerAdresses(__v: _root_.scala.collection.Seq[hogwild.grpc.WorkerAddress]): WorkersDetails = copy(workerAdresses = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
         case 1 => workerAdresses
@@ -63,41 +63,41 @@ final case class WorkersDetails(
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-    def companion = grpc.async.WorkersDetails
+    def companion = hogwild.grpc.WorkersDetails
 }
 
-object WorkersDetails extends scalapb.GeneratedMessageCompanion[grpc.async.WorkersDetails] {
-  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.async.WorkersDetails] = this
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.async.WorkersDetails = {
+object WorkersDetails extends scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkersDetails] {
+  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkersDetails] = this
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.WorkersDetails = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
-    grpc.async.WorkersDetails(
-      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.async.WorkerAddress]]
+    hogwild.grpc.WorkersDetails(
+      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[hogwild.grpc.WorkerAddress]]
     )
   }
-  implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.async.WorkersDetails] = _root_.scalapb.descriptors.Reads{
+  implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.WorkersDetails] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-      grpc.async.WorkersDetails(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.async.WorkerAddress]]).getOrElse(_root_.scala.collection.Seq.empty)
+      hogwild.grpc.WorkersDetails(
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[hogwild.grpc.WorkerAddress]]).getOrElse(_root_.scala.collection.Seq.empty)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
-  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = AsyncProto.javaDescriptor.getMessageTypes.get(1)
-  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = AsyncProto.scalaDescriptor.messages(1)
+  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = GrpcProto.javaDescriptor.getMessageTypes.get(3)
+  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = GrpcProto.scalaDescriptor.messages(3)
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 1 => __out = grpc.async.WorkerAddress
+      case 1 => __out = hogwild.grpc.WorkerAddress
     }
     __out
   }
   lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
   def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-  lazy val defaultInstance = grpc.async.WorkersDetails(
+  lazy val defaultInstance = hogwild.grpc.WorkersDetails(
   )
-  implicit class WorkersDetailsLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.async.WorkersDetails]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.async.WorkersDetails](_l) {
-    def workerAdresses: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.collection.Seq[grpc.async.WorkerAddress]] = field(_.workerAdresses)((c_, f_) => c_.copy(workerAdresses = f_))
+  implicit class WorkersDetailsLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.WorkersDetails]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.WorkersDetails](_l) {
+    def workerAdresses: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.collection.Seq[hogwild.grpc.WorkerAddress]] = field(_.workerAdresses)((c_, f_) => c_.copy(workerAdresses = f_))
   }
   final val WORKERADRESSES_FIELD_NUMBER = 1
 }

@@ -3,7 +3,7 @@
 //
 // Protofile syntax: PROTO3
 
-package grpc.async
+package hogwild.grpc
 
 @SerialVersionUID(0L)
 final case class WorkerBroadcast(
@@ -14,7 +14,7 @@ final case class WorkerBroadcast(
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
     private[this] def __computeSerializedValue(): _root_.scala.Int = {
       var __size = 0
-      weightsUpdate.foreach(weightsUpdate => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toBase(weightsUpdate).serializedSize) + grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toBase(weightsUpdate).serializedSize)
+      weightsUpdate.foreach(weightsUpdate => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toBase(weightsUpdate).serializedSize) + hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toBase(weightsUpdate).serializedSize)
       if (workerId != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(2, workerId) }
       __size
     }
@@ -29,8 +29,8 @@ final case class WorkerBroadcast(
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
       weightsUpdate.foreach { __v =>
         _output__.writeTag(1, 2)
-        _output__.writeUInt32NoTag(grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toBase(__v).serializedSize)
-        grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toBase(__v).writeTo(_output__)
+        _output__.writeUInt32NoTag(hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toBase(__v).serializedSize)
+        hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toBase(__v).writeTo(_output__)
       };
       {
         val __v = workerId
@@ -39,7 +39,7 @@ final case class WorkerBroadcast(
         }
       };
     }
-    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.async.WorkerBroadcast = {
+    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.WorkerBroadcast = {
       val __weightsUpdate = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.weightsUpdate)
       var __workerId = this.workerId
       var _done__ = false
@@ -48,13 +48,13 @@ final case class WorkerBroadcast(
         _tag__ match {
           case 0 => _done__ = true
           case 10 =>
-            __weightsUpdate += grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.async.WorkerBroadcast.WeightsUpdateEntry.defaultInstance))
+            __weightsUpdate += hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry.defaultInstance))
           case 16 =>
             __workerId = _input__.readUInt32()
           case tag => _input__.skipField(tag)
         }
       }
-      grpc.async.WorkerBroadcast(
+      hogwild.grpc.WorkerBroadcast(
           weightsUpdate = __weightsUpdate.result(),
           workerId = __workerId
       )
@@ -66,7 +66,7 @@ final case class WorkerBroadcast(
     def withWorkerId(__v: _root_.scala.Int): WorkerBroadcast = copy(workerId = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 1 => weightsUpdate.map(grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toBase)(_root_.scala.collection.breakOut)
+        case 1 => weightsUpdate.map(hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toBase)(_root_.scala.collection.breakOut)
         case 2 => {
           val __t = workerId
           if (__t != 0) __t else null
@@ -76,47 +76,47 @@ final case class WorkerBroadcast(
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 1 => _root_.scalapb.descriptors.PRepeated(weightsUpdate.map(grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 1 => _root_.scalapb.descriptors.PRepeated(weightsUpdate.map(hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
         case 2 => _root_.scalapb.descriptors.PInt(workerId)
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-    def companion = grpc.async.WorkerBroadcast
+    def companion = hogwild.grpc.WorkerBroadcast
 }
 
-object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[grpc.async.WorkerBroadcast] {
-  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.async.WorkerBroadcast] = this
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.async.WorkerBroadcast = {
+object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerBroadcast] {
+  implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerBroadcast] = this
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.WorkerBroadcast = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
-    grpc.async.WorkerBroadcast(
-      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.async.WorkerBroadcast.WeightsUpdateEntry]].map(grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut),
+    hogwild.grpc.WorkerBroadcast(
+      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry]].map(hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut),
       __fieldsMap.getOrElse(__fields.get(1), 0).asInstanceOf[_root_.scala.Int]
     )
   }
-  implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.async.WorkerBroadcast] = _root_.scalapb.descriptors.Reads{
+  implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.WorkerBroadcast] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-      grpc.async.WorkerBroadcast(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.async.WorkerBroadcast.WeightsUpdateEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.async.WorkerBroadcast._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut),
+      hogwild.grpc.WorkerBroadcast(
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(hogwild.grpc.WorkerBroadcast._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut),
         __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Int]).getOrElse(0)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
-  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = AsyncProto.javaDescriptor.getMessageTypes.get(5)
-  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = AsyncProto.scalaDescriptor.messages(5)
+  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = GrpcProto.javaDescriptor.getMessageTypes.get(7)
+  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = GrpcProto.scalaDescriptor.messages(7)
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 1 => __out = grpc.async.WorkerBroadcast.WeightsUpdateEntry
+      case 1 => __out = hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry
     }
     __out
   }
   lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq[_root_.scalapb.GeneratedMessageCompanion[_]](
-    _root_.grpc.async.WorkerBroadcast.WeightsUpdateEntry
+    _root_.hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry
   )
   def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-  lazy val defaultInstance = grpc.async.WorkerBroadcast(
+  lazy val defaultInstance = hogwild.grpc.WorkerBroadcast(
   )
   @SerialVersionUID(0L)
   final case class WeightsUpdateEntry(
@@ -153,7 +153,7 @@ object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[grpc.async.Work
           }
         };
       }
-      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.async.WorkerBroadcast.WeightsUpdateEntry = {
+      def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry = {
         var __key = this.key
         var __value = this.value
         var _done__ = false
@@ -168,7 +168,7 @@ object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[grpc.async.Work
             case tag => _input__.skipField(tag)
           }
         }
-        grpc.async.WorkerBroadcast.WeightsUpdateEntry(
+        hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry(
             key = __key,
             value = __value
         )
@@ -195,51 +195,51 @@ object WorkerBroadcast extends scalapb.GeneratedMessageCompanion[grpc.async.Work
         }
       }
       def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
-      def companion = grpc.async.WorkerBroadcast.WeightsUpdateEntry
+      def companion = hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry
   }
   
-  object WeightsUpdateEntry extends scalapb.GeneratedMessageCompanion[grpc.async.WorkerBroadcast.WeightsUpdateEntry] {
-    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[grpc.async.WorkerBroadcast.WeightsUpdateEntry] = this
-    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): grpc.async.WorkerBroadcast.WeightsUpdateEntry = {
+  object WeightsUpdateEntry extends scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry] {
+    implicit def messageCompanion: scalapb.GeneratedMessageCompanion[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry] = this
+    def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry = {
       require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
       val __fields = javaDescriptor.getFields
-      grpc.async.WorkerBroadcast.WeightsUpdateEntry(
+      hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry(
         __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[_root_.scala.Int],
         __fieldsMap.getOrElse(__fields.get(1), 0.0).asInstanceOf[_root_.scala.Double]
       )
     }
-    implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.async.WorkerBroadcast.WeightsUpdateEntry] = _root_.scalapb.descriptors.Reads{
+    implicit def messageReads: _root_.scalapb.descriptors.Reads[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry] = _root_.scalapb.descriptors.Reads{
       case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
         require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
-        grpc.async.WorkerBroadcast.WeightsUpdateEntry(
+        hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry(
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.Int]).getOrElse(0),
           __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Double]).getOrElse(0.0)
         )
       case _ => throw new RuntimeException("Expected PMessage")
     }
-    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = grpc.async.WorkerBroadcast.javaDescriptor.getNestedTypes.get(0)
-    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = grpc.async.WorkerBroadcast.scalaDescriptor.nestedMessages(0)
+    def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = hogwild.grpc.WorkerBroadcast.javaDescriptor.getNestedTypes.get(0)
+    def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = hogwild.grpc.WorkerBroadcast.scalaDescriptor.nestedMessages(0)
     def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
     lazy val nestedMessagesCompanions: Seq[_root_.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
     def enumCompanionForFieldNumber(__fieldNumber: _root_.scala.Int): _root_.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
-    lazy val defaultInstance = grpc.async.WorkerBroadcast.WeightsUpdateEntry(
+    lazy val defaultInstance = hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry(
     )
-    implicit class WeightsUpdateEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.async.WorkerBroadcast.WeightsUpdateEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.async.WorkerBroadcast.WeightsUpdateEntry](_l) {
+    implicit class WeightsUpdateEntryLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry](_l) {
       def key: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.key)((c_, f_) => c_.copy(key = f_))
       def value: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Double] = field(_.value)((c_, f_) => c_.copy(value = f_))
     }
     final val KEY_FIELD_NUMBER = 1
     final val VALUE_FIELD_NUMBER = 2
-    implicit val keyValueMapper: _root_.scalapb.TypeMapper[grpc.async.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)] =
-      _root_.scalapb.TypeMapper[grpc.async.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => grpc.async.WorkerBroadcast.WeightsUpdateEntry(__p._1, __p._2))
+    implicit val keyValueMapper: _root_.scalapb.TypeMapper[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)] =
+      _root_.scalapb.TypeMapper[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)](__m => (__m.key, __m.value))(__p => hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry(__p._1, __p._2))
   }
   
-  implicit class WorkerBroadcastLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.async.WorkerBroadcast]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.async.WorkerBroadcast](_l) {
+  implicit class WorkerBroadcastLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, hogwild.grpc.WorkerBroadcast]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, hogwild.grpc.WorkerBroadcast](_l) {
     def weightsUpdate: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.weightsUpdate)((c_, f_) => c_.copy(weightsUpdate = f_))
     def workerId: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.workerId)((c_, f_) => c_.copy(workerId = f_))
   }
   final val WEIGHTSUPDATE_FIELD_NUMBER = 1
   final val WORKERID_FIELD_NUMBER = 2
   @transient
-  private val _typemapper_weightsUpdate: _root_.scalapb.TypeMapper[grpc.async.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.async.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)]]
+  private val _typemapper_weightsUpdate: _root_.scalapb.TypeMapper[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[hogwild.grpc.WorkerBroadcast.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }
