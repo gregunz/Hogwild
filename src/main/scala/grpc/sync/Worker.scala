@@ -1,6 +1,7 @@
 package grpc.sync
 
 import dataset.Dataset
+import grpc.sync.Coordinator.argMismatch
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
 import launcher.GrpcRunnable
@@ -15,15 +16,30 @@ object Worker extends GrpcRunnable {
   var someGradient: Option[SparseNumVector] = Some(SparseNumVector.empty)
 
   def run(args: Seq[String]): Unit = {
+    args match {
+      case port :: _ =>
+        val client = createClient(port.toInt)
+        val responseObserver = createObserver
+        val requestObserver = client.updateWeights(responseObserver)
 
+        println(">> SPAWNED <<")
+        startComputingLoop(requestObserver)
+
+      case _ => argMismatch(s"expecting port but get $args")
+    }
+  }
+
+  def createClient(port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
     val channel = ManagedChannelBuilder
-      .forAddress("localhost", 50050) // host and port of service
+      .forAddress("localhost", port) // host and port of service
       .usePlaintext(true) // don't use encryption (for demo purposes)
       .build
 
-    val client = WorkerServiceSyncGrpc.stub(channel)
+    WorkerServiceSyncGrpc.stub(channel)
+  }
 
-    val responseObserver = new StreamObserver[WorkerResponse] {
+  def createObserver: StreamObserver[WorkerResponse] = {
+    new StreamObserver[WorkerResponse] {
       def onError(t: Throwable): Unit = {
         println(s"ON_ERROR: $t")
         sys.exit(1)
@@ -53,12 +69,10 @@ object Worker extends GrpcRunnable {
         }
       }
     }
+  }
 
-    val requestObserver = client.updateWeights(responseObserver)
-
-    println(">> SPAWNED <<")
-
-    while (!channel.isTerminated) {
+  def startComputingLoop(requestObserver: StreamObserver[WorkerRequest]): Unit = {
+    while (true) {
       instance.synchronized {
         while (someGradient.isEmpty) instance.wait()
         requestObserver.onNext(WorkerRequest(someGradient.get.values))

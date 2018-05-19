@@ -13,7 +13,6 @@ object Dataset {
   private final val dataPath = "data/"
   private final val filePaths: List[String] = {
     List(dataPath + "samples.dat")
-
     // de-comment this to load the whole data in memory
     //(0 until 4).map(i => dataPath + filename(i)).toList
   }
