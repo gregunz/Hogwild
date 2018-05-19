@@ -1,12 +1,9 @@
-package model
+package grpc
 
 import io.grpc.{ServerBuilder, ServerServiceDefinition}
 
 trait GrpcServer {
 
-  /**
-    * Just for demo purposes
-    */
   def runServer(ssd: ServerServiceDefinition, portNumber: Int): Unit = {
     val server = ServerBuilder
       .forPort(portNumber)

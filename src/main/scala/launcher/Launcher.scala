@@ -8,7 +8,7 @@ object Launcher {
   def main(args: Array[String]): Unit = {
     val arguments = args.toList
 
-    arguments.toList match {
+    arguments match {
       case "sync" :: "coord" :: tail =>
         SyncCoordinator.run(tail)
 

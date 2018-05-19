@@ -3,6 +3,7 @@ package grpc.async
 import java.net._
 
 import dataset.Dataset
+import grpc.GrpcServer
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import launcher.GrpcRunnable

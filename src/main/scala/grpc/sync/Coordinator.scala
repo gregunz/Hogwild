@@ -1,6 +1,7 @@
 package grpc.sync
 
 import dataset.Dataset
+import grpc.GrpcServer
 import io.grpc.stub.StreamObserver
 import launcher.GrpcRunnable
 import model._
