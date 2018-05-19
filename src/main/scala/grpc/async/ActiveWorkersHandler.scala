@@ -1,6 +1,6 @@
-package model
+package grpc.async
 
-class WorkersHandler {
+class ActiveWorkersHandler {
   private var portNumbers: Set[Int] = Set()
 
   def addWorker(address: String, portNumber: Int): Unit = {

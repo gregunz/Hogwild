@@ -30,4 +30,5 @@ WORKDIR /Hogwild
 ADD . /Hogwild
 
 #CMD sbt
+#CMD /bin/bash start_worker.sh $mode $status $coord_ip
 CMD /bin/bash start_node.sh $mode $type

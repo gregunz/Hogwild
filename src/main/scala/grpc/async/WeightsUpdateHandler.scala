@@ -1,6 +1,8 @@
-package model
+package grpc.async
 
-class WeightsHandler {
+import model.SparseNumVector
+
+class WeightsUpdateHandler {
   private var weightsUpdateAggregated: SparseNumVector = SparseNumVector.empty
   private var counts = 0
 

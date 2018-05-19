@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc;
+
+service WorkerServiceSync {
+    rpc UpdateWeights (stream WorkerRequest) returns (stream WorkerResponse) {
+    }
+}
+
+message WorkerRequest {
+    map<uint32, double> gradient = 2;
+}
+
+message WorkerResponse {
+    uint32 did = 1;
+    map<uint32, double> weights = 2;
+}

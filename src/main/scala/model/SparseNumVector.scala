@@ -2,7 +2,7 @@ package model
 
 import utils.Types.TID
 
-case class SparseNumVector(var values: Map[TID, Double]){
+case class SparseNumVector(var values: Map[TID, Double]) {
   values = values.withDefaultValue(0d)
 
   def +(other: SparseNumVector): SparseNumVector = {

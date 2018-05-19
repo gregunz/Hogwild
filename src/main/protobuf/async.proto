@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package grpc;
+
+service WorkerServiceAsync {
+    rpc Hello (WorkerDetail) returns (HelloResponse) {
+    }
+    rpc Broadcast (stream BroadcastMessage) returns (Empty) {
+    }
+}
+
+message BroadcastMessage {
+    map<uint32, double> weightsUpdate = 1;
+    WorkerDetail workerDetail = 2;
+}
+
+message HelloResponse {
+    repeated WorkerDetail workersDetails = 1;
+    map<uint32, double> weights = 2;
+
+}
+
+message WorkerDetail {
+    string address = 1;
+    uint64 port = 2;
+}
+
+message Empty {
+}

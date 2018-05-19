@@ -57,6 +57,13 @@ object Dataset {
     tidCounts
   }
 
+  def getSubset(n: Int): IndexedSeq[(SparseNumVector, Label)] = {
+    val someDids: IndexedSeq[TID] = didSet.take(500).toIndexedSeq
+    val someFeatures: IndexedSeq[SparseNumVector] = someDids.map(features)
+    val someLabels: IndexedSeq[Label] = someDids.map(labels)
+    someFeatures zip someLabels
+  }
+
   def samples(withReplacement: Boolean = false): Stream[Int] = {
     val docIndicesIndexSeq = didSet.toIndexedSeq
     if (!withReplacement) {

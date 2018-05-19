@@ -4,7 +4,7 @@ import utils.Label.Label
 import utils.Types.{Counts, LearningRate}
 
 
-case class SVM(stepSize: LearningRate = 0.01) {
+class SVM(stepSize: LearningRate = 0.01) {
   var weights: SparseNumVector = SparseNumVector.empty
 
   /**
@@ -16,7 +16,7 @@ case class SVM(stepSize: LearningRate = 0.01) {
   def updateWeights(gradient: SparseNumVector): SparseNumVector = {
     val weightsUpdate = SparseNumVector(
       gradient.values.keySet.map { k =>
-        val weightUpdate = - stepSize * gradient.values(k)
+        val weightUpdate = -stepSize * gradient.values(k)
         k -> weightUpdate
       }.toMap
     )
@@ -26,13 +26,6 @@ case class SVM(stepSize: LearningRate = 0.01) {
 
   def addWeightsUpdate(weightsUpdate: SparseNumVector): Unit = {
     weights += weightsUpdate
-  }
-
-  def updateWeight(gradient: SparseNumVector): Unit = {
-    gradient.values.keySet.foreach { k =>
-      val w_k = weights.values(k) - stepSize * gradient.values(k)
-      weights = SparseNumVector(weights.values + (k -> w_k))
-    }
   }
 
   def loss(features: IndexedSeq[SparseNumVector], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
@@ -60,5 +53,4 @@ object SVM {
       gradRightPart.pointWise(feature.mapTo((_, v) => v * (-label.id)), _ + _)
     }
   }
-
 }
