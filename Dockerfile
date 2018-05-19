@@ -8,10 +8,10 @@ ENV SBT_VERSION 1.1.5
 ENV SCALA_HOME /docker-scala-home
 ENV PATH=$SCALA_HOME/scala-$SCALA_VERSION/bin:$PATH
 
-# Scala expects this file
+# Scala expects this file 
 RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
 
-# Install Scala ## Piping curl directly in tar
+# Install Scala ## Piping curl directly in tar 
 RUN \
   mkdir $SCALA_HOME && \
   curl -fsL https://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz | tar xfz - -C $SCALA_HOME
@@ -29,4 +29,5 @@ RUN \
 WORKDIR /Hogwild
 ADD . /Hogwild
 
-CMD /bin/bash start_worker.sh $mode $status $coord_ip
+#CMD sbt
+CMD /bin/bash start_node.sh $mode $type

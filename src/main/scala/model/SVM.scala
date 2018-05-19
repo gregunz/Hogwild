@@ -28,6 +28,13 @@ case class SVM(stepSize: LearningRate = 0.01) {
     weights += weightsUpdate
   }
 
+  def updateWeight(gradient: SparseNumVector): Unit = {
+    gradient.values.keySet.foreach { k =>
+      val w_k = weights.values(k) - stepSize * gradient.values(k)
+      weights = SparseNumVector(weights.values + (k -> w_k))
+    }
+  }
+
   def loss(features: IndexedSeq[SparseNumVector], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
     require(features.size == labels.size)
     features.zip(labels)
@@ -37,7 +44,6 @@ case class SVM(stepSize: LearningRate = 0.01) {
         hinge + reg
       }.sum
   }
-
 }
 
 object SVM {

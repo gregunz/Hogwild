@@ -52,7 +52,7 @@ object Dataset {
   }
 
   def load(): Unit = {
-    //labels
+    labels
     features
     tidCounts
   }

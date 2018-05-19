@@ -1,9 +1,24 @@
 syntax = "proto3";
 
-package grpc;
+package hogwild;
 
+// Worker Service for the synchronous version
+service WorkerServiceSync {
+    rpc UpdateWeights (stream WorkerRequest) returns (stream WorkerResponse) {
+    }
+}
 
-service WorkerService {
+message WorkerRequest {
+    map<uint32, double> gradient = 2;
+}
+
+message WorkerResponse {
+    uint32 did = 1;
+    map<uint32, double> weights = 2;
+}
+
+// Worker Service for the asynchronous version
+service WorkerServiceAsync {
     rpc Identification (InformationRequest) returns (InformationResponse) {}
     rpc Ready(WorkerAddress) returns (WorkersDetails) {}
     rpc UpdateWeights (stream WorkerBroadcast) returns (stream WorkerBroadcast) {}
