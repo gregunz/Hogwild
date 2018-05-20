@@ -9,7 +9,7 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   private[this] val zero = implicitly[Numeric[T]].zero
   vector = vector.withDefaultValue(zero) // wish to set it as val and force this !
 
-  def toMap: Map[TID, T] = vector //.withDefaultValue(0d)
+  def toMap: Map[TID, T] = vector.filter(_ == zero) // not sure if need
   def tids: Set[TID] = this.toMap.keySet
 
   def pointWise(
@@ -25,8 +25,12 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
     SparseNumVector(this.toMap.filter{ case(k, v) => tids(k)})
   }
 
-  def mapTo(op: (TID, T) => T): SparseNumVector[T] = {
+  def map(op: (TID, T) => T): SparseNumVector[T] = {
     SparseNumVector(this.toMap.map { case (k, v) => k -> op(k, v) })
+  }
+
+  def mapValues(op: T => T): SparseNumVector[T] = {
+    this.map((_, v) => op(v))
   }
 
   def +(other: SparseNumVector[T]): SparseNumVector[T] = {
@@ -34,7 +38,7 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   }
 
   def +(value: T): SparseNumVector[T] = {
-    this.mapTo((_, v) => v + value)
+    this.mapValues(_ + value)
   }
 
   def -(other: SparseNumVector[T]): SparseNumVector[T] = {
@@ -42,7 +46,7 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   }
 
   def -(value: T): SparseNumVector[T] = {
-    this.mapTo((_, v) => v - value)
+    this.mapValues(_ - value)
   }
 
   def *(other: SparseNumVector[T]): SparseNumVector[T] = {
@@ -50,7 +54,7 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   }
 
   def *(value: T): SparseNumVector[T] = {
-    this.mapTo((_, v) => v * value)
+    this.mapValues(_ * value)
   }
 
   def dot(that: SparseNumVector[T]): T = {
