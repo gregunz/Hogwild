@@ -18,7 +18,7 @@ object Worker extends GrpcRunnable {
   def run(args: Seq[String]): Unit = {
     args match {
       case ip :: port :: _ =>
-        Dataset.load()
+        Dataset.fullLoad()
         val client = createClient(ip, port.toInt)
         val responseObserver = createObserver
         val requestObserver = client.updateWeights(responseObserver)

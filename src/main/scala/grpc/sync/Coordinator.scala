@@ -36,7 +36,7 @@ object Coordinator extends GrpcServer with GrpcRunnable {
   }
 
   def load(): Unit = {
-    Dataset.load()
+    Dataset.fullLoad()
     samples
   }
 

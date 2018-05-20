@@ -132,7 +132,7 @@ object Worker extends GrpcServer with GrpcRunnable {
 
         // here we broadcast the weights update
         if (counts % broadcastInterval == 0) {
-          val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeighsUpdate()
+          val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeightsUpdate()
           val msg = BroadcastMessage(
             weigthsUpdateToBroadcast.toMap,
             Some(myWorkerDetail)

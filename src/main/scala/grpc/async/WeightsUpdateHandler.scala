@@ -13,7 +13,7 @@ class WeightsUpdateHandler {
     weightsUpdateAggregated += weightsUpdate
   }
 
-  def getAndResetWeighsUpdate(): SparseNumVector[Double] = {
+  def getAndResetWeightsUpdate(): SparseNumVector[Double] = {
     counter = 0
     val tmp = weightsUpdateAggregated
     weightsUpdateAggregated = SparseNumVector.empty

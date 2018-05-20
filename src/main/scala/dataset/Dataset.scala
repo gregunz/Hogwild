@@ -48,10 +48,11 @@ object Dataset {
       }.toMap
   }
 
-  def load(): Unit = load("dataset") {
+  def fullLoad(): Unit = load("dataset") {
     labels
     features
     tidCounts
+    didSet
   }
 
   def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
