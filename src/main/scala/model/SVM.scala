@@ -30,11 +30,13 @@ class SVM(stepSize: LearningRate = 0.01) {
 
   def loss(features: IndexedSeq[SparseNumVector[Double]], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
     require(features.size == labels.size)
+    val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
+
     features.zip(labels)
       .map { case (f, l) =>
         val hinge = Math.max(0, 1 - (l.id * (f dot weights)))
         val w = weights.filter(f.tids)
-        val reg = 0.5 * lambda * (w * w).mapTo{(k,v) => v / tidCounts(k)}.norm
+        val reg = 0.5 * lambda * (w * w * inverseTidCountsVector).firstNorm
         hinge + reg
       }.sum
   }
@@ -46,12 +48,13 @@ object SVM {
                                 weights: SparseNumVector[Double],
                                 lambda: Double,
                                 tidCounts: Counts): SparseNumVector[Double] = {
-    val gradRightPart = SparseNumVector(
-      feature.toMap.map { case (k, v) => k -> (lambda * weights.toMap.withDefaultValue(0d)(k) / tidCounts(k)) })
+
+    val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
+    val gradRightPart = weights.filter(feature.tids) * lambda * inverseTidCountsVector
     if (label.id * (feature dot weights) >= 1) {
       gradRightPart
     } else {
-      gradRightPart.pointWise(feature.mapTo((_, v) => v * (-label.id)), _ + _)
+      gradRightPart + (feature * (-label.id))
     }
   }
 }
