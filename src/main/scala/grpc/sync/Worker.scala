@@ -17,9 +17,9 @@ object Worker extends GrpcRunnable {
 
   def run(args: Seq[String]): Unit = {
     args match {
-      case port :: _ =>
+      case ip :: port :: _ =>
         Dataset.load()
-        val client = createClient(port.toInt)
+        val client = createClient(ip, port.toInt)
         val responseObserver = createObserver
         val requestObserver = client.updateWeights(responseObserver)
 
@@ -30,9 +30,9 @@ object Worker extends GrpcRunnable {
     }
   }
 
-  def createClient(port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
+  def createClient(ip: String, port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
     val channel = ManagedChannelBuilder
-      .forAddress("localhost", port) // host and port of service
+      .forAddress(ip, port) // host and port of service
       .usePlaintext(true) // don't use encryption (for demo purposes)
       .build
 
