@@ -12,7 +12,7 @@ class WorkersAggregator {
   }
 
   def removeWorker(): Unit = {
-    numWorkers += 1
+    numWorkers -= 1
   }
 
   def isWaitingOnSomeWorker: Boolean = {

@@ -18,11 +18,12 @@ object Worker extends GrpcRunnable {
   def run(args: Seq[String]): Unit = {
     args match {
       case port :: _ =>
+        Dataset.load()
         val client = createClient(port.toInt)
         val responseObserver = createObserver
         val requestObserver = client.updateWeights(responseObserver)
 
-        println(">> SPAWNED <<")
+        println(">> READY <<")
         startComputingLoop(requestObserver)
 
       case _ => argMismatch(s"expecting port but get $args")

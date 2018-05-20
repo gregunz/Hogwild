@@ -48,12 +48,12 @@ object Coordinator extends GrpcServer with GrpcRunnable {
       new StreamObserver[WorkerRequest] {
         def onError(t: Throwable): Unit = {
           println(s"ON_ERROR: $t")
-          workersAggregator.removeWorker()
+          safeRemoveWorker()
         }
 
         def onCompleted(): Unit = {
           println("ON_COMPLETED")
-          workersAggregator.removeWorker()
+          safeRemoveWorker()
         }
 
         def onNext(req: WorkerRequest): Unit = {
@@ -86,6 +86,16 @@ object Coordinator extends GrpcServer with GrpcRunnable {
           responseObserver.onNext(spawnWorkerResponse(svm.weights))
         }
       }
+
+    private def safeRemoveWorker(): Unit = {
+      instance.synchronized{
+        workersAggregator.removeWorker()
+        if(!workersAggregator.isWaitingOnSomeWorker){
+          svm.updateWeights(workersAggregator.getMeanGradient)
+          instance.notifyAll()
+        }
+      }
+    }
 
     private def spawnWorkerResponse(weights: SparseNumVector): WorkerResponse = {
       val did = samples.next
