@@ -97,11 +97,11 @@ object Coordinator extends GrpcServer with GrpcRunnable {
       }
     }
 
-    private def spawnWorkerResponse(weights: SparseNumVector): WorkerResponse = {
+    private def spawnWorkerResponse(weights: SparseNumVector[Double]): WorkerResponse = {
       val did = samples.next
       WorkerResponse(
         did = did,
-        weights = Dataset.getFeature(did).mapTo { case (k, _) => weights.values.withDefaultValue(0d)(k) }.values
+        weights = weights.filter(Dataset.getFeature(did).tids).toMap
       )
     }
   }

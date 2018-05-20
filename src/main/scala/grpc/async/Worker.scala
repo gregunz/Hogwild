@@ -100,7 +100,7 @@ object Worker extends GrpcServer with GrpcRunnable {
     createStubToWorker(workerIp, workerPort).broadcast(broadcastObserver)
   }
 
-  def hello(oneWorkerStub: BlockingStub): (SparseNumVector, Set[(String, Int)]) = {
+  def hello(oneWorkerStub: BlockingStub): (SparseNumVector[Double], Set[(String, Int)]) = {
     val response = oneWorkerStub.hello(Empty())
     SparseNumVector(response.weights) -> response
       .workersDetails
@@ -128,18 +128,20 @@ object Worker extends GrpcServer with GrpcRunnable {
         )
         val weightsUpdate = svm.updateWeights(newGradient)
         weightsHandler.addWeightsUpdate(weightsUpdate)
-        val counts = weightsHandler.getCounts()
+        val counts = weightsHandler.counts
 
         // here we broadcast the weights update
         if (counts % broadcastInterval == 0) {
           val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeighsUpdate()
           val msg = BroadcastMessage(
-            weigthsUpdateToBroadcast.values,
+            weigthsUpdateToBroadcast.toMap,
             Some(myWorkerDetail)
           )
+          if (broadcasters.nonEmpty){
+            println(s"[SEND] Feel like sharing some computations, here you go guys (${broadcasters.keySet.mkString("[", ";", "]")})")
+          }
           broadcasters.foreach { broadcaster =>
             broadcaster._2.onNext(msg)
-            println(s"[SEND] Hei ${broadcaster._1} here are some computations for you <3")
           }
 
           // compute loss
@@ -170,7 +172,7 @@ object Worker extends GrpcServer with GrpcRunnable {
 
       Future.successful(HelloResponse(
         workersToSend.map { case (ip, port) => WorkerDetail(ip, port) }.toSeq,
-        weights.values
+        weights.toMap
       ))
     }
 

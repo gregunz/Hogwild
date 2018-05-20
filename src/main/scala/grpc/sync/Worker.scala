@@ -13,7 +13,7 @@ object Worker extends GrpcRunnable {
 
   val lambda = 0.1
   var count = 0
-  var someGradient: Option[SparseNumVector] = Some(SparseNumVector.empty)
+  var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(args: Seq[String]): Unit = {
     args match {
@@ -76,7 +76,7 @@ object Worker extends GrpcRunnable {
     while (true) {
       instance.synchronized {
         while (someGradient.isEmpty) instance.wait()
-        requestObserver.onNext(WorkerRequest(someGradient.get.values))
+        requestObserver.onNext(WorkerRequest(someGradient.get.toMap))
         someGradient = None
       }
     }

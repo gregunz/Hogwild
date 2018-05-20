@@ -19,10 +19,9 @@ object Dataset {
 
   lazy val didSet: Set[Int] = load("didSet"){features.keySet}
   lazy val tidCounts: Counts = load("tidCounts") {
-    features.flatMap(_._2.values.keys)
+    features.flatMap(_._2.tids.toSeq)
       .groupBy(tid => tid)
       .mapValues(_.size)
-
   }
   lazy val labels: Map[Int, Label] = load("labels") {
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
@@ -40,7 +39,7 @@ object Dataset {
       .mapValues { v => Label(v.exists(_._2)) }
   }
 
-  lazy val features: Map[Int, SparseNumVector] = load("features") {
+  lazy val features: Map[Int, SparseNumVector[Double]] = load("features") {
     filePaths
       .flatMap { path =>
         Source.fromFile(path)
@@ -55,9 +54,9 @@ object Dataset {
     tidCounts
   }
 
-  def getSubset(n: Int): IndexedSeq[(SparseNumVector, Label)] = {
+  def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
     val someDids: IndexedSeq[TID] = didSet.take(n).toIndexedSeq
-    val someFeatures: IndexedSeq[SparseNumVector] = someDids.map(features)
+    val someFeatures: IndexedSeq[SparseNumVector[Double]] = someDids.map(features)
     val someLabels: IndexedSeq[Label] = someDids.map(labels)
     someFeatures zip someLabels
   }
@@ -77,7 +76,7 @@ object Dataset {
     }
   }
 
-  def getFeature(did: Int): SparseNumVector = {
+  def getFeature(did: Int): SparseNumVector[Double] = {
     features(did)
   }
 
@@ -85,13 +84,13 @@ object Dataset {
     labels(index)
   }
 
-  private def parseLine(line: String): (Int, SparseNumVector) = {
+  private def parseLine(line: String): (Int, SparseNumVector[Double]) = {
     val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
     val did: Int = lineSplitted.head.toInt
     did -> pairsToVector(lineSplitted.tail)
   }
 
-  private def pairsToVector(lineSplitted: List[String]): SparseNumVector = {
+  private def pairsToVector(lineSplitted: List[String]): SparseNumVector[Double] = {
     SparseNumVector(
       lineSplitted.map(e => {
         val pair: List[String] = e.split(":").map(_.trim).toList
