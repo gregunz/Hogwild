@@ -9,7 +9,7 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   private[this] val zero = implicitly[Numeric[T]].zero
   vector = vector.withDefaultValue(zero) // wish to set it as val and force this !
 
-  def toMap: Map[TID, T] = vector.filter(_ == zero) // not sure if need
+  def toMap: Map[TID, T] = vector.filter(_ != zero) // not sure if need
   def tids: Set[TID] = this.toMap.keySet
 
   def pointWise(
