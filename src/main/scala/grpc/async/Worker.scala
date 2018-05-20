@@ -184,9 +184,9 @@ object Worker extends GrpcServer with GrpcRunnable {
           val detail = msg.workerDetail.get
           val worker = detail.address -> detail.port.toInt
 
-          println(s"[RECEIVED]: Thanks ${worker} for the computation, I owe you some gradients now ;)")
+          println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
           if (!broadcasters.contains(worker)){
-            println(s"[NEW]: New worker just arrived, welcome to the gang $worker")
+            println(s"[NEW]: a new worker just arrived, welcome to the GANG $worker")
             addBroadcaster(worker._1, worker._2)
           }
 
