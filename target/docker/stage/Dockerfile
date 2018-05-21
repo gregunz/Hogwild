@@ -1,6 +1,5 @@
 FROM openjdk:latest
 WORKDIR /opt/docker
-ADD --chown=daemon:daemon opt /opt
-USER daemon
+ADD opt /opt
 ENTRYPOINT ["/opt/docker/bin/hogwild"]
 CMD []
