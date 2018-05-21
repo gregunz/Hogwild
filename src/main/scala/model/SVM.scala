@@ -5,7 +5,7 @@ import utils.Types.{Counts, LearningRate}
 
 
 class SVM(stepSize: LearningRate = 0.01) {
-  var weights: SparseNumVector = SparseNumVector.empty
+  var weights: SparseNumVector[Double] = SparseNumVector.empty
 
   /**
     * update the weights of the model and return the weights coordinates by how much they've changed
@@ -13,10 +13,10 @@ class SVM(stepSize: LearningRate = 0.01) {
     * @param gradient
     * @return weights update
     */
-  def updateWeights(gradient: SparseNumVector): SparseNumVector = {
+  def updateWeights(gradient: SparseNumVector[Double]): SparseNumVector[Double] = {
     val weightsUpdate = SparseNumVector(
-      gradient.values.keySet.map { k =>
-        val weightUpdate = -stepSize * gradient.values(k)
+      gradient.tids.map { k =>
+        val weightUpdate = -stepSize * gradient.toMap(k)
         k -> weightUpdate
       }.toMap
     )
@@ -24,33 +24,37 @@ class SVM(stepSize: LearningRate = 0.01) {
     weightsUpdate
   }
 
-  def addWeightsUpdate(weightsUpdate: SparseNumVector): Unit = {
+  def addWeightsUpdate(weightsUpdate: SparseNumVector[Double]): Unit = {
     weights += weightsUpdate
   }
 
-  def loss(features: IndexedSeq[SparseNumVector], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
+  def loss(features: IndexedSeq[SparseNumVector[Double]], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
     require(features.size == labels.size)
+    val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
+
     features.zip(labels)
       .map { case (f, l) =>
-        val hinge = Math.max(0, 1 - (l.id * f.dotProduct(weights)))
-        val reg = 0.5 * lambda * f.mapTo { (k, v) => Math.pow(weights.values.withDefaultValue(0d)(k), 2) / tidCounts(k) }.values.values.sum
+        val hinge = Math.max(0, 1 - (l.id * (f dot weights)))
+        val w = weights.filter(f.tids)
+        val reg = 0.5 * lambda * (w * w * inverseTidCountsVector).firstNorm
         hinge + reg
       }.sum
   }
 }
 
 object SVM {
-  def computeStochasticGradient(feature: SparseNumVector,
+  def computeStochasticGradient(feature: SparseNumVector[Double],
                                 label: Label,
-                                weights: SparseNumVector,
+                                weights: SparseNumVector[Double],
                                 lambda: Double,
-                                tidCounts: Counts): SparseNumVector = {
-    val gradRightPart = SparseNumVector(
-      feature.values.map { case (k, v) => k -> (lambda * weights.values.withDefaultValue(0d)(k) / tidCounts(k)) })
-    if (label.id * feature.dotProduct(weights) >= 1) {
+                                tidCounts: Counts): SparseNumVector[Double] = {
+
+    val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
+    val gradRightPart = weights.filter(feature.tids) * lambda * inverseTidCountsVector
+    if (label.id * (feature dot weights) >= 1) {
       gradRightPart
     } else {
-      gradRightPart.pointWise(feature.mapTo((_, v) => v * (-label.id)), _ + _)
+      gradRightPart + (feature * (-label.id))
     }
   }
 }

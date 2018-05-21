@@ -15,11 +15,11 @@ object Worker extends GrpcServer with GrpcRunnable {
 
   type BlockingStub = WorkerServiceAsyncGrpc.WorkerServiceAsyncBlockingStub
   type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
+  type Worker = (String, Int)
   type Broadcaster = StreamObserver[BroadcastMessage]
 
   private val instance = this
-  var workers: Set[(String, Int)] = Set.empty
-  var broadcasters: Set[Broadcaster] = Set.empty
+  var broadcasters: Map[Worker, Broadcaster] = Map.empty
 
   lazy val myIp: String = InetAddress.getLocalHost.getHostAddress
   var myPort: Int = -1
@@ -44,10 +44,11 @@ object Worker extends GrpcServer with GrpcRunnable {
 
       case port :: oneWorkerIp :: oneWorkerPort :: interval :: Nil => // here we know one active workers
         val stub = createBlockingStubToWorker(oneWorkerIp, oneWorkerPort.toInt)
-        val (weights, ipAndPortList) = hello(stub, myIp, port.toInt)
+        val (weights, ipAndPortList) = hello(stub)
         svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
 
-        workers = ipAndPortList
+        broadcasters = ipAndPortList.map(v => v -> createBroadcaster(v._1, v._2)).toMap
+        start(myIp, port.toInt, interval.toInt)
 
       case _ =>
         argMismatch(s"expecting oneWorkerIp, oneWorkerPort and myPort but get $args")
@@ -62,7 +63,9 @@ object Worker extends GrpcServer with GrpcRunnable {
 
   def start(myIp: String, myPort: Int, broadcastInterval: Int): Unit = {
     this.myPort = myPort
+    load()
     spawnWorkingThread(myIp, myPort, broadcastInterval)
+    println(">> READY <<")
     startOwnServer(myPort)
   }
 
@@ -97,8 +100,8 @@ object Worker extends GrpcServer with GrpcRunnable {
     createStubToWorker(workerIp, workerPort).broadcast(broadcastObserver)
   }
 
-  def hello(oneWorkerStub: BlockingStub, myIp: String, myPort: Int): (SparseNumVector, Set[(String, Int)]) = {
-    val response = oneWorkerStub.hello(WorkerDetail(myIp, myPort))
+  def hello(oneWorkerStub: BlockingStub): (SparseNumVector[Double], Set[(String, Int)]) = {
+    val response = oneWorkerStub.hello(Empty())
     SparseNumVector(response.weights) -> response
       .workersDetails
       .map(a => a.address -> a.port.toInt)
@@ -111,69 +114,65 @@ object Worker extends GrpcServer with GrpcRunnable {
   }
 
   def spawnWorkingThread(myIp: String, myPort: Int, broadcastInterval: Int): Future[Unit] = {
-    load()
-    val workerDetail = WorkerDetail(myIp, myPort)
+    val myWorkerDetail = WorkerDetail(myIp, myPort)
 
     Future {
       while (true) {
+        val random_did = samples.next
+        val newGradient = SVM.computeStochasticGradient(
+          feature = Dataset.getFeature(random_did),
+          label = Dataset.getLabel(random_did),
+          weights = svm.weights,
+          lambda = lambda,
+          tidCounts = Dataset.tidCounts
+        )
+        val weightsUpdate = svm.updateWeights(newGradient)
+        weightsHandler.addWeightsUpdate(weightsUpdate)
+        val counts = weightsHandler.counts
 
-        instance.synchronized {
-          while (broadcasters.isEmpty) instance.wait()
-          val random_did = samples.next
-          val newGradient = SVM.computeStochasticGradient(
-            feature = Dataset.getFeature(random_did),
-            label = Dataset.getLabel(random_did),
-            weights = svm.weights,
-            lambda = lambda,
-            tidCounts = Dataset.tidCounts
+        // here we broadcast the weights update
+        if (counts % broadcastInterval == 0) {
+          val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeightsUpdate()
+          val msg = BroadcastMessage(
+            weigthsUpdateToBroadcast.toMap,
+            Some(myWorkerDetail)
           )
-          val weightsUpdate = svm.updateWeights(newGradient)
-          weightsHandler.addWeightsUpdate(weightsUpdate)
-          val counts = weightsHandler.getCounts()
-
-          // here we broadcast the weights update
-          if (counts % broadcastInterval == 0) {
-            val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeighsUpdate()
-            val msg = BroadcastMessage(
-              weigthsUpdateToBroadcast.values,
-              Some(workerDetail)
-            )
-            broadcasters.foreach { broadcaster =>
-              broadcaster.onNext(msg)
-              println(s"Update sent to $workerDetail")
-            }
-
-            // compute loss
-            /*
-            println(s"[CPT]: computing done since start = $counts)")
-            val loss = svm.loss(
-              someFeatures,
-              someLabels,
-              lambda,
-              Dataset.tidCounts
-            )
-            val duration = System.currentTimeMillis() - time
-            time = System.currentTimeMillis()
-            println(s"[UPT][$counts][$duration]: loss = $loss")
-            */
+          if (broadcasters.nonEmpty){
+            println(s"[SEND] Feel like sharing some computations, here you go guys (${broadcasters.keySet.mkString("[", ";", "]")})")
           }
+          broadcasters.foreach { broadcaster =>
+            broadcaster._2.onNext(msg)
+          }
+
+          // compute loss
+
+          //println(s"[CPT]: computing done since start = $counts)")
+          val loss = svm.loss(
+            someFeatures,
+            someLabels,
+            lambda,
+            Dataset.tidCounts
+          )
+          val duration = System.currentTimeMillis() - time
+          time = System.currentTimeMillis()
+          println(s"[UPT][$counts][$duration]: loss = $loss")
+
         }
       }
+
     }(ExecutionContext.global)
   }
 
   object WorkerServerService extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
 
 
-    override def hello(request: WorkerDetail): Future[HelloResponse] = {
-      val workersToSend = workers
+    override def hello(request: Empty): Future[HelloResponse] = {
+      val workersToSend = broadcasters.keySet + (myIp -> myPort)
       val weights = svm.weights
-
-      workers += request.address -> request.port.toInt
 
       Future.successful(HelloResponse(
         workersToSend.map { case (ip, port) => WorkerDetail(ip, port) }.toSeq,
-        weights.values
+        weights.toMap
       ))
     }
 
@@ -184,11 +183,14 @@ object Worker extends GrpcServer with GrpcRunnable {
         override def onCompleted(): Unit = println("ON_COMPLETED")
 
         override def onNext(msg: BroadcastMessage): Unit = {
-          println(s">> [B]: Broadcast from ${msg.workerDetail} received")
-
           val detail = msg.workerDetail.get
-          workers += detail.address -> detail.port.toInt
-          broadcasters += createBroadcaster(detail.address, detail.port.toInt)
+          val worker = detail.address -> detail.port.toInt
+
+          println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
+          if (!broadcasters.contains(worker)){
+            println(s"[NEW]: a new worker just arrived, welcome to the GANG $worker")
+            addBroadcaster(worker._1, worker._2)
+          }
 
           val receivedWeights = SparseNumVector(msg.weightsUpdate)
           svm.addWeightsUpdate(receivedWeights)
@@ -196,6 +198,9 @@ object Worker extends GrpcServer with GrpcRunnable {
       }
     }
 
+    def addBroadcaster(ip: String, port: Int): Unit = {
+      broadcasters += (ip -> port) -> createBroadcaster(ip, port)
+    }
   }
 
 }

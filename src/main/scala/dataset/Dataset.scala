@@ -17,21 +17,19 @@ object Dataset {
     //(0 until 4).map(i => dataPath + filename(i)).toList
   }
 
-  lazy val didSet: Set[Int] = features.keySet
-  lazy val tidCounts: Counts = {
-    println("...loading tidCounts...")
-    features.flatMap(_._2.values.keys)
+  lazy val didSet: Set[Int] = load("didSet"){features.keySet}
+  lazy val tidCounts: Counts = load("tidCounts") {
+    features.flatMap(_._2.tids.toSeq)
       .groupBy(tid => tid)
       .mapValues(_.size)
   }
-  lazy val labels: Map[Int, Label] = {
-    println("...loading labels...")
+  lazy val labels: Map[Int, Label] = load("labels") {
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"
     Source.fromFile(labelPath)
       .getLines
       .map { line =>
-        line.split(" ").toList.filterNot(_.isEmpty).take(2) match {
+        line.split(" ").filterNot(_.isEmpty).take(2).toList match {
           case label :: id :: Nil => id.toInt -> (label == labelOfInterest)
           case _ => throw new IllegalStateException("label file is corrupted")
         }
@@ -40,8 +38,8 @@ object Dataset {
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-  lazy val features: Map[Int, SparseNumVector] = {
-    println("...loading features...")
+
+  lazy val features: Map[Int, SparseNumVector[Double]] = load("features") {
     filePaths
       .flatMap { path =>
         Source.fromFile(path)
@@ -50,15 +48,16 @@ object Dataset {
       }.toMap
   }
 
-  def load(): Unit = {
+  def fullLoad(): Unit = load("dataset") {
     labels
     features
     tidCounts
+    didSet
   }
 
-  def getSubset(n: Int): IndexedSeq[(SparseNumVector, Label)] = {
-    val someDids: IndexedSeq[TID] = didSet.take(500).toIndexedSeq
-    val someFeatures: IndexedSeq[SparseNumVector] = someDids.map(features)
+  def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
+    val someDids: IndexedSeq[TID] = didSet.take(n).toIndexedSeq
+    val someFeatures: IndexedSeq[SparseNumVector[Double]] = someDids.map(features)
     val someLabels: IndexedSeq[Label] = someDids.map(labels)
     someFeatures zip someLabels
   }
@@ -78,7 +77,7 @@ object Dataset {
     }
   }
 
-  def getFeature(did: Int): SparseNumVector = {
+  def getFeature(did: Int): SparseNumVector[Double] = {
     features(did)
   }
 
@@ -86,13 +85,13 @@ object Dataset {
     labels(index)
   }
 
-  private def parseLine(line: String): (Int, SparseNumVector) = {
+  private def parseLine(line: String): (Int, SparseNumVector[Double]) = {
     val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
     val did: Int = lineSplitted.head.toInt
     did -> pairsToVector(lineSplitted.tail)
   }
 
-  private def pairsToVector(lineSplitted: List[String]): SparseNumVector = {
+  private def pairsToVector(lineSplitted: List[String]): SparseNumVector[Double] = {
     SparseNumVector(
       lineSplitted.map(e => {
         val pair: List[String] = e.split(":").map(_.trim).toList
@@ -101,5 +100,12 @@ object Dataset {
   }
 
   private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
+
+  private def load[T](name: String)(toLoad: => T): T = {
+    println(s"...loading $name...")
+    val toReturn = toLoad
+    println(s"$name loaded.")
+    toReturn
+  }
 
 }

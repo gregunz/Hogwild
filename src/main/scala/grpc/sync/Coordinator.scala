@@ -36,7 +36,7 @@ object Coordinator extends GrpcServer with GrpcRunnable {
   }
 
   def load(): Unit = {
-    Dataset.load()
+    Dataset.fullLoad()
     samples
   }
 
@@ -48,12 +48,12 @@ object Coordinator extends GrpcServer with GrpcRunnable {
       new StreamObserver[WorkerRequest] {
         def onError(t: Throwable): Unit = {
           println(s"ON_ERROR: $t")
-          workersAggregator.removeWorker()
+          safeRemoveWorker()
         }
 
         def onCompleted(): Unit = {
           println("ON_COMPLETED")
-          workersAggregator.removeWorker()
+          safeRemoveWorker()
         }
 
         def onNext(req: WorkerRequest): Unit = {
@@ -87,11 +87,21 @@ object Coordinator extends GrpcServer with GrpcRunnable {
         }
       }
 
-    private def spawnWorkerResponse(weights: SparseNumVector): WorkerResponse = {
+    private def safeRemoveWorker(): Unit = {
+      instance.synchronized{
+        workersAggregator.removeWorker()
+        if(!workersAggregator.isWaitingOnSomeWorker){
+          svm.updateWeights(workersAggregator.getMeanGradient)
+          instance.notifyAll()
+        }
+      }
+    }
+
+    private def spawnWorkerResponse(weights: SparseNumVector[Double]): WorkerResponse = {
       val did = samples.next
       WorkerResponse(
         did = did,
-        weights = Dataset.getFeature(did).mapTo { case (k, _) => weights.values.withDefaultValue(0d)(k) }.values
+        weights = weights.filter(Dataset.getFeature(did).tids).toMap
       )
     }
   }

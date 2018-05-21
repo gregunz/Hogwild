@@ -13,25 +13,26 @@ object Worker extends GrpcRunnable {
 
   val lambda = 0.1
   var count = 0
-  var someGradient: Option[SparseNumVector] = Some(SparseNumVector.empty)
+  var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(args: Seq[String]): Unit = {
     args match {
-      case port :: _ =>
-        val client = createClient(port.toInt)
+      case ip :: port :: _ =>
+        Dataset.fullLoad()
+        val client = createClient(ip, port.toInt)
         val responseObserver = createObserver
         val requestObserver = client.updateWeights(responseObserver)
 
-        println(">> SPAWNED <<")
+        println(">> READY <<")
         startComputingLoop(requestObserver)
 
       case _ => argMismatch(s"expecting port but get $args")
     }
   }
 
-  def createClient(port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
+  def createClient(ip: String, port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
     val channel = ManagedChannelBuilder
-      .forAddress("localhost", port) // host and port of service
+      .forAddress(ip, port) // host and port of service
       .usePlaintext(true) // don't use encryption (for demo purposes)
       .build
 
@@ -75,7 +76,7 @@ object Worker extends GrpcRunnable {
     while (true) {
       instance.synchronized {
         while (someGradient.isEmpty) instance.wait()
-        requestObserver.onNext(WorkerRequest(someGradient.get.values))
+        requestObserver.onNext(WorkerRequest(someGradient.get.toMap))
         someGradient = None
       }
     }
