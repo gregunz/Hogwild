@@ -26,8 +26,8 @@ RUN \
   sbt sbtVersion
 
 # Define working directory
-WORKDIR /Hogwild
-ADD . /Hogwild
+WORKDIR /hogwild
+ADD . /hogwild
 
 #CMD sbt
 #CMD /bin/bash start_worker.sh $mode $status $coord_ip

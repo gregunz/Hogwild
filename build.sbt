@@ -4,6 +4,9 @@ version := "0.1"
 
 scalaVersion := "2.12.6"
 
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value
 )
