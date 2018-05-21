@@ -6,6 +6,7 @@ scalaVersion := "2.12.6"
 
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)
+enablePlugins(AshScriptPlugin)
 
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value
@@ -20,3 +21,5 @@ libraryDependencies ++= Seq(
 )
 
 mainClass in Compile := Some("launcher.Launcher")
+
+dockerBaseImage := "openjdk:jre-alpine"

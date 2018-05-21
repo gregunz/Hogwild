@@ -18,7 +18,6 @@ object Worker extends GrpcServer with GrpcRunnable {
   type Worker = (String, Int)
   type Broadcaster = StreamObserver[BroadcastMessage]
 
-  private val instance = this
   var broadcasters: Map[Worker, Broadcaster] = Map.empty
 
   lazy val myIp: String = InetAddress.getLocalHost.getHostAddress
@@ -64,9 +63,8 @@ object Worker extends GrpcServer with GrpcRunnable {
   def start(myIp: String, myPort: Int, broadcastInterval: Int): Unit = {
     this.myPort = myPort
     load()
-    spawnWorkingThread(myIp, myPort, broadcastInterval)
-    println(">> READY <<")
-    startOwnServer(myPort)
+    startWorkingThread(myIp, myPort, broadcastInterval)
+    startServer(myPort)
   }
 
   def createBlockingStubToWorker(workerIp: String, workerPort: Int): BlockingStub = {
@@ -108,14 +106,16 @@ object Worker extends GrpcServer with GrpcRunnable {
       .toSet
   }
 
-  def startOwnServer(myPort: Int): Unit = {
+  def startServer(myPort: Int): Unit = {
+    println(">> Server starting..")
     val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService, ExecutionContext.global)
+    println(">> Ready!")
     runServer(ssd, myPort)
   }
 
-  def spawnWorkingThread(myIp: String, myPort: Int, broadcastInterval: Int): Future[Unit] = {
+  def startWorkingThread(myIp: String, myPort: Int, broadcastInterval: Int): Future[Unit] = {
     val myWorkerDetail = WorkerDetail(myIp, myPort)
-
+    println(">> Computations thread set up..")
     Future {
       while (true) {
         val random_did = samples.next
