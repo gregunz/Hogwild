@@ -20,7 +20,6 @@ object Launcher {
 
       case _ =>
         println(s"arguments invalid: $arguments")
-        sys.exit(1)
     }
   }
 

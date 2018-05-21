@@ -18,3 +18,5 @@ libraryDependencies ++= Seq(
   "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
   "io.monix" %% "monix" % "2.3.0"
 )
+
+mainClass in Compile := Some("launcher.Launcher")
