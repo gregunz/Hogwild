@@ -13,6 +13,7 @@
        containers:
          - name: h2
            image: hogwild
+           imagePullPolicy: Never
            ports:
              - containerPort: 80
            env:
