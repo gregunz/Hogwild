@@ -8,16 +8,11 @@ import utils.Types.{Counts, TID}
 import scala.io.Source
 import scala.util.Random
 
-object Dataset {
+case class Dataset(dataPath: String, onlySamples: Boolean) {
 
-  private final val dataPath = "/data/datasets/"
-  private final val filePaths: List[String] = {
-    List(dataPath + "samples.dat")
-    // de-comment this to load the whole data in memory
-    //(0 until 4).map(i => dataPath + filename(i)).toList
+  lazy val didSet: Set[Int] = load("didSet") {
+    features.keySet
   }
-
-  lazy val didSet: Set[Int] = load("didSet"){features.keySet}
   lazy val tidCounts: Counts = load("tidCounts") {
     features.flatMap(_._2.tids.toSeq)
       .groupBy(tid => tid)
@@ -38,7 +33,6 @@ object Dataset {
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-
   lazy val features: Map[Int, SparseNumVector[Double]] = load("features") {
     filePaths
       .flatMap { path =>
@@ -48,11 +42,29 @@ object Dataset {
       }.toMap
   }
 
-  def fullLoad(): Unit = load("dataset") {
+  def filePaths: List[String] = {
+    if (onlySamples) {
+      List(dataPath + "samples.dat")
+    } else {
+      (0 until 4).map(i => dataPath + filename(i)).toList
+    }
+  }
+
+  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
+
+  def fullLoad(): Dataset = load("dataset") {
     labels
     features
     tidCounts
     didSet
+    this
+  }
+
+  private def load[T](name: String)(toLoad: => T): T = {
+    println(s"...loading $name...")
+    val toReturn = toLoad
+    println(s"$name loaded.")
+    toReturn
   }
 
   def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
@@ -97,15 +109,6 @@ object Dataset {
         val pair: List[String] = e.split(":").map(_.trim).toList
         pair.head.toInt -> pair.tail.head.toDouble
       }).toMap)
-  }
-
-  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
-
-  private def load[T](name: String)(toLoad: => T): T = {
-    println(s"...loading $name...")
-    val toReturn = toLoad
-    println(s"$name loaded.")
-    toReturn
   }
 
 }

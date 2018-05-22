@@ -5,7 +5,7 @@ import java.net._
 import dataset.Dataset
 import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
-import io.grpc.{Context, ManagedChannel, ManagedChannelBuilder}
+import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import model._
 import utils.AsyncWorkerMode
 
@@ -19,13 +19,10 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   private val broadcastersHandler = BroadcastersHandler
 
-  /* TO COMPUTE & PRINT LOSSES */
-  lazy val (someFeatures, someLabels) = Dataset.getSubset(subsetSize).unzip
-  val subsetSize = 500
-  var time: Long = System.currentTimeMillis()
 
   def run(mode: AsyncWorkerMode): Unit = {
-    load()
+
+    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
     val svm = new SVM()
     val myIp: String = InetAddress.getLocalHost.getHostAddress
     val myPort = mode.port
@@ -33,27 +30,19 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
     startServer(myIp, myPort, svm)
 
-    if (mode.worker.isEmpty) {
-      startComputations(myIp, myPort, svm, weightsUpdateHandler)
-    } else {
+    if (mode.worker.isDefined) {
       val worker = mode.worker.get
       val channel = createChannel(worker)
       val (weights, workers) = hello(myIp, myPort, worker, channel)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
 
-      broadcastersHandler.add(worker, channel)
-      broadcastersHandler.add(workers.filterNot(_ == worker))
-      startComputations(myIp, myPort, svm, weightsUpdateHandler)
+      broadcastersHandler.addSomeActive(workers)
     }
+
+    startComputations(myIp, myPort, dataset, svm, weightsUpdateHandler)
   }
 
-  def load(): Unit = {
-    Dataset.fullLoad()
-    someFeatures
-    someLabels
-  }
-
-  def createChannel(worker: RemoteWorker):ManagedChannel  = {
+  def createChannel(worker: RemoteWorker): ManagedChannel = {
     ManagedChannelBuilder
       .forAddress(worker.ip, worker.port)
       .usePlaintext(true)
@@ -71,23 +60,29 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   }
 
   def startServer(myIp: String, myPort: Int, svm: SVM): Unit = {
-      val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService(myIp, myPort, svm), ExecutionContext.global)
-      println(">> Server starting..")
-      runServer(ssd, myPort)
+    val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService(myIp, myPort, svm), ExecutionContext.global)
+    println(">> Server starting..")
+    runServer(ssd, myPort)
   }
 
-  def startComputations(myIp: String, myPort: Int, svm: SVM, weightsHandler: WeightsUpdateHandler): Unit = {
+  def startComputations(myIp: String, myPort: Int, dataset: Dataset, svm: SVM, weightsHandler: WeightsUpdateHandler): Unit = {
     val myWorkerDetail = WorkerDetail(myIp, myPort)
-    val samples: Iterator[Int] = Dataset.samples().toIterator
+    val samples: Iterator[Int] = dataset.samples().toIterator
+
+    /* TO COMPUTE & PRINT LOSSES */
+    val subsetSize = 500
+    lazy val (someFeatures, someLabels) = dataset.getSubset(subsetSize).unzip
+    var time: Long = System.currentTimeMillis()
+
 
     println(">> Computations thread starting..")
 
     while (true) {
       val random_did = samples.next
       val newGradient = svm.computeStochasticGradient(
-        feature = Dataset.getFeature(random_did),
-        label = Dataset.getLabel(random_did),
-        tidCounts = Dataset.tidCounts
+        feature = dataset.getFeature(random_did),
+        label = dataset.getLabel(random_did),
+        tidCounts = dataset.tidCounts
       )
       val weightsUpdate = svm.updateWeights(newGradient)
       weightsHandler.addWeightsUpdate(weightsUpdate)
@@ -99,18 +94,14 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           weigthsUpdateToBroadcast.toMap,
           Some(myWorkerDetail)
         )
-        if (broadcastersHandler.hasBroadcaster) {
-          println(s"[SEND] feel like sharing some computations, here you go guys " +
-            s"(${broadcastersHandler.workers.mkString("[", ";", "]")})")
 
-          broadcastersHandler.broadcast(msg)
-        }
+        broadcastersHandler.broadcast(msg)
 
         // compute loss
         val loss = svm.loss(
           someFeatures,
           someLabels,
-          Dataset.tidCounts
+          dataset.tidCounts
         )
         val duration = System.currentTimeMillis() - time
         time = System.currentTimeMillis()
@@ -125,10 +116,10 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   case class WorkerServerService(myIp: String, myPort: Int, svm: SVM) extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
 
     override def hello(request: WorkerDetail): Future[HelloResponse] = {
-      val workersToSend = broadcastersHandler.workers + RemoteWorker(myIp, myPort)
+      val workersToSend = broadcastersHandler.activeWorkers + RemoteWorker(myIp, myPort)
       val weights = svm.weights
 
-      broadcastersHandler.add(RemoteWorker(request.address, request.port.toInt))
+      broadcastersHandler.addToWaitingList(RemoteWorker(request.address, request.port.toInt))
 
       Future.successful(HelloResponse(
         workersToSend.map { w => WorkerDetail(w.ip, w.port) }.toSeq,

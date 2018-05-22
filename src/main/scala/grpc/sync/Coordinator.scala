@@ -4,38 +4,34 @@ import dataset.Dataset
 import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
 import model._
-import utils.{SyncCoordinatorMode}
+import utils.SyncCoordinatorMode
 
 import scala.concurrent.ExecutionContext
 
 object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
-  private lazy val samples: Iterator[Int] = Dataset.samples().toIterator
-
-  private val svm = new SVM()
-  private val workersAggregator = WorkersAggregator
-
-  /* TO COMPUTE & PRINT LOSSES */
-  val subsetSize = 500
-  val (someFeatures, someLabels) = Dataset.getSubset(subsetSize).unzip
-  var i = 0
-  var time: Long = System.currentTimeMillis()
 
   def run(mode: SyncCoordinatorMode): Unit = {
-      load()
-      val ssd = WorkerServiceSyncGrpc.bindService(WorkerService, ExecutionContext.global)
-      println(">> READY <<")
-      runServer(ssd, mode.port).awaitTermination()
+    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
+    val svm = new SVM()
+    val workersAggregator = WorkersAggregator
+
+    val service = WorkerService(dataset, svm, workersAggregator)
+    val ssd = WorkerServiceSyncGrpc.bindService(service, ExecutionContext.global)
+    println(">> READY <<")
+    runServer(ssd, mode.port).awaitTermination()
   }
 
-  def load(): Unit = {
-    Dataset.fullLoad()
-    samples
-  }
 
-  object WorkerService extends WorkerServiceSyncGrpc.WorkerServiceSync {
+  case class WorkerService(dataset: Dataset, svm: SVM, workersAggregator: WorkersAggregator.type) extends WorkerServiceSyncGrpc.WorkerServiceSync {
 
+    val samples: Iterator[Int] = dataset.samples().toIterator
+
+    val subsetSize = 500
+    val (someFeatures, someLabels) = dataset.getSubset(subsetSize).unzip
     private val instance = this
+    var i = 0
+    var time: Long = System.currentTimeMillis()
 
     override def updateWeights(responseObserver: StreamObserver[WorkerResponse]): StreamObserver[WorkerRequest] =
       new StreamObserver[WorkerRequest] {
@@ -61,7 +57,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                   val loss = svm.loss(
                     someFeatures,
                     someLabels,
-                    Dataset.tidCounts
+                    dataset.tidCounts
                   )
                   val duration = System.currentTimeMillis() - time
                   time = System.currentTimeMillis()
@@ -80,9 +76,9 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
       }
 
     private def safeRemoveWorker(): Unit = {
-      instance.synchronized{
+      instance.synchronized {
         workersAggregator.removeWorker()
-        if(!workersAggregator.isWaitingOnSomeWorker){
+        if (!workersAggregator.isWaitingOnSomeWorker) {
           svm.updateWeights(workersAggregator.getMeanGradient)
           instance.notifyAll()
         }
@@ -93,7 +89,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
       val did = samples.next
       WorkerResponse(
         did = did,
-        weights = weights.filter(Dataset.getFeature(did).tids).toMap
+        weights = weights.filter(dataset.getFeature(did).tids).toMap
       )
     }
   }

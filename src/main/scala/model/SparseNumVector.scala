@@ -9,28 +9,8 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   private[this] val zero = implicitly[Numeric[T]].zero
   vector = vector.withDefaultValue(zero) // wish to set it as val and force this !
 
-  def toMap: Map[TID, T] = vector
-  def tids: Set[TID] = this.toMap.keySet
-
-  def pointWise(
-                 that: SparseNumVector[T],
-                 op: (T, T) => T,
-                 keysOp: (Set[TID], Set[TID]) => Set[TID] = (a, b) => a.union(b)
-               ): SparseNumVector[T] = {
-    val keys = keysOp(this.tids, that.tids)
-    SparseNumVector(keys.map(k => k -> op(this.toMap(k), that.toMap(k))).toMap)
-  }
-
   def filter(tids: Set[TID]): SparseNumVector[T] = {
-    SparseNumVector(this.toMap.filter{ case(k, v) => tids(k)})
-  }
-
-  def map(op: (TID, T) => T): SparseNumVector[T] = {
-    SparseNumVector(this.toMap.map { case (k, v) => k -> op(k, v) })
-  }
-
-  def mapValues(op: T => T): SparseNumVector[T] = {
-    this.map((_, v) => op(v))
+    SparseNumVector(this.toMap.filter { case (k, v) => tids(k) })
   }
 
   def +(other: SparseNumVector[T]): SparseNumVector[T] = {
@@ -49,9 +29,15 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
     this.mapValues(_ - value)
   }
 
-  def *(other: SparseNumVector[T]): SparseNumVector[T] = {
-    this.pointWise(other, _ * _, (a, b) => a.intersect(b))
+  def mapValues(op: T => T): SparseNumVector[T] = {
+    this.map((_, v) => op(v))
   }
+
+  def map(op: (TID, T) => T): SparseNumVector[T] = {
+    SparseNumVector(this.toMap.map { case (k, v) => k -> op(k, v) })
+  }
+
+  def toMap: Map[TID, T] = vector
 
   def *(value: T): SparseNumVector[T] = {
     this.mapValues(_ * value)
@@ -60,6 +46,21 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   def dot(that: SparseNumVector[T]): T = {
     (this * that).firstNorm
   }
+
+  def *(other: SparseNumVector[T]): SparseNumVector[T] = {
+    this.pointWise(other, _ * _, (a, b) => a.intersect(b))
+  }
+
+  def pointWise(
+                 that: SparseNumVector[T],
+                 op: (T, T) => T,
+                 keysOp: (Set[TID], Set[TID]) => Set[TID] = (a, b) => a.union(b)
+               ): SparseNumVector[T] = {
+    val keys = keysOp(this.tids, that.tids)
+    SparseNumVector(keys.map(k => k -> op(this.toMap(k), that.toMap(k))).toMap)
+  }
+
+  def tids: Set[TID] = this.toMap.keySet
 
   def firstNorm: T = this.toMap.values.foldLeft(zero)(_ + _)
 }

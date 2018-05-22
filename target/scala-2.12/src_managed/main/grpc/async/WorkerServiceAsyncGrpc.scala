@@ -1,11 +1,11 @@
 package grpc.async
 
 object WorkerServiceAsyncGrpc {
-  val METHOD_HELLO: _root_.io.grpc.MethodDescriptor[grpc.async.Empty, grpc.async.HelloResponse] =
+  val METHOD_HELLO: _root_.io.grpc.MethodDescriptor[grpc.async.WorkerDetail, grpc.async.HelloResponse] =
     _root_.io.grpc.MethodDescriptor.newBuilder()
       .setType(_root_.io.grpc.MethodDescriptor.MethodType.UNARY)
       .setFullMethodName(_root_.io.grpc.MethodDescriptor.generateFullMethodName("grpc.WorkerServiceAsync", "Hello"))
-      .setRequestMarshaller(new scalapb.grpc.Marshaller(grpc.async.Empty))
+      .setRequestMarshaller(new scalapb.grpc.Marshaller(grpc.async.WorkerDetail))
       .setResponseMarshaller(new scalapb.grpc.Marshaller(grpc.async.HelloResponse))
       .build()
   
@@ -26,7 +26,7 @@ object WorkerServiceAsyncGrpc {
   
   trait WorkerServiceAsync extends _root_.scalapb.grpc.AbstractService {
     override def serviceCompanion = WorkerServiceAsync
-    def hello(request: grpc.async.Empty): scala.concurrent.Future[grpc.async.HelloResponse]
+    def hello(request: grpc.async.WorkerDetail): scala.concurrent.Future[grpc.async.HelloResponse]
     def broadcast(responseObserver: _root_.io.grpc.stub.StreamObserver[grpc.async.Empty]): _root_.io.grpc.stub.StreamObserver[grpc.async.BroadcastMessage]
   }
   
@@ -37,11 +37,11 @@ object WorkerServiceAsyncGrpc {
   
   trait WorkerServiceAsyncBlockingClient {
     def serviceCompanion = WorkerServiceAsync
-    def hello(request: grpc.async.Empty): grpc.async.HelloResponse
+    def hello(request: grpc.async.WorkerDetail): grpc.async.HelloResponse
   }
   
   class WorkerServiceAsyncBlockingStub(channel: _root_.io.grpc.Channel, options: _root_.io.grpc.CallOptions = _root_.io.grpc.CallOptions.DEFAULT) extends _root_.io.grpc.stub.AbstractStub[WorkerServiceAsyncBlockingStub](channel, options) with WorkerServiceAsyncBlockingClient {
-    override def hello(request: grpc.async.Empty): grpc.async.HelloResponse = {
+    override def hello(request: grpc.async.WorkerDetail): grpc.async.HelloResponse = {
       _root_.io.grpc.stub.ClientCalls.blockingUnaryCall(channel.newCall(METHOD_HELLO, options), request)
     }
     
@@ -49,7 +49,7 @@ object WorkerServiceAsyncGrpc {
   }
   
   class WorkerServiceAsyncStub(channel: _root_.io.grpc.Channel, options: _root_.io.grpc.CallOptions = _root_.io.grpc.CallOptions.DEFAULT) extends _root_.io.grpc.stub.AbstractStub[WorkerServiceAsyncStub](channel, options) with WorkerServiceAsync {
-    override def hello(request: grpc.async.Empty): scala.concurrent.Future[grpc.async.HelloResponse] = {
+    override def hello(request: grpc.async.WorkerDetail): scala.concurrent.Future[grpc.async.HelloResponse] = {
       scalapb.grpc.Grpc.guavaFuture2ScalaFuture(_root_.io.grpc.stub.ClientCalls.futureUnaryCall(channel.newCall(METHOD_HELLO, options), request))
     }
     
@@ -64,8 +64,8 @@ object WorkerServiceAsyncGrpc {
     _root_.io.grpc.ServerServiceDefinition.builder(SERVICE)
     .addMethod(
       METHOD_HELLO,
-      _root_.io.grpc.stub.ServerCalls.asyncUnaryCall(new _root_.io.grpc.stub.ServerCalls.UnaryMethod[grpc.async.Empty, grpc.async.HelloResponse] {
-        override def invoke(request: grpc.async.Empty, observer: _root_.io.grpc.stub.StreamObserver[grpc.async.HelloResponse]): Unit =
+      _root_.io.grpc.stub.ServerCalls.asyncUnaryCall(new _root_.io.grpc.stub.ServerCalls.UnaryMethod[grpc.async.WorkerDetail, grpc.async.HelloResponse] {
+        override def invoke(request: grpc.async.WorkerDetail, observer: _root_.io.grpc.stub.StreamObserver[grpc.async.HelloResponse]): Unit =
           serviceImpl.hello(request).onComplete(scalapb.grpc.Grpc.completeObserver(observer))(
             executionContext)
       }))
