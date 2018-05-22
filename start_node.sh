@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#This will be set elsewhere later on
-interval=500
-#This will be set elsewhere later on
-port=80
+interval=$INTERVAL
+
+port=$PORT_TO_OPEN
 
 
 n=`echo $1 | awk -F- '{print $NF}'`
@@ -11,16 +10,14 @@ last_number=`echo $2 | cut -d . -f 4`
 difference=$((last_number-n))
 first_ip=`echo $2 | cut -d"." -f1-3`.$difference
 
+ip_port=${first_ip}:${port}
+
 if [ "$n" == "0" ];then
-  if [ "$3" == "async" ];then
-    sbt "run async ${port} ${interval}"
-  else
-    sbt "run sync ${port} ${interval}"
-  fi
-else
-  if [ "$3" == "async" ];then
-    sbt "run async ${port} ${interval} ${first_ip}:${port}"
-  else
-    sbt "run sync ${port} ${interval} ${first_ip}:${port}"
-  fi
+  ip_port=""
 fi
+
+sbt "run mode=${3}
+port=${port}
+interval=${interval}
+worker-ip:worker-port=${ip_port}
+data-path=${DATASET_PATH}"
