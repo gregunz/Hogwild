@@ -4,7 +4,7 @@
  metadata:
    name: hogwildnode
  spec:
-   replicas: 3
+   replicas: 2
    template:
      metadata:
        labels:
@@ -12,8 +12,7 @@
      spec:
        containers:
          - name: h2
-           image: hogwild
-           imagePullPolicy: Never
+           image: gregunz/hogwild
            ports:
              - containerPort: 80
            env:
@@ -39,3 +38,10 @@
                    fieldPath: spec.serviceAccountName
              - name: MODE
                value: "async"
+           resources:
+             requests:
+               memory: "64Mi"
+               cpu: "250m"
+             limits:
+               memory: "128Mi"
+               cpu: "500m"
