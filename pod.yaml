@@ -10,6 +10,10 @@
        labels:
          app: hog
      spec:
+       volumes:
+         - name: cs449g2-scratch
+           persistentVolumeClaim:
+             claimName: cs449g2-scratch
        containers:
          - name: h2
            image: gregunz/hogwild
@@ -45,3 +49,6 @@
              limits:
                memory: "128Mi"
                cpu: "500m"
+           volumeMounts:
+             - mountPath: "/datasets"
+               name: cs449g2-scratch
