@@ -15,12 +15,12 @@ if [ "$n" == "0" ];then
   if [ "$3" == "async" ];then
     sbt "run async ${port} ${interval}"
   else
-    sbt "run sync coord ${port}"
+    sbt "run sync ${port} ${interval}"
   fi
 else
   if [ "$3" == "async" ];then
-    sbt "run async ${port} ${first_ip} ${port} ${interval}"
+    sbt "run async ${port} ${interval} ${first_ip}:${port}"
   else
-    sbt "run sync worker ${first_ip} ${port}"
+    sbt "run sync ${port} ${interval} ${first_ip}:${port}"
   fi
 fi
