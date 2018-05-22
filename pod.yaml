@@ -16,7 +16,7 @@
              claimName: cs449g2-scratch
        containers:
          - name: hogwild
-           image: gregunz/hogwild
+           image: gregunz/hogwild:latest
            ports:
              - containerPort: 80
            env:
@@ -36,10 +36,10 @@
                value: "async"
            resources:
              requests:
-               memory: "512Mi"
+               memory: "1022Mi"
                cpu: "500m"
              limits:
-               memory: "1024Mi"
+               memory: "3072Mi"
                cpu: "1000m"
            volumeMounts:
              - mountPath: "/data"
