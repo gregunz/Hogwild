@@ -10,7 +10,7 @@ import scala.util.Random
 
 object Dataset {
 
-  private final val dataPath = "data/"
+  private final val dataPath = "/data/datasets/"
   private final val filePaths: List[String] = {
     List(dataPath + "samples.dat")
     // de-comment this to load the whole data in memory

@@ -4,26 +4,22 @@
  metadata:
    name: hogwildnode
  spec:
-   replicas: 2
+   replicas: 4
    template:
      metadata:
        labels:
          app: hog
      spec:
        volumes:
-         - name: cs449g2-scratch
+         - name: dataset
            persistentVolumeClaim:
              claimName: cs449g2-scratch
        containers:
-         - name: h2
+         - name: hogwild
            image: gregunz/hogwild
            ports:
              - containerPort: 80
            env:
-             - name: MY_NODE_NAME
-               valueFrom:
-                 fieldRef:
-                   fieldPath: spec.nodeName
              - name: MY_POD_NAME
                valueFrom:
                  fieldRef:
@@ -36,19 +32,15 @@
                valueFrom:
                  fieldRef:
                    fieldPath: status.podIP
-             - name: MY_POD_SERVICE_ACCOUNT
-               valueFrom:
-                 fieldRef:
-                   fieldPath: spec.serviceAccountName
              - name: MODE
                value: "async"
            resources:
              requests:
-               memory: "64Mi"
-               cpu: "250m"
-             limits:
-               memory: "128Mi"
+               memory: "512Mi"
                cpu: "500m"
+             limits:
+               memory: "1024Mi"
+               cpu: "1000m"
            volumeMounts:
-             - mountPath: "/datasets"
-               name: cs449g2-scratch
+             - mountPath: "/data"
+               name: dataset
