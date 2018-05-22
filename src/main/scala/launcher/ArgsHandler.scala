@@ -7,6 +7,8 @@ object ArgsHandler {
   val defaults: Map[String, String] = Map(
     "data-path" -> "data/",
     "samples" -> "0",
+    "lambda" -> "0.1",
+    "step-size" -> "0.1",
     "mode" -> "async",
     "port" -> "50500",
     "interval" -> "500",

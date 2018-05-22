@@ -73,7 +73,9 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
     toReturn
   }
 
-  def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
+  lazy val validationSet: IndexedSeq[(SparseNumVector[Double], Label)] = getSubset(500)
+
+  private def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
     val someDids: IndexedSeq[TID] = didSet.take(n).toIndexedSeq
     val someFeatures: IndexedSeq[SparseNumVector[Double]] = someDids.map(features)
     val someLabels: IndexedSeq[Label] = someDids.map(labels)

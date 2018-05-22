@@ -3,7 +3,7 @@ package grpc.async
 import java.net._
 
 import dataset.Dataset
-import grpc.{GrpcRunnable, GrpcServer}
+import grpc.{GrpcRunnable, GrpcServer, WeightsUpdateHandler}
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import model._
@@ -23,10 +23,10 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   def run(mode: AsyncWorkerMode): Unit = {
 
     val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
-    val svm = new SVM()
+    val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
     val myIp: String = InetAddress.getLocalHost.getHostAddress
     val myPort = mode.port
-    val weightsUpdateHandler: WeightsUpdateHandler = WeightsUpdateHandler(mode.interval)
+    val weightsUpdateHandler: WeightsUpdateHandler = WeightsUpdateHandler(mode.interval, dataset)
 
     startServer(myIp, myPort, svm)
 
@@ -69,10 +69,6 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     val myWorkerDetail = WorkerDetail(myIp, myPort)
     val samples: Iterator[Int] = dataset.samples().toIterator
 
-    /* TO COMPUTE & PRINT LOSSES */
-    val subsetSize = 500
-    lazy val (someFeatures, someLabels) = dataset.getSubset(subsetSize).unzip
-    var time: Long = System.currentTimeMillis()
 
 
     println(">> Computations thread starting..")
@@ -88,25 +84,15 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       weightsHandler.addWeightsUpdate(weightsUpdate)
 
       // here we broadcast the weights update
-      if (weightsHandler.shouldBroadcast) {
-        val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeightsUpdate()
+      if (weightsHandler.reachedInterval) {
         val msg = BroadcastMessage(
-          weigthsUpdateToBroadcast.toMap,
+          weightsHandler.getAndResetWeightsUpdate().toMap,
           Some(myWorkerDetail)
         )
+        weightsHandler.resetInterval()
 
+        weightsHandler.showLoss(svm)
         broadcastersHandler.broadcast(msg)
-
-        // compute loss
-        val loss = svm.loss(
-          someFeatures,
-          someLabels,
-          dataset.tidCounts
-        )
-        val duration = System.currentTimeMillis() - time
-        time = System.currentTimeMillis()
-        println(s"[UPT][$duration]: loss = $loss")
-
       }
     }
   }

@@ -1,7 +1,7 @@
 package grpc.sync
 
 import dataset.Dataset
-import grpc.{GrpcRunnable, GrpcServer}
+import grpc.{GrpcRunnable, GrpcServer, WeightsUpdateHandler}
 import io.grpc.stub.StreamObserver
 import model._
 import utils.SyncCoordinatorMode
@@ -13,25 +13,27 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
   def run(mode: SyncCoordinatorMode): Unit = {
     val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
-    val svm = new SVM()
+    val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
     val workersAggregator = WorkersAggregator
+    val weightsUpdateHandler = WeightsUpdateHandler(mode.interval, dataset)
 
-    val service = WorkerService(dataset, svm, workersAggregator)
+    val service = WorkerService(dataset, svm, workersAggregator, weightsUpdateHandler)
     val ssd = WorkerServiceSyncGrpc.bindService(service, ExecutionContext.global)
     println(">> READY <<")
     runServer(ssd, mode.port).awaitTermination()
   }
 
 
-  case class WorkerService(dataset: Dataset, svm: SVM, workersAggregator: WorkersAggregator.type) extends WorkerServiceSyncGrpc.WorkerServiceSync {
+  case class WorkerService(
+                            dataset: Dataset,
+                            svm: SVM,
+                            workersAggregator: WorkersAggregator.type,
+                            weightsUpdateHandler: WeightsUpdateHandler
+                          ) extends WorkerServiceSyncGrpc.WorkerServiceSync {
+
+    private val instance = this
 
     val samples: Iterator[Int] = dataset.samples().toIterator
-
-    val subsetSize = 500
-    val (someFeatures, someLabels) = dataset.getSubset(subsetSize).unzip
-    private val instance = this
-    var i = 0
-    var time: Long = System.currentTimeMillis()
 
     override def updateWeights(responseObserver: StreamObserver[WorkerResponse]): StreamObserver[WorkerRequest] =
       new StreamObserver[WorkerRequest] {
@@ -52,26 +54,20 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
               if (workersAggregator.isWaitingOnSomeWorker) {
                 instance.wait()
               } else {
-                svm.updateWeights(workersAggregator.getMeanGradient)
-                if (i % 500 == 0) {
-                  val loss = svm.loss(
-                    someFeatures,
-                    someLabels,
-                    dataset.tidCounts
-                  )
-                  val duration = System.currentTimeMillis() - time
-                  time = System.currentTimeMillis()
-                  println(s"[UPT][$i][$duration]: loss = $loss}")
-                }
-                i += 1
+                val weightsUpdate = svm.updateWeights(workersAggregator.getMeanGradient)
+                weightsUpdateHandler.addWeightsUpdate(weightsUpdate)
                 instance.notifyAll()
               }
             }
           } else {
-            println("[NEW]: a Worker wants to compute some gradients")
+            println("[NEW]: a worker wants to compute some gradients")
             workersAggregator.addWorker()
           }
-          responseObserver.onNext(spawnWorkerResponse(svm.weights))
+          responseObserver.onNext(spawnWorkerResponse(weightsUpdateHandler.getAndResetWeightsUpdate()))
+          if (weightsUpdateHandler.reachedInterval){
+            weightsUpdateHandler.resetInterval()
+            weightsUpdateHandler.showLoss(svm)
+          }
         }
       }
 

@@ -77,7 +77,7 @@ object BroadcastersHandler {
     instance.synchronized {
       if (broadcasters.nonEmpty) {
         println(s"[SEND] feel like sharing some computations, here you go guys " +
-          s"(${broadcasters.keySet.mkString("[", ";", "]")})")
+          s"${broadcasters.keySet.mkString("[", ";", "]")}")
       }
       broadcasters.values.foreach(_.onNext(msg))
     }

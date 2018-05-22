@@ -4,7 +4,7 @@ import utils.Label.Label
 import utils.Types.{Counts, LearningRate}
 
 
-class SVM(lambda: Double = 0.1, stepSize: LearningRate = 0.01) {
+class SVM(lambda: Double, stepSize: LearningRate) {
   var weights: SparseNumVector[Double] = SparseNumVector.empty
 
   /**

@@ -11,10 +11,12 @@ if [ "$n" == "0" ];then
   ip_port=""
 fi
 
-sh /opt/docker/bin/hogwild \
+sh hogwild \
     mode=${MODE} \
     port=${PORT_TO_OPEN} \
     interval=${INTERVAL} \
     worker-ip:worker-port=${ip_port} \
     data-path=${DATASET_PATH} \
-    samples=${SAMPLES}
+    samples=${SAMPLES} \
+    lambda=${LAMBDA} \
+    step-size=${STEP_SIZE}
