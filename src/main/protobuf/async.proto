@@ -3,7 +3,7 @@ syntax = "proto3";
 package grpc;
 
 service WorkerServiceAsync {
-    rpc Hello (Empty) returns (HelloResponse) {
+    rpc Hello (WorkerDetail) returns (HelloResponse) {
     }
     rpc Broadcast (stream BroadcastMessage) returns (Empty) {
     }

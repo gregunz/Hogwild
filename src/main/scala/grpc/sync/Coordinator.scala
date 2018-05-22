@@ -25,7 +25,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
       load()
       val ssd = WorkerServiceSyncGrpc.bindService(WorkerService, ExecutionContext.global)
       println(">> READY <<")
-      runServer(ssd, mode.port)
+      runServer(ssd, mode.port).awaitTermination()
   }
 
   def load(): Unit = {
