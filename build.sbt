@@ -4,6 +4,10 @@ version := "0.1"
 
 scalaVersion := "2.12.6"
 
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+enablePlugins(AshScriptPlugin)
+
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value
 )
@@ -15,3 +19,7 @@ libraryDependencies ++= Seq(
   "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
   "io.monix" %% "monix" % "2.3.0"
 )
+
+mainClass in Compile := Some("launcher.Launcher")
+
+dockerBaseImage := "openjdk:jre-alpine"

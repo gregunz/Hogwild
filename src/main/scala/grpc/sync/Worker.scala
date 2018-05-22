@@ -1,33 +1,29 @@
 package grpc.sync
 
 import dataset.Dataset
-import grpc.sync.Coordinator.argMismatch
+import grpc.GrpcRunnable
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
-import launcher.GrpcRunnable
 import model.{SVM, SparseNumVector}
+import utils.SyncWorkerMode
 
-object Worker extends GrpcRunnable {
+object Worker extends GrpcRunnable[SyncWorkerMode] {
 
   private val instance = this
 
   val lambda = 0.1
+
   var count = 0
   var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
-  def run(args: Seq[String]): Unit = {
-    args match {
-      case ip :: port :: _ =>
-        Dataset.fullLoad()
-        val client = createClient(ip, port.toInt)
-        val responseObserver = createObserver
-        val requestObserver = client.updateWeights(responseObserver)
+  def run(mode: SyncWorkerMode): Unit = {
+      Dataset.fullLoad()
+      val client = createClient(mode.serverIp, mode.serverPort)
+      val responseObserver = createObserver
+      val requestObserver = client.updateWeights(responseObserver)
 
-        println(">> READY <<")
-        startComputingLoop(requestObserver)
-
-      case _ => argMismatch(s"expecting port but get $args")
-    }
+      println(">> Ready to compute!")
+      startComputingLoop(requestObserver)
   }
 
   def createClient(ip: String, port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {

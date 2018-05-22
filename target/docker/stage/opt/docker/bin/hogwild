@@ -1,0 +1,60 @@
+#!/bin/sh
+
+realpath () {
+(
+  TARGET_FILE="$1"
+
+  cd "$(dirname "$TARGET_FILE")"
+  TARGET_FILE=$(basename "$TARGET_FILE")
+
+  COUNT=0
+  while [ -L "$TARGET_FILE" -a $COUNT -lt 100 ]
+  do
+      TARGET_FILE=$(readlink "$TARGET_FILE")
+      cd "$(dirname "$TARGET_FILE")"
+      TARGET_FILE=$(basename "$TARGET_FILE")
+      COUNT=$(($COUNT + 1))
+  done
+
+  if [ "$TARGET_FILE" = "." -o "$TARGET_FILE" = ".." ]; then
+    cd "$TARGET_FILE"
+    TARGET_FILEPATH=
+  else
+    TARGET_FILEPATH=/$TARGET_FILE
+  fi
+
+  echo "$(pwd -P)/$TARGET_FILE"
+)
+}
+
+# Allow user and template_declares (see below) to add java options.
+addJava () {
+  java_opts="$java_opts $1"
+}
+
+# Allow user to specify java options. These get listed first per bash-template.
+if [ -n "$JAVA_OPTS" ]
+then
+  addJava "$JAVA_OPTS"
+fi
+
+# Loads a configuration file full of default command line options for this script.
+loadConfigFile() {
+  cat "$1" | sed '/^\#/d;s/\r$//' | sed 's/^-J-X/-X/' | tr '\r\n' ' '
+}
+
+
+real_script_path="$(realpath "$0")"
+app_home="$(realpath "$(dirname "$real_script_path")")"
+lib_dir="$(realpath "${app_home}/../lib")"
+
+app_mainclass=launcher.Launcher
+
+script_conf_file="${app_home}/../conf/application.ini"
+app_classpath="$lib_dir/default.hogwild-0.1.jar:$lib_dir/org.scala-lang.scala-library-2.12.6.jar:$lib_dir/com.thesamet.scalapb.scalapb-runtime_2.12-0.7.0.jar:$lib_dir/com.thesamet.scalapb.lenses_2.12-0.7.0-test2.jar:$lib_dir/com.lihaoyi.fastparse_2.12-1.0.0.jar:$lib_dir/com.lihaoyi.fastparse-utils_2.12-1.0.0.jar:$lib_dir/com.lihaoyi.sourcecode_2.12-0.1.4.jar:$lib_dir/org.scalactic.scalactic_2.12-3.0.5.jar:$lib_dir/org.scala-lang.scala-reflect-2.12.6.jar:$lib_dir/io.grpc.grpc-netty-1.10.0.jar:$lib_dir/io.grpc.grpc-core-1.10.0.jar:$lib_dir/io.grpc.grpc-context-1.10.0.jar:$lib_dir/com.google.code.gson.gson-2.7.jar:$lib_dir/com.google.guava.guava-19.0.jar:$lib_dir/com.google.errorprone.error_prone_annotations-2.1.2.jar:$lib_dir/com.google.code.findbugs.jsr305-3.0.0.jar:$lib_dir/io.opencensus.opencensus-api-0.11.0.jar:$lib_dir/io.opencensus.opencensus-contrib-grpc-metrics-0.11.0.jar:$lib_dir/io.netty.netty-codec-http2-4.1.17.Final.jar:$lib_dir/io.netty.netty-codec-http-4.1.17.Final.jar:$lib_dir/io.netty.netty-codec-4.1.17.Final.jar:$lib_dir/io.netty.netty-transport-4.1.17.Final.jar:$lib_dir/io.netty.netty-buffer-4.1.17.Final.jar:$lib_dir/io.netty.netty-common-4.1.17.Final.jar:$lib_dir/io.netty.netty-resolver-4.1.17.Final.jar:$lib_dir/io.netty.netty-handler-4.1.17.Final.jar:$lib_dir/io.netty.netty-handler-proxy-4.1.17.Final.jar:$lib_dir/io.netty.netty-codec-socks-4.1.17.Final.jar:$lib_dir/com.thesamet.scalapb.scalapb-runtime-grpc_2.12-0.7.0.jar:$lib_dir/io.grpc.grpc-stub-1.10.0.jar:$lib_dir/io.grpc.grpc-protobuf-1.10.0.jar:$lib_dir/com.google.protobuf.protobuf-java-3.5.1.jar:$lib_dir/com.google.protobuf.protobuf-java-util-3.5.1.jar:$lib_dir/com.google.api.grpc.proto-google-common-protos-1.0.0.jar:$lib_dir/io.grpc.grpc-protobuf-lite-1.10.0.jar:$lib_dir/io.monix.monix-types_2.12-2.3.0.jar:$lib_dir/io.monix.monix-execution_2.12-2.3.0.jar:$lib_dir/org.reactivestreams.reactive-streams-1.0.0.jar:$lib_dir/io.monix.monix-eval_2.12-2.3.0.jar:$lib_dir/io.monix.monix-reactive_2.12-2.3.0.jar:$lib_dir/org.jctools.jctools-core-2.0.1.jar"
+
+
+# If a configuration file exist, read the contents to $opts
+[ -f "$script_conf_file" ] && opts=$(loadConfigFile "$script_conf_file")
+
+exec java $java_opts -classpath $app_classpath $opts $app_mainclass "$@"

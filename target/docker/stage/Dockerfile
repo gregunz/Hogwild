@@ -1,0 +1,6 @@
+FROM openjdk:jre-alpine
+WORKDIR /opt/docker
+ADD opt /opt
+RUN ["chmod", "+x", "/opt/docker/bin/hogwild"]
+ENTRYPOINT ["/opt/docker/bin/hogwild"]
+CMD []

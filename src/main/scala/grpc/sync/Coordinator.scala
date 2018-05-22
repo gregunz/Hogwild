@@ -1,21 +1,19 @@
 package grpc.sync
 
 import dataset.Dataset
-import grpc.GrpcServer
+import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
-import launcher.GrpcRunnable
 import model._
+import utils.{SyncCoordinatorMode}
 
 import scala.concurrent.ExecutionContext
 
-object Coordinator extends GrpcServer with GrpcRunnable {
+object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
-  lazy val samples: Iterator[Int] = Dataset.samples().toIterator
+  private lazy val samples: Iterator[Int] = Dataset.samples().toIterator
 
-  val lambda: Double = 0.1
-  val svm = new SVM()
-
-  val workersAggregator = new WorkersAggregator
+  private val svm = new SVM()
+  private val workersAggregator = WorkersAggregator
 
   /* TO COMPUTE & PRINT LOSSES */
   val subsetSize = 500
@@ -23,16 +21,11 @@ object Coordinator extends GrpcServer with GrpcRunnable {
   var i = 0
   var time: Long = System.currentTimeMillis()
 
-  def run(args: Seq[String]): Unit = {
-    args match {
-      case port :: _ =>
-        load()
-        val ssd = WorkerServiceSyncGrpc.bindService(WorkerService, ExecutionContext.global)
-        println(">> READY <<")
-        runServer(ssd, port.toInt)
-
-      case _ => argMismatch(s"expecting port but get $args")
-    }
+  def run(mode: SyncCoordinatorMode): Unit = {
+      load()
+      val ssd = WorkerServiceSyncGrpc.bindService(WorkerService, ExecutionContext.global)
+      println(">> READY <<")
+      runServer(ssd, mode.port)
   }
 
   def load(): Unit = {
@@ -68,7 +61,6 @@ object Coordinator extends GrpcServer with GrpcRunnable {
                   val loss = svm.loss(
                     someFeatures,
                     someLabels,
-                    lambda,
                     Dataset.tidCounts
                   )
                   val duration = System.currentTimeMillis() - time
