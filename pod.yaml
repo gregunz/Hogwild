@@ -18,7 +18,7 @@ spec:
    name: hogwild
  spec:
    serviceName: hogwild
-   replicas: 6
+   replicas: 3
    selector:
     matchLabels:
       app: hogwild
@@ -33,7 +33,7 @@ spec:
              claimName: cs449g2-scratch
        containers:
          - name: hogwild
-           image: gregunz/hogwild
+           image: hogwild/hogwild:latest
            ports:
              - containerPort: 80
            env:
@@ -51,13 +51,19 @@ spec:
                    fieldPath: status.podIP
              - name: MODE
                value: "async"
+             - name: DATASET_PATH
+               value: "/data/datasets"
+             - name: PORT_TO_OPEN
+               value: 80
+             - name: INTERVAL
+               value: 500
            resources:
              requests:
-               memory: "1022Mi"
-               cpu: "500m"
-             limits:
-               memory: "3072Mi"
+               memory: "4096Mi"
                cpu: "1000m"
+             limits:
+               memory: "8192Mi"
+               cpu: "2000m"
            volumeMounts:
              - mountPath: "/data"
                name: dataset
