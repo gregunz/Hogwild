@@ -16,4 +16,5 @@ sh /opt/docker/bin/hogwild \
     port=${PORT_TO_OPEN} \
     interval=${INTERVAL} \
     worker-ip:worker-port=${ip_port} \
-    data-path=${DATASET_PATH}
+    data-path=${DATASET_PATH} \
+    samples=${SAMPLES}

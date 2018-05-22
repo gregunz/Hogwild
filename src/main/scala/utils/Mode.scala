@@ -48,7 +48,7 @@ object Mode {
   def apply(options: Options): Mode = {
     Try {
       val dataPath = options("data-path")
-      val samples = options("samples").toInt != 0
+      val samples = options("samples").toInt == 1
       options("mode") match {
         case "sync" if options("type") == "worker" =>
           options("server-ip:server-port").split(":").toList match {
