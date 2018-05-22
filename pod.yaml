@@ -1,14 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hogwild
+  labels:
+    app: hogwild
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: hogwild
 ---
- apiVersion: extensions/v1beta1
- kind: Deployment
+ apiVersion: apps/v1
+ kind: StatefulSet
  metadata:
-   name: hogwildnode
+   name: hogwild
  spec:
-   replicas: 4
+   serviceName: hogwild
+   replicas: 6
+   selector:
+    matchLabels:
+      app: hogwild
    template:
      metadata:
        labels:
-         app: hog
+         app: hogwild
      spec:
        volumes:
          - name: dataset
@@ -16,7 +33,7 @@
              claimName: cs449g2-scratch
        containers:
          - name: hogwild
-           image: gregunz/hogwild:latest
+           image: gregunz/hogwild
            ports:
              - containerPort: 80
            env:
