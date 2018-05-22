@@ -31,4 +31,4 @@ ADD . /hogwild
 
 #CMD sbt
 #CMD /bin/bash start_worker.sh $mode $status $coord_ip
-CMD /bin/bash start_node.sh $MY_POD_NAME $MY_POD_IP
+CMD /bin/bash start_node.sh $MY_POD_NAME $MY_POD_IP $MODE

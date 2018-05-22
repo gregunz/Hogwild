@@ -16,7 +16,7 @@
              claimName: cs449g2-scratch
        containers:
          - name: hogwild
-           image: gregunz/hogwild:latest
+           image: gregunz/hogwild
            ports:
              - containerPort: 80
            env:
