@@ -1,9 +1,7 @@
 #!/bin/sh
 
 n=`echo $MY_POD_NAME | awk -F- '{print $NF}'`
-last_number=`echo $MY_POD_IP | cut -d . -f 4`
-difference=$((last_number-n))
-first_ip=`echo $MY_POD_IP | cut -d"." -f1-3`.$difference
+first_ip="hogwild-0"
 
 ip_port=${first_ip}:${PORT_TO_OPEN}
 
