@@ -34,20 +34,26 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
       .mapValues { v => Label(v.exists(_._2)) }
   }
   lazy val features: Map[Int, SparseNumVector[Double]] = load("features") {
-    filePaths
-      .flatMap { path =>
-        Source.fromFile(path)
-          .getLines()
-          .map { line => parseLine(line) }
-      }.toMap
+    if (onlySamples) {
+      filePaths.take(1)
+        .flatMap { path =>
+          Source.fromFile(path)
+            .getLines()
+            .take(20000)
+            .map { line => parseLine(line) }
+        }.toMap
+    } else {
+      filePaths
+        .flatMap { path =>
+          Source.fromFile(path)
+            .getLines()
+            .map { line => parseLine(line) }
+        }.toMap
+    }
   }
 
-  def filePaths: List[String] = {
-    if (onlySamples) {
-      List(dataPath + "samples.dat")
-    } else {
-      (0 until 4).map(i => dataPath + filename(i)).toList
-    }
+  lazy val filePaths: List[String] = {
+    (0 until 4).map(i => dataPath + filename(i)).toList
   }
 
   private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
