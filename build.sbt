@@ -6,8 +6,9 @@ version := "0.1"
 
 scalaVersion := "2.12.6"
 
-enablePlugins(JavaAppPackaging, AshScriptPlugin, sbtdocker.DockerPlugin)
-
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+enablePlugins(AshScriptPlugin)
 
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value
@@ -20,18 +21,16 @@ libraryDependencies ++= Seq(
 
 mainClass in Compile := Some("launcher.Launcher")
 
-dockerfile in docker := {
-  val appDir: File = stage.value
-  val targetDir = "/app"
-  val username = "daemon"
-  val scriptName = "start_node.sh"
+//dockerBaseImage := "openjdk:jre-alpine"
+//dockerEntrypoint := Seq("/opt/docker/bin/start_node.sh")
 
-  new Dockerfile {
-    from("openjdk:jre-alpine")
-    add(appDir, targetDir, chown = s"$username:$username")
-    workDir(targetDir)
-    user(username)
-    entryPoint(s"$targetDir/bin/$scriptName")
-    cmd()
-  }
-}
+// hardcoding the docker image we want
+dockerCommands := Seq(
+  Cmd("FROM", "openjdk:jre-alpine"),
+  Cmd("ADD", "opt", "/opt"),
+  Cmd("WORKDIR", "/opt/docker/bin"),
+  Cmd("RUN", """["chmod", "+x", "hogwild"]"""),
+  Cmd("RUN", """["chmod", "+x", "start_node.sh"]"""),
+  Cmd("ENTRYPOINT", """["sh" , "start_node.sh"]"""),
+  Cmd("CMD", "[]"),
+)
