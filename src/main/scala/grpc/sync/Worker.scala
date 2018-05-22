@@ -9,21 +9,19 @@ import utils.SyncWorkerMode
 
 object Worker extends GrpcRunnable[SyncWorkerMode] {
 
-  private val instance = this
-
   val lambda = 0.1
-
+  private val instance = this
   var count = 0
   var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(mode: SyncWorkerMode): Unit = {
-      Dataset.fullLoad()
-      val client = createClient(mode.serverIp, mode.serverPort)
-      val responseObserver = createObserver
-      val requestObserver = client.updateWeights(responseObserver)
+    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
+    val client = createClient(mode.serverIp, mode.serverPort)
+    val responseObserver = createObserver(dataset)
+    val requestObserver = client.updateWeights(responseObserver)
 
-      println(">> Ready to compute!")
-      startComputingLoop(requestObserver)
+    println(">> Ready to compute!")
+    startComputingLoop(requestObserver)
   }
 
   def createClient(ip: String, port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
@@ -35,7 +33,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
     WorkerServiceSyncGrpc.stub(channel)
   }
 
-  def createObserver: StreamObserver[WorkerResponse] = {
+  def createObserver(dataset: Dataset): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
       def onError(t: Throwable): Unit = {
         println(s"ON_ERROR: $t")
@@ -49,11 +47,11 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
 
       def onNext(res: WorkerResponse): Unit = {
         val newGradient = SVM.computeStochasticGradient(
-          feature = Dataset.getFeature(res.did),
-          label = Dataset.getLabel(res.did),
+          feature = dataset.getFeature(res.did),
+          label = dataset.getLabel(res.did),
           weights = SparseNumVector(res.weights),
           lambda = lambda,
-          tidCounts = Dataset.tidCounts
+          tidCounts = dataset.tidCounts
         )
         count += 1
         if (count % 500 == 0) {

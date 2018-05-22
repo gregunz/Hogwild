@@ -1,10 +1,10 @@
 package grpc
 
-import io.grpc.{ServerBuilder, ServerServiceDefinition}
+import io.grpc.{Server, ServerBuilder, ServerServiceDefinition}
 
 trait GrpcServer {
 
-  def runServer(ssd: ServerServiceDefinition, portNumber: Int): Unit = {
+  def runServer(ssd: ServerServiceDefinition, portNumber: Int): Server = {
     val server = ServerBuilder
       .forPort(portNumber)
       .addService(ssd)
@@ -16,6 +16,6 @@ trait GrpcServer {
       override def run(): Unit = server.shutdown()
     })
 
-    server.awaitTermination()
+    server
   }
 }

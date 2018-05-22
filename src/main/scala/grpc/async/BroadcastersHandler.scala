@@ -1,56 +1,90 @@
 package grpc.async
 
-import grpc.async.Worker.{Broadcaster, Stub, RemoteWorker}
-import io.grpc.ManagedChannelBuilder
+import grpc.async.Worker.{Broadcaster, RemoteWorker, Stub}
 import io.grpc.stub.StreamObserver
+import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 
 object BroadcastersHandler {
-  private val handler = this
+  private val instance = this
   private var broadcasters: Map[RemoteWorker, Broadcaster] = Map.empty
+  private var waitingList: Set[RemoteWorker] = Set.empty
 
-  def add(worker: RemoteWorker): Map[RemoteWorker, Broadcaster] = {
-    if(!this.workers.contains(worker)){
-      println(s"[NEW]: a new worker just arrived, welcome to the GANG mate ($worker joined)")
+  def add(worker: RemoteWorker): Unit = {
+    instance.synchronized {
+      if (!broadcasters.contains(worker)) {
+        waitingList -= worker
+        println(s"[NEW] a new worker just joined the gang! welcome $worker")
+        broadcasters += createBroadcaster(worker)
+      }
     }
-    add(Set(worker))
-  }
-  def add(workers: Set[RemoteWorker]): Map[RemoteWorker, Broadcaster] = {
-    broadcasters ++= workers.diff(this.workers).map(w => w -> createBroadcaster(w)).toMap
-    broadcasters
   }
 
-  def remove(worker: RemoteWorker): Map[RemoteWorker, Broadcaster] = {
-    println(s"[BYE] Goodbye my lover, goodbye my friend... ($worker left)")
-    broadcasters = broadcasters.filterKeys(w => w != worker)
-    broadcasters
+  def addSomeActive(workers: Set[RemoteWorker]): Unit = {
+    instance.synchronized {
+      val newWorkers = workers.diff(broadcasters.keySet)
+      if (newWorkers.nonEmpty) {
+        waitingList --= newWorkers
+        broadcasters ++= newWorkers.map(createBroadcaster)
+      }
+    }
   }
 
-  def broadcast(msg: BroadcastMessage): Unit = {
-    broadcasters.values.foreach(_.onNext(msg))
+  private def createBroadcaster(worker: RemoteWorker): (RemoteWorker, Broadcaster) = {
+    createBroadcaster(worker, createStub(worker))
   }
 
-  def workers: Set[RemoteWorker] = broadcasters.keySet
-
-  def hasBroadcaster: Boolean = broadcasters.nonEmpty
-
-  private def createBroadcaster(worker: RemoteWorker): Broadcaster = {
+  private def createBroadcaster(worker: RemoteWorker, stub: Stub): (RemoteWorker, Broadcaster) = {
     val broadcastObserver = new StreamObserver[Empty] {
-      override def onError(t: Throwable): Unit = handler.remove(worker)
+      override def onError(t: Throwable): Unit = {
+        //t.printStackTrace()
+        instance.remove(worker)
+      }
 
-      override def onCompleted(): Unit = handler.remove(worker)
+      override def onCompleted(): Unit = instance.remove(worker)
 
-      override def onNext(msg: Empty): Unit = println("<< SHOULD NEVER BE TRIGGERED >>")
+      override def onNext(msg: Empty): Unit = {}
     }
-    createStub(worker).broadcast(broadcastObserver)
+    worker -> stub.broadcast(broadcastObserver)
+  }
+
+  def remove(worker: RemoteWorker): Unit = {
+    instance.synchronized {
+      if (broadcasters.contains(worker)) {
+        broadcasters = broadcasters.filterKeys(w => w != worker)
+        println(s"[BYE] Goodbye my lover, goodbye my friend... ($worker left)")
+      }
+    }
   }
 
   private def createStub(worker: RemoteWorker): Stub = {
-    val channel = ManagedChannelBuilder
+    val channel: ManagedChannel = ManagedChannelBuilder
       .forAddress(worker.ip, worker.port)
       .usePlaintext(true)
       .build
 
-    WorkerServiceAsyncGrpc.stub(channel)
+    createStub(channel)
+  }
+
+  private def createStub(channel: ManagedChannel): Stub = WorkerServiceAsyncGrpc.stub(channel)
+
+  def addToWaitingList(worker: RemoteWorker): Unit = {
+    instance.synchronized {
+      waitingList += worker
+    }
+  }
+
+  def broadcast(msg: BroadcastMessage): Unit = {
+    instance.synchronized {
+      if (broadcasters.nonEmpty) {
+        println(s"[SEND] feel like sharing some computations, here you go guys " +
+          s"(${broadcasters.keySet.mkString("[", ";", "]")})")
+      }
+      broadcasters.values.foreach(_.onNext(msg))
+    }
+  }
+
+  def activeWorkers: Set[RemoteWorker] = instance.synchronized {
+    broadcasters.keySet ++ waitingList
   }
 
 }
