@@ -33,7 +33,7 @@ spec:
              claimName: cs449g2-scratch
        containers:
          - name: hogwild
-           image: hogwild/hogwild:latest
+           image: gregunz/hogwild:latest
            ports:
              - containerPort: 80
            env:
@@ -52,18 +52,20 @@ spec:
              - name: MODE
                value: "async"
              - name: DATASET_PATH
-               value: "/data/datasets"
+               value: "/data/datasets/"
              - name: PORT_TO_OPEN
-               value: 80
+               value: "80"
              - name: INTERVAL
-               value: 500
+               value: "500"
+             - name: SAMPLES
+               value: "1"
            resources:
              requests:
-               memory: "4096Mi"
-               cpu: "1000m"
-             limits:
-               memory: "8192Mi"
+               memory: "1200Mi"
                cpu: "2000m"
+             limits:
+               memory: "16000Mi"
+               cpu: "3000m"
            volumeMounts:
              - mountPath: "/data"
                name: dataset
