@@ -18,7 +18,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   case class RemoteWorker(ip: String, port: Int)
   type Broadcaster = StreamObserver[BroadcastMessage]
 
-  val broadcastersHandler = BroadcastersHandler
+  private val broadcastersHandler = BroadcastersHandler
 
   /* TO COMPUTE & PRINT LOSSES */
   val subsetSize = 500
@@ -26,6 +26,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   var time: Long = System.currentTimeMillis()
 
   def run(mode: AsyncWorkerMode): Unit = {
+    load()
     val svm = new SVM()
     val myIp: String = InetAddress.getLocalHost.getHostAddress
     val weightsUpdateHandler: WeightsUpdateHandler = WeightsUpdateHandler(mode.interval)
@@ -34,8 +35,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       start(myIp, mode.port, svm, weightsUpdateHandler)
     } else {
       val worker = mode.worker.get
-      val stub = createBlockingStub(worker)
-      val (weights, workers) = hello(stub)
+      val (weights, workers) = hello(worker)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
       broadcastersHandler.add(workers)
       start(myIp, mode.port, svm, weightsUpdateHandler)
@@ -43,27 +43,27 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   }
 
   def load(): Unit = {
+    Dataset.fullLoad()
     someFeatures
     someLabels
   }
 
   def start(myIp: String, myPort: Int, svm: SVM, weightsUpdateHandler: WeightsUpdateHandler): Unit = {
-    load()
     startWorkingThread(myIp, myPort, svm, weightsUpdateHandler)
     startServer(myIp, myPort, svm)
   }
 
-  def createBlockingStub(worker: RemoteWorker): BlockingStub = {
+  def hello(worker: RemoteWorker): (SparseNumVector[Double], Set[RemoteWorker]) = {
     val channel: ManagedChannel = ManagedChannelBuilder
       .forAddress(worker.ip, worker.port)
       .usePlaintext(true)
       .build
 
-    WorkerServiceAsyncGrpc.blockingStub(channel)
-  }
+    val stub = WorkerServiceAsyncGrpc.blockingStub(channel)
+    val response = stub.hello(Empty())
 
-  def hello(oneWorkerStub: BlockingStub): (SparseNumVector[Double], Set[RemoteWorker]) = {
-    val response = oneWorkerStub.hello(Empty())
+    channel.shutdown()
+
     SparseNumVector(response.weights) -> response
       .workersDetails
       .map(a => RemoteWorker(a.address, a.port.toInt))
@@ -138,16 +138,16 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
     override def broadcast(responseObserver: StreamObserver[Empty]): StreamObserver[BroadcastMessage] = {
       new StreamObserver[BroadcastMessage] {
-        override def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")
+        override def onError(t: Throwable): Unit = {}
 
-        override def onCompleted(): Unit = println("ON_COMPLETED")
+        override def onCompleted(): Unit = {}
 
         override def onNext(msg: BroadcastMessage): Unit = {
           val detail = msg.workerDetail.get
           val worker = RemoteWorker(detail.address, detail.port.toInt)
 
-          println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
           broadcastersHandler.add(worker)
+          println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
 
           val receivedWeights = SparseNumVector(msg.weightsUpdate)
           svm.addWeightsUpdate(receivedWeights)
