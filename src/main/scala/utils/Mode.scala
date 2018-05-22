@@ -3,6 +3,7 @@ package utils
 import grpc.async.Worker.RemoteWorker
 import grpc.async.{Worker => AsyncWorker}
 import grpc.sync.{Coordinator => SyncCoordinator, Worker => SyncWorker}
+import launcher.ArgsHandler.Options
 
 import scala.util.Try
 
@@ -32,12 +33,12 @@ case class AsyncWorkerMode(port: Int, interval: Int, worker: Option[RemoteWorker
   }
 }
 
-object DefaultMode extends Mode {
-  def run(): Unit = println("arguments mismatch")
+case class DefaultMode(options: Options) extends Mode {
+  def run(): Unit = println(s"arguments mismatch ($options)")
 }
 
 object Mode {
-  def apply(options: Map[String, String]): Mode = {
+  def apply(options: Options): Mode = {
     Try {
       options("mode") match {
         case "sync" if options("type") == "worker" =>
@@ -52,8 +53,7 @@ object Mode {
               case ip :: port :: Nil => RemoteWorker(ip, port.toInt)
             })
           AsyncWorkerMode(options("port").toInt, options("interval").toInt, someWorker)
-        case _ => DefaultMode
       }
-    }.getOrElse(DefaultMode)
+    }.getOrElse(DefaultMode(options))
   }
 }

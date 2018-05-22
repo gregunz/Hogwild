@@ -37,7 +37,6 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       val stub = createBlockingStub(worker)
       val (weights, workers) = hello(stub)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
-
       broadcastersHandler.add(workers)
       start(myIp, mode.port, svm, weightsUpdateHandler)
     }
@@ -105,6 +104,8 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           if (broadcastersHandler.hasBroadcaster){
             println(s"[SEND] feel like sharing some computations, here you go guys " +
               s"(${broadcastersHandler.workers.mkString("[", ";", "]")})")
+
+            broadcastersHandler.broadcast(msg)
           }
 
           // compute loss
@@ -146,7 +147,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           val worker = RemoteWorker(detail.address, detail.port.toInt)
 
           println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
-
+          broadcastersHandler.add(worker)
 
           val receivedWeights = SparseNumVector(msg.weightsUpdate)
           svm.addWeightsUpdate(receivedWeights)

@@ -10,10 +10,10 @@ import scala.concurrent.ExecutionContext
 
 object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
-  lazy val samples: Iterator[Int] = Dataset.samples().toIterator
+  private lazy val samples: Iterator[Int] = Dataset.samples().toIterator
 
-  val svm = new SVM()
-  val workersAggregator = new WorkersAggregator
+  private val svm = new SVM()
+  private val workersAggregator = WorkersAggregator
 
   /* TO COMPUTE & PRINT LOSSES */
   val subsetSize = 500

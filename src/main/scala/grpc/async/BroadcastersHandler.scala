@@ -19,18 +19,14 @@ object BroadcastersHandler {
     broadcasters
   }
 
-  def remove(worker: RemoteWorker*): Map[RemoteWorker, Broadcaster] = {
-    worker.foreach{w =>
-      println(s"[BYE] Goodbye my lover, goodbye my friend... ($w left)")
-    }
-    broadcasters = broadcasters.filterKeys(worker.toSet.contains)
+  def remove(worker: RemoteWorker): Map[RemoteWorker, Broadcaster] = {
+    println(s"[BYE] Goodbye my lover, goodbye my friend... ($worker left)")
+    broadcasters = broadcasters.filterKeys(w => w != worker)
     broadcasters
   }
 
   def broadcast(msg: BroadcastMessage): Unit = {
-    broadcasters.foreach { broadcaster =>
-      broadcaster._2.onNext(msg)
-    }
+    broadcasters.values.foreach(_.onNext(msg))
   }
 
   def workers: Set[RemoteWorker] = broadcasters.keySet
