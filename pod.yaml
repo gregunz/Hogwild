@@ -19,7 +19,7 @@ spec:
    name: hogwild-pod
  spec:
    serviceName: statefulset-service
-   replicas: 3
+   replicas: 20
    selector:
     matchLabels:
       app: hogwild-pod
@@ -60,10 +60,10 @@ spec:
                value: "1"
            resources:
              requests:
-               memory: "1200Mi"
+               memory: "1000Mi"
                cpu: "2000m"
              limits:
-               memory: "16000Mi"
+               memory: "12000Mi"
                cpu: "3000m"
            volumeMounts:
              - mountPath: "/data"
