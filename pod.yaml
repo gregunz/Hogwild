@@ -58,6 +58,8 @@ spec:
                   fieldPath: status.podIP
             - name: MODE
               value: "async"
+            - name: ROLE
+              value: "master"
             - name: DATASET_PATH
               value: "/data/datasets/"
             - name: PORT_TO_OPEN
@@ -112,6 +114,8 @@ spec:
                    fieldPath: status.podIP
              - name: MODE
                value: "async"
+             - name: ROLE
+               value: "slave"
              - name: DATASET_PATH
                value: "/data/datasets/"
              - name: PORT_TO_OPEN
