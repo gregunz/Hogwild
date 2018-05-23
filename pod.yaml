@@ -1,98 +1,32 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: dns-service
-spec:
-  selector:
-    app: hogwild-master
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 81
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: statefulset-service
   labels:
-    app: hogwild-slave
+    app: hogwild-pod
 spec:
   ports:
   - port: 80
     name: web
   clusterIP: None
   selector:
-    app: hogwild-slave
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: hogwild-master
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: hogwild-master
-  template:
-    metadata:
-      labels:
-        app: hogwild-master
-    spec:
-      volumes:
-        - name: dataset
-          persistentVolumeClaim:
-            claimName: cs449g2-scratch
-      containers:
-        - name: hogwild
-          image: gregunz/hogwild:latest
-          ports:
-            - containerPort: 81
-          env:
-            - name: MY_POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: MODE
-              value: "async"
-            - name: ROLE
-              value: "master"
-            - name: DATASET_PATH
-              value: "/data/datasets/"
-            - name: PORT_TO_OPEN
-              value: "80"
-            - name: INTERVAL
-              value: "500"
-            - name: SAMPLES
-              value: "1"
-          resources:
-            requests:
-              memory: "1200Mi"
-              cpu: "2000m"
-            limits:
-              memory: "16000Mi"
-              cpu: "3000m"
-          volumeMounts:
-            - mountPath: "/data"
-              name: dataset
+    app: hogwild-pod
 ---
  apiVersion: apps/v1
  kind: StatefulSet
  metadata:
-   name: hogwild-slave
+   name: hogwild-pod
  spec:
    serviceName: statefulset-service
    replicas: 3
    selector:
     matchLabels:
-      app: hogwild
+      app: hogwild-pod
    template:
      metadata:
        labels:
-         app: hogwild
+         app: hogwild-pod
      spec:
        volumes:
          - name: dataset
