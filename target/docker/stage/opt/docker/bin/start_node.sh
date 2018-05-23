@@ -13,7 +13,7 @@ sh hogwild \
     mode=${MODE} \
     port=${PORT_TO_OPEN} \
     interval=${INTERVAL} \
-    worker-ip:worker-port=${ip_port} \
+    ip:port=${ip_port} \
     data-path=${DATASET_PATH} \
     samples=${SAMPLES} \
     lambda=${LAMBDA} \
