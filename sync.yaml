@@ -19,7 +19,7 @@ spec:
    name: hogwild-pod
  spec:
    serviceName: statefulset-service
-   replicas: 20
+   replicas: 5
    selector:
     matchLabels:
       app: hogwild-pod
@@ -47,9 +47,7 @@ spec:
                  fieldRef:
                    fieldPath: status.podIP
              - name: MODE
-               value: "async"
-             - name: ROLE
-               value: "slave"
+               value: "sync"
              - name: DATASET_PATH
                value: "/data/datasets/"
              - name: PORT_TO_OPEN
