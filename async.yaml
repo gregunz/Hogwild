@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hogwild-deployment
+  name: hogwild-async
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: hogwild
+      app: hogwild-async
   template:
     metadata:
       labels:
-        app: hogwild
+        app: hogwild-async
     spec:
       volumes:
       - name: dataset
