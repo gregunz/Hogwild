@@ -5,7 +5,7 @@ last_number=`echo $MY_POD_IP | cut -d . -f 4`
 difference=$((last_number-n))
 first_ip=`echo $MY_POD_IP | cut -d"." -f1-3`.$difference
 
-ip_port=hogwild-pod-0:${PORT_TO_OPEN}
+ip_port=hogwild-pod-0.statefulset-service:${PORT_TO_OPEN}
 
 if [ "$n" == "0" ];then
   ip_port=""
