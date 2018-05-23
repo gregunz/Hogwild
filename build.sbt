@@ -27,6 +27,7 @@ mainClass in Compile := Some("launcher.Launcher")
 // hardcoding the docker image we want
 dockerCommands := Seq(
   Cmd("FROM", "openjdk:jre-alpine"),
+  Cmd("RUN", "apk add --no-cache bash"),
   Cmd("ADD", "opt", "/opt"),
   Cmd("WORKDIR", "/opt/docker/bin"),
   Cmd("RUN", """["chmod", "+x", "hogwild"]"""),
