@@ -6,16 +6,16 @@ spec:
   selector:
     app: hogwild-master
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9376
+    - protocol: TCP
+      port: 80
+      targetPort: 81
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: statefulset-service
   labels:
-    app: hogwild
+    app: hogwild-slave
 spec:
   ports:
   - port: 80
@@ -29,10 +29,14 @@ kind: Deployment
 metadata:
   name: hogwild-master
 spec:
-  serviceName: dns-service
+  replicas: 1
   selector:
     matchLabels:
-      app: hogwild
+      app: hogwild-master
+  template:
+    metadata:
+      labels:
+        app: hogwild-master
     spec:
       volumes:
         - name: dataset
@@ -42,7 +46,7 @@ spec:
         - name: hogwild
           image: gregunz/hogwild:latest
           ports:
-            - containerPort: 80
+            - containerPort: 81
           env:
             - name: MY_POD_NAME
               valueFrom:
