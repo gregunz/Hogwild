@@ -68,11 +68,11 @@ object Mode {
         lambda = options("lambda").toDouble, stepSize = options("step-size").toDouble, interval = options("interval").toInt)
 
       options("mode") match {
-        case "sync" if options("type") == "worker" =>
+        case "sync" =>
           options("server-ip:server-port").split(":").toList match {
             case ip :: port :: Nil => modeBuilder.toSyncWorkerMode(ip, port.toInt)
           }
-        case "sync" if options("type") == "coord" =>
+        case "sync" =>
           modeBuilder.toSyncCoordinatorMode(options("port").toInt)
         case "async" =>
           val someWorker = options.get("worker-ip:worker-port")
