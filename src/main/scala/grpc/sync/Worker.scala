@@ -1,33 +1,27 @@
 package grpc.sync
 
 import dataset.Dataset
-import grpc.sync.Coordinator.argMismatch
+import grpc.GrpcRunnable
 import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
-import launcher.GrpcRunnable
 import model.{SVM, SparseNumVector}
+import utils.SyncWorkerMode
 
-object Worker extends GrpcRunnable {
-
-  private val instance = this
+object Worker extends GrpcRunnable[SyncWorkerMode] {
 
   val lambda = 0.1
+  private val instance = this
   var count = 0
   var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
-  def run(args: Seq[String]): Unit = {
-    args match {
-      case ip :: port :: _ =>
-        Dataset.fullLoad()
-        val client = createClient(ip, port.toInt)
-        val responseObserver = createObserver
-        val requestObserver = client.updateWeights(responseObserver)
+  def run(mode: SyncWorkerMode): Unit = {
+    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
+    val client = createClient(mode.serverIp, mode.serverPort)
+    val responseObserver = createObserver(dataset)
+    val requestObserver = client.updateWeights(responseObserver)
 
-        println(">> READY <<")
-        startComputingLoop(requestObserver)
-
-      case _ => argMismatch(s"expecting port but get $args")
-    }
+    println(">> Ready to compute!")
+    startComputingLoop(requestObserver)
   }
 
   def createClient(ip: String, port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
@@ -39,7 +33,7 @@ object Worker extends GrpcRunnable {
     WorkerServiceSyncGrpc.stub(channel)
   }
 
-  def createObserver: StreamObserver[WorkerResponse] = {
+  def createObserver(dataset: Dataset): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
       def onError(t: Throwable): Unit = {
         println(s"ON_ERROR: $t")
@@ -53,11 +47,11 @@ object Worker extends GrpcRunnable {
 
       def onNext(res: WorkerResponse): Unit = {
         val newGradient = SVM.computeStochasticGradient(
-          feature = Dataset.getFeature(res.did),
-          label = Dataset.getLabel(res.did),
+          feature = dataset.getFeature(res.did),
+          label = dataset.getLabel(res.did),
           weights = SparseNumVector(res.weights),
           lambda = lambda,
-          tidCounts = Dataset.tidCounts
+          tidCounts = dataset.tidCounts
         )
         count += 1
         if (count % 500 == 0) {

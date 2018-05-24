@@ -3,7 +3,7 @@ package grpc.sync
 import model.SparseNumVector
 
 
-class WorkersAggregator {
+object WorkersAggregator {
   private var numWorkers = 0
   private var gradients: List[SparseNumVector[Double]] = List()
 

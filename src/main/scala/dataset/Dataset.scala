@@ -8,16 +8,11 @@ import utils.Types.{Counts, TID}
 import scala.io.Source
 import scala.util.Random
 
-object Dataset {
+case class Dataset(dataPath: String, onlySamples: Boolean) {
 
-  private final val dataPath = "data/"
-  private final val filePaths: List[String] = {
-    List(dataPath + "samples.dat")
-    // de-comment this to load the whole data in memory
-    //(0 until 4).map(i => dataPath + filename(i)).toList
+  lazy val didSet: Set[Int] = load("didSet") {
+    features.keySet
   }
-
-  lazy val didSet: Set[Int] = load("didSet"){features.keySet}
   lazy val tidCounts: Counts = load("tidCounts") {
     features.flatMap(_._2.tids.toSeq)
       .groupBy(tid => tid)
@@ -38,24 +33,49 @@ object Dataset {
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-
   lazy val features: Map[Int, SparseNumVector[Double]] = load("features") {
-    filePaths
-      .flatMap { path =>
-        Source.fromFile(path)
-          .getLines()
-          .map { line => parseLine(line) }
-      }.toMap
+    if (onlySamples) {
+      filePaths.take(1)
+        .flatMap { path =>
+          Source.fromFile(path)
+            .getLines()
+            .take(20000)
+            .map { line => parseLine(line) }
+        }.toMap
+    } else {
+      filePaths
+        .flatMap { path =>
+          Source.fromFile(path)
+            .getLines()
+            .map { line => parseLine(line) }
+        }.toMap
+    }
   }
 
-  def fullLoad(): Unit = load("dataset") {
+  lazy val filePaths: List[String] = {
+    (0 until 4).map(i => dataPath + filename(i)).toList
+  }
+
+  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
+
+  def fullLoad(): Dataset = load("dataset") {
     labels
     features
     tidCounts
     didSet
+    this
   }
 
-  def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
+  private def load[T](name: String)(toLoad: => T): T = {
+    println(s"...loading $name...")
+    val toReturn = toLoad
+    println(s"$name loaded.")
+    toReturn
+  }
+
+  lazy val validationSet: IndexedSeq[(SparseNumVector[Double], Label)] = getSubset(500)
+
+  private def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
     val someDids: IndexedSeq[TID] = didSet.take(n).toIndexedSeq
     val someFeatures: IndexedSeq[SparseNumVector[Double]] = someDids.map(features)
     val someLabels: IndexedSeq[Label] = someDids.map(labels)
@@ -97,15 +117,6 @@ object Dataset {
         val pair: List[String] = e.split(":").map(_.trim).toList
         pair.head.toInt -> pair.tail.head.toDouble
       }).toMap)
-  }
-
-  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
-
-  private def load[T](name: String)(toLoad: => T): T = {
-    println(s"...loading $name...")
-    val toReturn = toLoad
-    println(s"$name loaded.")
-    toReturn
   }
 
 }

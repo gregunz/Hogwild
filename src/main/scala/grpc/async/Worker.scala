@@ -3,203 +3,133 @@ package grpc.async
 import java.net._
 
 import dataset.Dataset
-import grpc.GrpcServer
+import grpc.{GrpcRunnable, GrpcServer, WeightsUpdateHandler}
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
-import launcher.GrpcRunnable
 import model._
+import utils.AsyncWorkerMode
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object Worker extends GrpcServer with GrpcRunnable {
+object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   type BlockingStub = WorkerServiceAsyncGrpc.WorkerServiceAsyncBlockingStub
   type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
-  type Worker = (String, Int)
   type Broadcaster = StreamObserver[BroadcastMessage]
 
-  private val instance = this
-  var broadcasters: Map[Worker, Broadcaster] = Map.empty
+  private val broadcastersHandler = BroadcastersHandler
 
-  lazy val myIp: String = InetAddress.getLocalHost.getHostAddress
-  var myPort: Int = -1
 
-  lazy val samples: Iterator[Int] = Dataset.samples().toIterator
+  def run(mode: AsyncWorkerMode): Unit = {
 
-  val weightsHandler = new WeightsUpdateHandler
-  val workersHandler = new ActiveWorkersHandler
+    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
+    val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
+    val myIp: String = InetAddress.getLocalHost.getHostAddress
+    val myPort = mode.port
+    val weightsUpdateHandler: WeightsUpdateHandler = WeightsUpdateHandler(mode.interval, dataset)
 
-  val lambda: Double = 0.1
-  val svm = new SVM()
+    startServer(myIp, myPort, svm)
 
-  /* TO COMPUTE & PRINT LOSSES */
-  val subsetSize = 500
-  lazy val (someFeatures, someLabels) = Dataset.getSubset(subsetSize).unzip
-  var time: Long = System.currentTimeMillis()
+    if (mode.worker.isDefined) {
+      val worker = mode.worker.get
+      val channel = createChannel(worker)
+      val (weights, workers) = hello(myIp, myPort, worker, channel)
+      svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
 
-  def run(args: Seq[String]): Unit = {
-    args match {
-      case port :: interval :: Nil => // here we assume there are no active workers
-        start(myIp, port.toInt, interval.toInt)
-
-      case port :: oneWorkerIp :: oneWorkerPort :: interval :: Nil => // here we know one active workers
-        val stub = createBlockingStubToWorker(oneWorkerIp, oneWorkerPort.toInt)
-        val (weights, ipAndPortList) = hello(stub)
-        svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
-
-        broadcasters = ipAndPortList.map(v => v -> createBroadcaster(v._1, v._2)).toMap
-        start(myIp, port.toInt, interval.toInt)
-
-      case _ =>
-        argMismatch(s"expecting oneWorkerIp, oneWorkerPort and myPort but get $args")
+      broadcastersHandler.addSomeActive(workers)
     }
+
+    startComputations(myIp, myPort, dataset, svm, weightsUpdateHandler)
   }
 
-  def load(): Unit = {
-    samples
-    someFeatures
-    someLabels
-  }
-
-  def start(myIp: String, myPort: Int, broadcastInterval: Int): Unit = {
-    this.myPort = myPort
-    load()
-    spawnWorkingThread(myIp, myPort, broadcastInterval)
-    println(">> READY <<")
-    startOwnServer(myPort)
-  }
-
-  def createBlockingStubToWorker(workerIp: String, workerPort: Int): BlockingStub = {
-    val channel: ManagedChannel = ManagedChannelBuilder
-      .forAddress(workerIp, workerPort)
+  def createChannel(worker: RemoteWorker): ManagedChannel = {
+    ManagedChannelBuilder
+      .forAddress(worker.ip, worker.port)
       .usePlaintext(true)
       .build
-
-    WorkerServiceAsyncGrpc.blockingStub(channel)
   }
 
-  def createStubToWorker(workerIp: String, workerPort: Int): Stub = {
-    val channel = ManagedChannelBuilder
-      .forAddress(workerIp, workerPort)
-      .usePlaintext(true)
-      .build
+  def hello(myIp: String, myPort: Int, worker: RemoteWorker, channel: ManagedChannel): (SparseNumVector[Double], Set[RemoteWorker]) = {
+    val stub = WorkerServiceAsyncGrpc.blockingStub(channel)
+    val response = stub.hello(WorkerDetail(myIp, myPort))
 
-    WorkerServiceAsyncGrpc.stub(channel)
-  }
-
-  def createBroadcaster(workerIp: String, workerPort: Int): Broadcaster = {
-    val broadcastObserver = new StreamObserver[Empty] {
-      override def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")
-
-      override def onCompleted(): Unit = println("ON_COMPLETED")
-
-      override def onNext(msg: Empty): Unit = {
-        println("<< SHOULD NOT BE TRIGGERED >>")
-      }
-    }
-    createStubToWorker(workerIp, workerPort).broadcast(broadcastObserver)
-  }
-
-  def hello(oneWorkerStub: BlockingStub): (SparseNumVector[Double], Set[(String, Int)]) = {
-    val response = oneWorkerStub.hello(Empty())
     SparseNumVector(response.weights) -> response
       .workersDetails
-      .map(a => a.address -> a.port.toInt)
+      .map(a => RemoteWorker(a.address, a.port.toInt))
       .toSet
   }
 
-  def startOwnServer(myPort: Int): Unit = {
-    val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService, ExecutionContext.global)
+  def startServer(myIp: String, myPort: Int, svm: SVM): Unit = {
+    val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService(myIp, myPort, svm), ExecutionContext.global)
+    println(">> Server starting..")
     runServer(ssd, myPort)
   }
 
-  def spawnWorkingThread(myIp: String, myPort: Int, broadcastInterval: Int): Future[Unit] = {
+  def startComputations(myIp: String, myPort: Int, dataset: Dataset, svm: SVM, weightsHandler: WeightsUpdateHandler): Unit = {
     val myWorkerDetail = WorkerDetail(myIp, myPort)
+    val samples: Iterator[Int] = dataset.samples().toIterator
 
-    Future {
-      while (true) {
-        val random_did = samples.next
-        val newGradient = SVM.computeStochasticGradient(
-          feature = Dataset.getFeature(random_did),
-          label = Dataset.getLabel(random_did),
-          weights = svm.weights,
-          lambda = lambda,
-          tidCounts = Dataset.tidCounts
+
+
+    println(">> Computations thread starting..")
+
+    while (true) {
+      val random_did = samples.next
+      val newGradient = svm.computeStochasticGradient(
+        feature = dataset.getFeature(random_did),
+        label = dataset.getLabel(random_did),
+        tidCounts = dataset.tidCounts
+      )
+      val weightsUpdate = svm.updateWeights(newGradient)
+      weightsHandler.addWeightsUpdate(weightsUpdate)
+
+      // here we broadcast the weights update
+      if (weightsHandler.reachedInterval) {
+        val msg = BroadcastMessage(
+          weightsHandler.getAndResetWeightsUpdate().toMap,
+          Some(myWorkerDetail)
         )
-        val weightsUpdate = svm.updateWeights(newGradient)
-        weightsHandler.addWeightsUpdate(weightsUpdate)
-        val counts = weightsHandler.counts
+        weightsHandler.resetInterval()
 
-        // here we broadcast the weights update
-        if (counts % broadcastInterval == 0) {
-          val weigthsUpdateToBroadcast = weightsHandler.getAndResetWeightsUpdate()
-          val msg = BroadcastMessage(
-            weigthsUpdateToBroadcast.toMap,
-            Some(myWorkerDetail)
-          )
-          if (broadcasters.nonEmpty){
-            println(s"[SEND] Feel like sharing some computations, here you go guys (${broadcasters.keySet.mkString("[", ";", "]")})")
-          }
-          broadcasters.foreach { broadcaster =>
-            broadcaster._2.onNext(msg)
-          }
-
-          // compute loss
-
-          //println(s"[CPT]: computing done since start = $counts)")
-          val loss = svm.loss(
-            someFeatures,
-            someLabels,
-            lambda,
-            Dataset.tidCounts
-          )
-          val duration = System.currentTimeMillis() - time
-          time = System.currentTimeMillis()
-          println(s"[UPT][$counts][$duration]: loss = $loss")
-
-        }
+        weightsHandler.showLoss(svm)
+        broadcastersHandler.broadcast(msg)
       }
-
-    }(ExecutionContext.global)
+    }
   }
 
-  object WorkerServerService extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
+  case class RemoteWorker(ip: String, port: Int)
 
+  case class WorkerServerService(myIp: String, myPort: Int, svm: SVM) extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
 
-    override def hello(request: Empty): Future[HelloResponse] = {
-      val workersToSend = broadcasters.keySet + (myIp -> myPort)
+    override def hello(request: WorkerDetail): Future[HelloResponse] = {
+      val workersToSend = broadcastersHandler.activeWorkers + RemoteWorker(myIp, myPort)
       val weights = svm.weights
 
+      broadcastersHandler.addToWaitingList(RemoteWorker(request.address, request.port.toInt))
+
       Future.successful(HelloResponse(
-        workersToSend.map { case (ip, port) => WorkerDetail(ip, port) }.toSeq,
+        workersToSend.map { w => WorkerDetail(w.ip, w.port) }.toSeq,
         weights.toMap
       ))
     }
 
     override def broadcast(responseObserver: StreamObserver[Empty]): StreamObserver[BroadcastMessage] = {
       new StreamObserver[BroadcastMessage] {
-        override def onError(t: Throwable): Unit = println(s"ON_ERROR: $t")
+        override def onError(t: Throwable): Unit = {}
 
-        override def onCompleted(): Unit = println("ON_COMPLETED")
+        override def onCompleted(): Unit = {}
 
         override def onNext(msg: BroadcastMessage): Unit = {
           val detail = msg.workerDetail.get
-          val worker = detail.address -> detail.port.toInt
+          val worker = RemoteWorker(detail.address, detail.port.toInt)
 
+          broadcastersHandler.add(worker)
           println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
-          if (!broadcasters.contains(worker)){
-            println(s"[NEW]: a new worker just arrived, welcome to the GANG $worker")
-            addBroadcaster(worker._1, worker._2)
-          }
 
           val receivedWeights = SparseNumVector(msg.weightsUpdate)
           svm.addWeightsUpdate(receivedWeights)
         }
       }
-    }
-
-    def addBroadcaster(ip: String, port: Int): Unit = {
-      broadcasters += (ip -> port) -> createBroadcaster(ip, port)
     }
   }
 

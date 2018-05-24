@@ -4,7 +4,7 @@ import utils.Label.Label
 import utils.Types.{Counts, LearningRate}
 
 
-class SVM(stepSize: LearningRate = 0.01) {
+class SVM(lambda: Double, stepSize: LearningRate) {
   var weights: SparseNumVector[Double] = SparseNumVector.empty
 
   /**
@@ -28,7 +28,7 @@ class SVM(stepSize: LearningRate = 0.01) {
     weights += weightsUpdate
   }
 
-  def loss(features: IndexedSeq[SparseNumVector[Double]], labels: IndexedSeq[Label], lambda: Double, tidCounts: Counts): Double = {
+  def loss(features: IndexedSeq[SparseNumVector[Double]], labels: IndexedSeq[Label], tidCounts: Counts): Double = {
     require(features.size == labels.size)
     val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
 
@@ -39,6 +39,12 @@ class SVM(stepSize: LearningRate = 0.01) {
         val reg = 0.5 * lambda * (w * w * inverseTidCountsVector).firstNorm
         hinge + reg
       }.sum
+  }
+
+  def computeStochasticGradient(feature: SparseNumVector[Double],
+                                label: Label,
+                                tidCounts: Counts): SparseNumVector[Double] = {
+    SVM.computeStochasticGradient(feature, label, weights, lambda, tidCounts)
   }
 }
 
