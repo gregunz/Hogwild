@@ -8,7 +8,7 @@ import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import model._
-import utils.{AsyncWorkerMode, Interval, WeightsExport}
+import utils.{AsyncWorkerMode, Interval}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
