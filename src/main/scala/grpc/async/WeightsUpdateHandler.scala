@@ -1,8 +1,6 @@
-package grpc
+package grpc.async
 
-import dataset.Dataset
-import model.{SVM, SparseNumVector}
-import utils.Interval
+import model.SparseNumVector
 
 object WeightsUpdateHandler {
   private var weightsUpdateAggregated: SparseNumVector[Double] = SparseNumVector.empty

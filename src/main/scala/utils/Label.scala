@@ -7,4 +7,5 @@ object Label extends Enumeration {
   val Else: Label.Value = Value(-1)
 
   def apply(isCCAT: Boolean): Label = if (isCCAT) CCAT else Else
+  def fromInt(value: Int): Label = apply(value == 1)
 }

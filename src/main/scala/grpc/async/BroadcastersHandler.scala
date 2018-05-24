@@ -1,10 +1,15 @@
 package grpc.async
 
-import grpc.async.Worker.{Broadcaster, RemoteWorker, Stub}
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 
+
 object BroadcastersHandler {
+
+  case class RemoteWorker(ip: String, port: Int)
+  type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
+  type Broadcaster = (ManagedChannel, StreamObserver[BroadcastMessage])
+
   private val instance = this
   private var broadcasters: Map[RemoteWorker, Broadcaster] = Map.empty
   private var waitingList: Set[RemoteWorker] = Set.empty
@@ -29,14 +34,23 @@ object BroadcastersHandler {
     }
   }
 
-  private def createBroadcaster(worker: RemoteWorker): (RemoteWorker, Broadcaster) = {
-    createBroadcaster(worker, createStub(worker))
+  def killAll(): Unit = {
+    instance.synchronized{
+      val channels = broadcasters.values.unzip._1 ++ waitingList.map(createChannel)
+      channels.foreach{ c =>
+        val blockingStub = WorkerServiceAsyncGrpc.blockingStub(c)
+        blockingStub.kill(Empty())
+      }
+    }
   }
 
-  private def createBroadcaster(worker: RemoteWorker, stub: Stub): (RemoteWorker, Broadcaster) = {
+  private def createBroadcaster(worker: RemoteWorker): (RemoteWorker, Broadcaster) = {
+    createBroadcaster(worker, createChannel(worker))
+  }
+
+  private def createBroadcaster(worker: RemoteWorker, channel: ManagedChannel): (RemoteWorker, Broadcaster) = {
     val broadcastObserver = new StreamObserver[Empty] {
       override def onError(t: Throwable): Unit = {
-        //t.printStackTrace()
         instance.remove(worker)
       }
 
@@ -44,7 +58,9 @@ object BroadcastersHandler {
 
       override def onNext(msg: Empty): Unit = {}
     }
-    worker -> stub.broadcast(broadcastObserver)
+
+    val stub = createStub(channel)
+    worker -> (channel -> stub.broadcast(broadcastObserver))
   }
 
   def remove(worker: RemoteWorker): Unit = {
@@ -56,13 +72,11 @@ object BroadcastersHandler {
     }
   }
 
-  private def createStub(worker: RemoteWorker): Stub = {
-    val channel: ManagedChannel = ManagedChannelBuilder
+  private def createChannel(worker: RemoteWorker): ManagedChannel = {
+    ManagedChannelBuilder
       .forAddress(worker.ip, worker.port)
       .usePlaintext(true)
       .build
-
-    createStub(channel)
   }
 
   private def createStub(channel: ManagedChannel): Stub = WorkerServiceAsyncGrpc.stub(channel)
@@ -79,7 +93,7 @@ object BroadcastersHandler {
         println(s"[SEND] feel like sharing some computations, here you go guys " +
           s"${broadcasters.keySet.mkString("[", ";", "]")}")
       }
-      broadcasters.values.foreach(_.onNext(msg))
+      broadcasters.values.foreach(_._2.onNext(msg))
     }
   }
 

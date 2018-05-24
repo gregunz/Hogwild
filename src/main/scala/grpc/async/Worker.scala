@@ -3,19 +3,17 @@ package grpc.async
 import java.net._
 
 import dataset.Dataset
-import grpc.{GrpcRunnable, GrpcServer, WeightsUpdateHandler}
+import grpc.async.BroadcastersHandler.RemoteWorker
+import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import model._
-import utils.AsyncWorkerMode
+import utils.{AsyncWorkerMode, Interval, WeightsExport}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
-
-  type BlockingStub = WorkerServiceAsyncGrpc.WorkerServiceAsyncBlockingStub
-  type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
-  type Broadcaster = StreamObserver[BroadcastMessage]
 
   private val broadcastersHandler = BroadcastersHandler
 
@@ -26,7 +24,6 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
     val myIp: String = InetAddress.getLocalHost.getHostAddress
     val myPort = mode.port
-    val weightsUpdateHandler: WeightsUpdateHandler = WeightsUpdateHandler(mode.interval, dataset)
 
     startServer(myIp, myPort, svm)
 
@@ -39,7 +36,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       broadcastersHandler.addSomeActive(workers)
     }
 
-    startComputations(myIp, myPort, dataset, svm, weightsUpdateHandler)
+    startComputations(myIp, myPort, dataset, svm, mode.interval, mode.isMaster)
   }
 
   def createChannel(worker: RemoteWorker): ManagedChannel = {
@@ -65,10 +62,11 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     runServer(ssd, myPort)
   }
 
-  def startComputations(myIp: String, myPort: Int, dataset: Dataset, svm: SVM, weightsHandler: WeightsUpdateHandler): Unit = {
+  def startComputations(myIp: String, myPort: Int, dataset: Dataset, svm: SVM, interval: Interval,
+                        isMaster: Boolean): Unit = {
     val myWorkerDetail = WorkerDetail(myIp, myPort)
     val samples: Iterator[Int] = dataset.samples().toIterator
-
+    val stoppingCriterion = StoppingCriterion(dataset)
 
 
     println(">> Computations thread starting..")
@@ -81,23 +79,25 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
         tidCounts = dataset.tidCounts
       )
       val weightsUpdate = svm.updateWeights(newGradient)
-      weightsHandler.addWeightsUpdate(weightsUpdate)
+      WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
 
-      // here we broadcast the weights update
-      if (weightsHandler.reachedInterval) {
+      if (interval.resetIfReachedElseIncrease()) {
         val msg = BroadcastMessage(
-          weightsHandler.getAndResetWeightsUpdate().toMap,
+          WeightsUpdateHandler.getAndResetWeightsUpdate().toMap,
           Some(myWorkerDetail)
         )
-        weightsHandler.resetInterval()
-
-        weightsHandler.showLoss(svm)
         broadcastersHandler.broadcast(msg)
+        if(isMaster){
+          stoppingCriterion.compute(svm, displayLoss = true)
+          if (stoppingCriterion.shouldStop){
+            broadcastersHandler.killAll()
+            WeightsExport.uploadWeightsAndGetLink(svm.weights)
+            sys.exit(0)
+          }
+        }
       }
     }
   }
-
-  case class RemoteWorker(ip: String, port: Int)
 
   case class WorkerServerService(myIp: String, myPort: Int, svm: SVM) extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
 
@@ -107,7 +107,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
       broadcastersHandler.addToWaitingList(RemoteWorker(request.address, request.port.toInt))
 
-      Future.successful(HelloResponse(
+      Future(HelloResponse(
         workersToSend.map { w => WorkerDetail(w.ip, w.port) }.toSeq,
         weights.toMap
       ))
@@ -130,6 +130,12 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           svm.addWeightsUpdate(receivedWeights)
         }
       }
+    }
+
+    override def kill(request: Empty): Future[Empty] = {
+      println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
+      sys.exit(0)
+      Future(Empty())
     }
   }
 

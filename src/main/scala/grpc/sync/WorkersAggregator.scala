@@ -29,4 +29,6 @@ object WorkersAggregator {
     meanGradient
   }
 
+  def noWorkersAvailable: Boolean = numWorkers == 0
+
 }

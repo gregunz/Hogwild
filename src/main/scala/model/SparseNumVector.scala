@@ -9,8 +9,8 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
   private[this] val zero = implicitly[Numeric[T]].zero
   vector = vector.withDefaultValue(zero) // wish to set it as val and force this !
 
-  def filter(tids: Set[TID]): SparseNumVector[T] = {
-    SparseNumVector(this.toMap.filter { case (k, v) => tids(k) })
+  def filterKeys(predicate: TID => Boolean): SparseNumVector[T] = {
+    SparseNumVector(this.toMap.filterKeys(predicate))
   }
 
   def +(other: SparseNumVector[T]): SparseNumVector[T] = {

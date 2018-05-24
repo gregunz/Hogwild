@@ -2,38 +2,37 @@ package grpc.sync
 
 import dataset.Dataset
 import grpc.GrpcRunnable
-import io.grpc.ManagedChannelBuilder
+import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import io.grpc.stub.StreamObserver
 import model.{SVM, SparseNumVector}
-import utils.SyncWorkerMode
+import utils.{Interval, SyncWorkerMode}
 
 object Worker extends GrpcRunnable[SyncWorkerMode] {
 
-  val lambda = 0.1
   private val instance = this
-  var count = 0
-  var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
+  private var shouldStop = false
+  private var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(mode: SyncWorkerMode): Unit = {
     val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
-    val client = createClient(mode.serverIp, mode.serverPort)
-    val responseObserver = createObserver(dataset)
+    val channel = createChannel(mode.serverIp, mode.serverPort)
+    val client = WorkerServiceSyncGrpc.stub(channel)
+    val responseObserver = createObserver(dataset, mode.lambda, mode.interval)
     val requestObserver = client.updateWeights(responseObserver)
 
+    channel.shutdown()
     println(">> Ready to compute!")
     startComputingLoop(requestObserver)
   }
 
-  def createClient(ip: String, port: Int): WorkerServiceSyncGrpc.WorkerServiceSyncStub = {
-    val channel = ManagedChannelBuilder
-      .forAddress(ip, port) // host and port of service
-      .usePlaintext(true) // don't use encryption (for demo purposes)
+  def createChannel(ip: String, port: Int): ManagedChannel = {
+    ManagedChannelBuilder
+      .forAddress(ip, port)
+      .usePlaintext(true)
       .build
-
-    WorkerServiceSyncGrpc.stub(channel)
   }
 
-  def createObserver(dataset: Dataset): StreamObserver[WorkerResponse] = {
+  def createObserver(dataset: Dataset, lambda: Double, interval: Interval): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
       def onError(t: Throwable): Unit = {
         println(s"ON_ERROR: $t")
@@ -46,6 +45,10 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       }
 
       def onNext(res: WorkerResponse): Unit = {
+        if (res.did == -1){
+          println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
+          sys.exit(0)
+        }
         val newGradient = SVM.computeStochasticGradient(
           feature = dataset.getFeature(res.did),
           label = dataset.getLabel(res.did),
@@ -53,9 +56,8 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
           lambda = lambda,
           tidCounts = dataset.tidCounts
         )
-        count += 1
-        if (count % 500 == 0) {
-          println(s"[CPT]: computing done since start = $count)")
+        if (interval.resetIfReachedElseIncrease()) {
+          println(s"[CPT]: hardworking since ${interval.prettyLimit}")
         }
 
         instance.synchronized {

@@ -1,6 +1,6 @@
 package utils
 
-import grpc.async.Worker.RemoteWorker
+import grpc.async.BroadcastersHandler.RemoteWorker
 import grpc.async.{Worker => AsyncWorker}
 import grpc.sync.{Coordinator => SyncCoordinator, Worker => SyncWorker}
 import launcher.ArgsHandler.Options
@@ -18,11 +18,11 @@ trait TopMode extends Mode {
   val samples: Boolean
   val lambda: Double
   val stepSize: LearningRate
-  val interval: Int
+  val interval: Interval
 }
 
 case class SyncWorkerMode(dataPath: String, samples: Boolean, lambda: Double, stepSize: LearningRate,
-                          interval: Int, serverIp: String, serverPort: Int) extends TopMode {
+                          interval: Interval, serverIp: String, serverPort: Int) extends TopMode {
   def run(): Unit = {
     printMode(this)
     SyncWorker.run(this)
@@ -30,7 +30,7 @@ case class SyncWorkerMode(dataPath: String, samples: Boolean, lambda: Double, st
 }
 
 case class SyncCoordinatorMode(dataPath: String, samples: Boolean, lambda: Double, stepSize: LearningRate,
-                               interval: Int, port: Int) extends TopMode {
+                               interval: Interval, port: Int) extends TopMode {
   def run(): Unit = {
     printMode(this)
     SyncCoordinator.run(this)
@@ -38,11 +38,13 @@ case class SyncCoordinatorMode(dataPath: String, samples: Boolean, lambda: Doubl
 }
 
 case class AsyncWorkerMode(dataPath: String, samples: Boolean, lambda: Double, stepSize: LearningRate,
-                           interval: Int, port: Int, worker: Option[RemoteWorker]) extends TopMode {
+                           interval: Interval, port: Int, worker: Option[RemoteWorker]) extends TopMode {
   def run(): Unit = {
     printMode(this)
     AsyncWorker.run(this)
   }
+
+  val isMaster: Boolean = worker.isDefined
 }
 
 case class DefaultMode(options: Options) extends Mode {
@@ -50,22 +52,24 @@ case class DefaultMode(options: Options) extends Mode {
 }
 
 
-case class ModeBuilder(dataPath: String, samples: Boolean, lambda: Double, stepSize: LearningRate, interval: Int){
+case class ModeBuilder(dataPath: String, samples: Boolean, lambda: Double, stepSize: LearningRate, interval: Interval){
   def toSyncWorkerMode(serverIp: String, serverPort: Int) = SyncWorkerMode(dataPath = dataPath, samples = samples,
     lambda = lambda, stepSize = stepSize, interval = interval, serverIp = serverIp, serverPort = serverPort)
 
   def toSyncCoordinatorMode(port: Int) = SyncCoordinatorMode(dataPath = dataPath, samples = samples,
     lambda = lambda, stepSize = stepSize, interval = interval, port = port)
 
-  def toAsyncWorkerMode(port: Int, worker: Option[RemoteWorker]) = AsyncWorkerMode(dataPath = dataPath,
-    samples = samples, lambda = lambda, stepSize = stepSize, interval = interval, port = port, worker = worker)
+  def toAsyncWorkerMode(port: Int, worker: Option[RemoteWorker]) = AsyncWorkerMode(
+    dataPath = dataPath, samples = samples, lambda = lambda, stepSize = stepSize, interval = interval,
+    port = port, worker = worker)
 }
 
 object Mode {
   def apply(options: Options): Mode = {
     Try {
       val modeBuilder = ModeBuilder(dataPath = options("data-path"), samples = options("samples").toInt == 1,
-        lambda = options("lambda").toDouble, stepSize = options("step-size").toDouble, interval = options("interval").toInt)
+        lambda = options("lambda").toDouble, stepSize = options("step-size").toDouble,
+        interval = Interval(options("interval").toInt, inSecond = options("in-second").toBoolean))
 
       options("mode") match {
         case "sync" if options.contains("ip:port") =>
