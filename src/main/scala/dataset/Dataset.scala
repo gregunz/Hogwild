@@ -10,7 +10,7 @@ import scala.util.Random
 
 case class Dataset(dataPath: String, onlySamples: Boolean) {
 
-  lazy val didSet: Set[Int] = load("didSet") {
+  lazy val dids: Set[Int] = load("didSet") {
     features.keySet
   }
   lazy val tidCounts: Counts = load("tidCounts") {
@@ -19,10 +19,13 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
       .mapValues(_.size)
   }
   lazy val labels: Map[Int, Label] = load("labels") {
+
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"
     Source.fromFile(labelPath)
       .getLines
+      .toStream
+      .par
       .map { line =>
         line.split(" ").filterNot(_.isEmpty).take(2).toList match {
           case label :: id :: Nil => id.toInt -> (label == labelOfInterest)
@@ -46,8 +49,10 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
       filePaths
         .flatMap { path =>
           Source.fromFile(path)
-            .getLines()
-            .map { line => parseLine(line) }
+            .getLines
+            .grouped(50000)
+            .flatMap(lines => lines.par.map(parseLine))
+            //.map(parseLine)
         }.toMap
     }
   }
@@ -62,7 +67,7 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
     labels
     features
     tidCounts
-    didSet
+    dids
     this
   }
 
@@ -76,14 +81,14 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
   lazy val validationSet: IndexedSeq[(SparseNumVector[Double], Label)] = getSubset(500)
 
   private def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
-    val someDids: IndexedSeq[TID] = didSet.take(n).toIndexedSeq
+    val someDids: IndexedSeq[TID] = dids.take(n).toIndexedSeq
     val someFeatures: IndexedSeq[SparseNumVector[Double]] = someDids.map(features)
     val someLabels: IndexedSeq[Label] = someDids.map(labels)
     someFeatures zip someLabels
   }
 
   def samples(withReplacement: Boolean = false): Stream[Int] = {
-    val docIndicesIndexSeq = didSet.toIndexedSeq
+    val docIndicesIndexSeq = dids.toIndexedSeq
     if (!withReplacement) {
       Stream.continually {
         Random.shuffle(docIndicesIndexSeq).toStream

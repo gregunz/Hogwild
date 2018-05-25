@@ -6,6 +6,9 @@ version := "0.1"
 
 scalaVersion := "2.12.6"
 
+// Increase Java Max Heap Size (https://goo.gl/wuBkQM)
+javaOptions += "-Xmx20G"
+
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)
 enablePlugins(AshScriptPlugin)

@@ -17,10 +17,10 @@ object WeightsExport {
 
   private def writeWeightsToFile(dirPath: String, filename: String, weights: SparseNumVector[Double]): Unit = {
     createDir(dirPath)
-    val file = new File(filename)
+    val file = new File(s"$dirPath/$filename")
     val bw = new BufferedWriter(new FileWriter(file))
     weights.toMap.foreach{ case (tid, value) =>
-      val toWrite = s"$tid,$value"
+      val toWrite = s"$tid,$value\n"
       bw.write(toWrite)
     }
     bw.close()

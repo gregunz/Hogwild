@@ -17,7 +17,6 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   private val broadcastersHandler = BroadcastersHandler
 
-
   def run(mode: AsyncWorkerMode): Unit = {
 
     val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
