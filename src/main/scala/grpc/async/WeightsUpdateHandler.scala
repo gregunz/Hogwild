@@ -9,12 +9,12 @@ object WeightsUpdateHandler {
     weightsUpdateAggregated += weightsUpdate
   }
 
-  def resetWeightsUpdate(): Unit = weightsUpdateAggregated = SparseNumVector.empty
-
   def getAndResetWeightsUpdate(): SparseNumVector[Double] = {
-      val tmp = weightsUpdateAggregated
-      resetWeightsUpdate()
-      tmp
+    val tmp = weightsUpdateAggregated
+    resetWeightsUpdate()
+    tmp
   }
+
+  def resetWeightsUpdate(): Unit = weightsUpdateAggregated = SparseNumVector.empty
 
 }

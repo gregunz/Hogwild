@@ -11,8 +11,8 @@ import launcher.AsyncWorkerMode
 import model._
 import utils.Interval
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
@@ -86,9 +86,9 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           Some(myWorkerDetail)
         )
         broadcastersHandler.broadcast(msg)
-        if(stoppingCriterion.isDefined){
+        if (stoppingCriterion.isDefined) {
           stoppingCriterion.get.compute(svm, displayLoss = true)
-          if (stoppingCriterion.get.shouldStop){
+          if (stoppingCriterion.get.shouldStop) {
             broadcastersHandler.killAll()
             WeightsExport.uploadWeightsAndGetLink(stoppingCriterion.get.getWeights)
             sys.exit(0)

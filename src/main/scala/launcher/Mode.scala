@@ -11,6 +11,7 @@ import scala.util.Try
 
 trait Mode {
   def run(): Unit
+
   def printMode(mode: Mode): Unit = println(s">> Starting $mode")
 }
 
@@ -24,37 +25,37 @@ trait TopMode extends Mode {
 
 case class SyncWorkerMode(dataPath: String, lambda: Double, stepSize: LearningRate, interval: Interval,
                           serverIp: String, serverPort: Int) extends TopMode {
+  val isMaster = false
+
   def run(): Unit = {
     printMode(this)
     SyncWorker.run(this)
   }
-
-  val isMaster = false
 }
 
 case class SyncCoordinatorMode(dataPath: String, lambda: Double, stepSize: LearningRate,
                                interval: Interval, port: Int, maxTimesWithoutImproving: Int) extends TopMode {
+  val isMaster = true
+
   def run(): Unit = {
     printMode(this)
     SyncCoordinator.run(this)
   }
-
-  val isMaster = true
 }
 
 case class AsyncWorkerMode(dataPath: String, lambda: Double, stepSize: LearningRate, interval: Interval, port: Int,
                            worker: Option[RemoteWorker], maxTimesWithoutImproving: Option[Int]) extends TopMode {
   require(
-    (worker.isEmpty  && maxTimesWithoutImproving.isDefined)
-      || (worker.isDefined&& maxTimesWithoutImproving.isEmpty)
+    (worker.isEmpty && maxTimesWithoutImproving.isDefined)
+      || (worker.isDefined && maxTimesWithoutImproving.isEmpty)
   )
+
+  val isMaster: Boolean = maxTimesWithoutImproving.isDefined
 
   def run(): Unit = {
     printMode(this)
     AsyncWorker.run(this)
   }
-
-  val isMaster: Boolean = maxTimesWithoutImproving.isDefined
 }
 
 case class DefaultMode(options: Options, t: Throwable) extends Mode {
@@ -62,7 +63,7 @@ case class DefaultMode(options: Options, t: Throwable) extends Mode {
 }
 
 
-case class ModeBuilder(dataPath: String, lambda: Double, stepSize: LearningRate, interval: Interval){
+case class ModeBuilder(dataPath: String, lambda: Double, stepSize: LearningRate, interval: Interval) {
   def toSyncWorkerMode(serverIp: String, serverPort: Int) =
     SyncWorkerMode(dataPath = dataPath, lambda = lambda, stepSize = stepSize, interval = interval, serverIp = serverIp,
       serverPort = serverPort)
@@ -95,13 +96,15 @@ object Mode {
             .map(_.split(":").toList match {
               case ip :: port :: Nil => RemoteWorker(ip, port.toInt)
             })
-          val earlyStopping = if (someWorker.isEmpty){
+          val earlyStopping = if (someWorker.isEmpty) {
             Some(options("early-stopping").toInt)
-          } else { None }
+          } else {
+            None
+          }
           modeBuilder.toAsyncWorkerMode(options("port").toInt, someWorker, earlyStopping)
       }
     }
-    if (mode.isSuccess){
+    if (mode.isSuccess) {
       mode.get
     } else {
       DefaultMode(options, mode.failed.get)

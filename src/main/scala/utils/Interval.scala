@@ -8,13 +8,9 @@ case class Interval(limit: Int, inSecond: Boolean) {
   //val duration = ((now - time) / 100d).toInt / 10d
   //time = now
 
-  def increase(): Unit = counter += 1
-  def hasReached: Boolean = counter >= limit
-  def reset(): Unit = counter = 0
-
   def resetIfReachedElseIncrease(): Boolean = {
     val reached = hasReached
-    if (reached){
+    if (reached) {
       reset()
     } else {
       increase()
@@ -22,5 +18,13 @@ case class Interval(limit: Int, inSecond: Boolean) {
     reached
   }
 
-  def prettyLimit: String = limit + {if(inSecond)"sec" else "iterations"}
+  def increase(): Unit = counter += 1
+
+  def hasReached: Boolean = counter >= limit
+
+  def reset(): Unit = counter = 0
+
+  def prettyLimit: String = limit + {
+    if (inSecond) "sec" else "iterations"
+  }
 }

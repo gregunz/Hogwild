@@ -6,10 +6,8 @@ import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 
 object BroadcastersHandler {
 
-  case class RemoteWorker(ip: String, port: Int)
   type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
   type Broadcaster = (ManagedChannel, StreamObserver[BroadcastMessage])
-
   private val instance = this
   private var broadcasters: Map[RemoteWorker, Broadcaster] = Map.empty
   private var waitingList: Set[RemoteWorker] = Set.empty
@@ -20,26 +18,6 @@ object BroadcastersHandler {
         waitingList -= worker
         println(s"[NEW] a new worker just joined the gang! welcome $worker")
         broadcasters += createBroadcaster(worker)
-      }
-    }
-  }
-
-  def addSomeActive(workers: Set[RemoteWorker]): Unit = {
-    instance.synchronized {
-      val newWorkers = workers.diff(broadcasters.keySet)
-      if (newWorkers.nonEmpty) {
-        waitingList --= newWorkers
-        broadcasters ++= newWorkers.map(createBroadcaster)
-      }
-    }
-  }
-
-  def killAll(): Unit = {
-    instance.synchronized{
-      val channels = broadcasters.values.unzip._1 ++ waitingList.map(createChannel)
-      channels.foreach{ c =>
-        val blockingStub = WorkerServiceAsyncGrpc.blockingStub(c)
-        blockingStub.kill(Empty())
       }
     }
   }
@@ -72,6 +50,8 @@ object BroadcastersHandler {
     }
   }
 
+  private def createStub(channel: ManagedChannel): Stub = WorkerServiceAsyncGrpc.stub(channel)
+
   private def createChannel(worker: RemoteWorker): ManagedChannel = {
     ManagedChannelBuilder
       .forAddress(worker.ip, worker.port)
@@ -79,7 +59,25 @@ object BroadcastersHandler {
       .build
   }
 
-  private def createStub(channel: ManagedChannel): Stub = WorkerServiceAsyncGrpc.stub(channel)
+  def addSomeActive(workers: Set[RemoteWorker]): Unit = {
+    instance.synchronized {
+      val newWorkers = workers.diff(broadcasters.keySet)
+      if (newWorkers.nonEmpty) {
+        waitingList --= newWorkers
+        broadcasters ++= newWorkers.map(createBroadcaster)
+      }
+    }
+  }
+
+  def killAll(): Unit = {
+    instance.synchronized {
+      val channels = broadcasters.values.unzip._1 ++ waitingList.map(createChannel)
+      channels.foreach { c =>
+        val blockingStub = WorkerServiceAsyncGrpc.blockingStub(c)
+        blockingStub.kill(Empty())
+      }
+    }
+  }
 
   def addToWaitingList(worker: RemoteWorker): Unit = {
     instance.synchronized {
@@ -100,5 +98,7 @@ object BroadcastersHandler {
   def activeWorkers: Set[RemoteWorker] = instance.synchronized {
     broadcasters.keySet ++ waitingList
   }
+
+  case class RemoteWorker(ip: String, port: Int)
 
 }

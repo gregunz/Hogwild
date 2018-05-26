@@ -12,7 +12,7 @@ case class StoppingCriterion(dataset: Dataset, maxTimesWithoutImproving: Int, mi
 
   def compute(svm: SVM, displayLoss: Boolean): (Double, Double) = {
     val (loss, accuracy) = svm.lossAndAccuracy(someFeatures, someLabels, dataset.inverseTidCountsVector)
-    if(displayLoss) {
+    if (displayLoss) {
       println(s"[LOSS = $loss][ACCURACY = ${accuracy * 100} %]")
     }
     if (loss < bestLoss) {
@@ -31,6 +31,8 @@ case class StoppingCriterion(dataset: Dataset, maxTimesWithoutImproving: Int, mi
   }
 
   def getWeights: SparseNumVector[Double] = bestWeights
+
   def getLoss: Double = bestLoss
+
   def getAccuracy: Double = bestAccuracy
 }

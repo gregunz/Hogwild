@@ -12,18 +12,6 @@ import scala.util.Random
 case class Dataset(dataPath: String) {
 
   lazy val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
-  private lazy val tidCounts: Counts = load("tidCounts") {
-    var counts = mutable.Map.empty[Int, Int]
-    for {
-      f <- filePaths
-      line <- Source.fromFile(f).getLines
-      (tid, _) <- parseTailLine(line.split(" ").map(_.trim).filter(_.nonEmpty).drop(1))
-    }{
-      val count = counts.getOrElse(tid, 0)
-      counts.update(tid, count + 1)
-    }
-    counts.toMap
-  }
   lazy val testSet: Seq[(SparseNumVector[Double], Label)] = load("test-set") {
     val testPath = dataPath + "lyrl2004_vectors_train.dat"
     for {
@@ -33,7 +21,18 @@ case class Dataset(dataPath: String) {
       vect -> labels(did)
     }
   }.toList
-
+  private lazy val tidCounts: Counts = load("tidCounts") {
+    var counts = mutable.Map.empty[Int, Int]
+    for {
+      f <- filePaths
+      line <- Source.fromFile(f).getLines
+      (tid, _) <- parseTailLine(line.split(" ").map(_.trim).filter(_.nonEmpty).drop(1))
+    } {
+      val count = counts.getOrElse(tid, 0)
+      counts.update(tid, count + 1)
+    }
+    counts.toMap
+  }
   private lazy val labels: Map[Int, Label] = load("labels") {
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"

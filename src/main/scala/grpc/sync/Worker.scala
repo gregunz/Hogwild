@@ -2,8 +2,8 @@ package grpc.sync
 
 import dataset.Dataset
 import grpc.GrpcRunnable
-import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import io.grpc.stub.StreamObserver
+import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import launcher.SyncWorkerMode
 import model.{SVM, SparseNumVector}
 import utils.Interval
@@ -45,7 +45,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       }
 
       def onNext(res: WorkerResponse): Unit = {
-        if (res.weightsUpdate.isEmpty){
+        if (res.weightsUpdate.isEmpty) {
           println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
           sys.exit(0)
         }

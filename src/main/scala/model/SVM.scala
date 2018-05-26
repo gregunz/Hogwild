@@ -2,7 +2,7 @@ package model
 
 import utils.Label
 import utils.Label.Label
-import utils.Types.{Counts, LearningRate}
+import utils.Types.LearningRate
 
 
 class SVM(lambda: Double, stepSize: LearningRate) {
@@ -29,12 +29,12 @@ class SVM(lambda: Double, stepSize: LearningRate) {
     weights += weightsUpdate
   }
 
-  def predict(features: IndexedSeq[SparseNumVector[Double]]): IndexedSeq[Double] = {
-    features.map(_ dot weights)
-  }
-
   def predictLabels(features: IndexedSeq[SparseNumVector[Double]]): IndexedSeq[Label] = {
     predict(features).map(pred => Label.fromInt(Math.round(pred).toInt))
+  }
+
+  def predict(features: IndexedSeq[SparseNumVector[Double]]): IndexedSeq[Double] = {
+    features.map(_ dot weights)
   }
 
   def lossAndAccuracy(features: Seq[SparseNumVector[Double]], labels: Seq[Label],
