@@ -3,7 +3,7 @@
 n=`echo $MY_POD_NAME | awk -F- '{print $NF}'`
 first_ip="hogwild-0"
 early_stop=""
-min-loss=""
+loss=""
 ip_port=hogwild-pod-0.statefulset-service:${PORT_TO_OPEN}
 
 if [ "$n" == "0" ];then
