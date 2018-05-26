@@ -79,10 +79,11 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker) {
   }
 
   private def updateTidsPerBroadcaster(): Unit = {
+
     val tids = dataset.tids
     val activeWorkers = (this.broadcasters.keySet + meWorker).toList
     val nGroup = activeWorkers.size
-    val groupSize = Math.round(tids.size / nGroup.toDouble)
+    val groupSize = Math.round(tids.size / nGroup.toDouble + 1)
     val ids = activeWorkers
       .map(_.id)
       .sorted
