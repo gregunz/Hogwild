@@ -11,7 +11,9 @@ object ArgsHandler {
     "step-size" -> "0.1",
     "port" -> "50500",
     "interval" -> "500",
-    "in-second" -> "0"
+    "in-second" -> "0",
+    "early-stopping" -> "10",
+    "min-loss" -> "0"
   )
 
   def argsToMap(args: Args): Options =

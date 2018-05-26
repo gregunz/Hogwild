@@ -1,16 +1,20 @@
 package grpc.async
 
+import dataset.Dataset
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
+import model.SparseNumVector
+import utils.Types.TID
 
 
-object BroadcastersHandler {
+case class BroadcastersHandler(dataset: Dataset, myId: Int) {
 
   type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
   type Broadcaster = (ManagedChannel, StreamObserver[BroadcastMessage])
   private val instance = this
   private var broadcasters: Map[RemoteWorker, Broadcaster] = Map.empty
   private var waitingList: Set[RemoteWorker] = Set.empty
+  private var tidsPerBroadcaster: Map[Int, Set[TID]] = Map.empty
 
   def add(worker: RemoteWorker): Unit = {
     instance.synchronized {
@@ -69,6 +73,13 @@ object BroadcastersHandler {
     }
   }
 
+  def updateTidsPerBroadcaster(): Unit = {
+    val tids = dataset.tids
+    val nGroup = this.broadcasters.size
+    val groupSize = Math.round(tids.size / nGroup.toDouble)
+    tidsPerBroadcaster = this.broadcasters.keys.map(_.id).toList.map()
+  }
+
   def killAll(): Unit = {
     instance.synchronized {
       val channels = broadcasters.values.unzip._1 ++ waitingList.map(createChannel)
@@ -85,20 +96,25 @@ object BroadcastersHandler {
     }
   }
 
-  def broadcast(msg: BroadcastMessage): Unit = {
+  def broadcast(weights: SparseNumVector[Double]): Unit = {
     instance.synchronized {
       if (broadcasters.nonEmpty) {
         println(s"[SEND] feel like sharing some computations, here you go guys " +
           s"${broadcasters.keySet.mkString("[", ";", "]")}")
       }
-      broadcasters.values.foreach(_._2.onNext(msg))
+      broadcasters.foreach{ case (worker, (_, broadcaster)) =>
+        val tidsToBroadcast = tidsPerBroadcaster(worker.id) ++ tidsToBroadcast(myId)
+        val msg = BroadcastMessage(
+          weightsUpdate = weights.filterKeys().toMap,
+          workerDetail = Some(worker.toWorkerDetail)
+        )
+          broadcaster.onNext(msg)
+      }
     }
   }
 
   def activeWorkers: Set[RemoteWorker] = instance.synchronized {
     broadcasters.keySet ++ waitingList
   }
-
-  case class RemoteWorker(ip: String, port: Int)
 
 }

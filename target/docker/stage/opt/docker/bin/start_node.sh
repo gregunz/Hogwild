@@ -15,6 +15,6 @@ sh hogwild \
     interval=${INTERVAL} \
     ip:port=${ip_port} \
     data-path=${DATASET_PATH} \
-    samples=${SAMPLES} \
     lambda=${LAMBDA} \
+    early-stopping=${EARLY_STOPPING} \
     step-size=${STEP_SIZE}

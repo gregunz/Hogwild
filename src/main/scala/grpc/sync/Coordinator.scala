@@ -15,7 +15,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
   def run(mode: SyncCoordinatorMode): Unit = {
     val dataset = Dataset(mode.dataPath).getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
-    val stoppingCriterion = StoppingCriterion(dataset, mode.maxTimesWithoutImproving)
+    val stoppingCriterion = StoppingCriteria(dataset, mode.maxTimesWithoutImproving)
 
     val service = WorkerService(dataset, svm, mode.interval, stoppingCriterion)
     val ssd = WorkerServiceSyncGrpc.bindService(service, ExecutionContext.global)
@@ -28,7 +28,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                             dataset: Dataset,
                             svm: SVM,
                             interval: Interval,
-                            stoppingCriterion: StoppingCriterion,
+                            stoppingCriterion: StoppingCriteria,
                           ) extends WorkerServiceSyncGrpc.WorkerServiceSync {
 
     private val instance = this

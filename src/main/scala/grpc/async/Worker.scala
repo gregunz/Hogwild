@@ -3,26 +3,24 @@ package grpc.async
 import java.net._
 
 import dataset.Dataset
-import grpc.async.BroadcastersHandler.RemoteWorker
 import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import launcher.AsyncWorkerMode
 import model._
 import utils.Interval
+import utils.Types.TID
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
-  private val broadcastersHandler = BroadcastersHandler
-
   def run(mode: AsyncWorkerMode): Unit = {
 
     val dataset = Dataset(mode.dataPath).getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
-    val stoppingCriterion = mode.maxTimesWithoutImproving.map(maxTimes => StoppingCriterion(dataset, maxTimes))
+    val stoppingCriterion = mode.maxTimesWithoutImproving.map(maxTimes => StoppingCriteria(dataset, maxTimes))
     val myIp: String = InetAddress.getLocalHost.getHostAddress
     val myPort = mode.port
 
@@ -34,10 +32,15 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       val (weights, workers) = hello(myIp, myPort, worker, channel)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
 
-      broadcastersHandler.addSomeActive(workers)
+      BroadcastersHandler.addSomeActive(workers)
     }
 
     startComputations(myIp, myPort, dataset, svm, mode.interval, stoppingCriterion)
+  }
+
+  def tidsToBroadcast(dataset: Dataset, i: Int, n: Int): Set[TID] = {
+    val allTids = dataset.inverseTidCountsVector.keys.toSeq.sorted
+    allTids.filter(tid => tid % n == i).toSet
   }
 
   def createChannel(worker: RemoteWorker): ManagedChannel = {
@@ -64,7 +67,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   }
 
   def startComputations(myIp: String, myPort: Int, dataset: Dataset, svm: SVM, interval: Interval,
-                        stoppingCriterion: Option[StoppingCriterion]): Unit = {
+                        stoppingCriterion: Option[StoppingCriteria]): Unit = {
     val myWorkerDetail = WorkerDetail(myIp, myPort)
 
 
@@ -85,11 +88,11 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           WeightsUpdateHandler.getAndResetWeightsUpdate().toMap,
           Some(myWorkerDetail)
         )
-        broadcastersHandler.broadcast(msg)
+        BroadcastersHandler.broadcast(msg)
         if (stoppingCriterion.isDefined) {
           stoppingCriterion.get.compute(svm, displayLoss = true)
           if (stoppingCriterion.get.shouldStop) {
-            broadcastersHandler.killAll()
+            BroadcastersHandler.killAll()
             WeightsExport.uploadWeightsAndGetLink(stoppingCriterion.get.getWeights)
             sys.exit(0)
           }
@@ -101,10 +104,10 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   case class WorkerServerService(myIp: String, myPort: Int, svm: SVM) extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
 
     override def hello(request: WorkerDetail): Future[HelloResponse] = {
-      val workersToSend = broadcastersHandler.activeWorkers + RemoteWorker(myIp, myPort)
+      val workersToSend = BroadcastersHandler.activeWorkers + RemoteWorker(myIp, myPort)
       val weights = svm.weights
 
-      broadcastersHandler.addToWaitingList(RemoteWorker(request.address, request.port.toInt))
+      BroadcastersHandler.addToWaitingList(RemoteWorker(request.address, request.port.toInt))
 
       Future(HelloResponse(
         workersToSend.map { w => WorkerDetail(w.ip, w.port) }.toSeq,
@@ -122,7 +125,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           val detail = msg.workerDetail.get
           val worker = RemoteWorker(detail.address, detail.port.toInt)
 
-          broadcastersHandler.add(worker)
+          BroadcastersHandler.add(worker)
           println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
 
           val receivedWeights = SparseNumVector(msg.weightsUpdate)

@@ -2,7 +2,7 @@ package model
 
 import dataset.Dataset
 
-case class StoppingCriterion(dataset: Dataset, maxTimesWithoutImproving: Int, minLoss: Double = 0d) {
+case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Double) {
   private lazy val (someFeatures, someLabels) = dataset.testSet.unzip
 
   private var bestWeights = SparseNumVector.empty[Double]
@@ -27,7 +27,7 @@ case class StoppingCriterion(dataset: Dataset, maxTimesWithoutImproving: Int, mi
   }
 
   def shouldStop: Boolean = {
-    bestLoss < minLoss || timesWithoutImproving > maxTimesWithoutImproving
+    bestLoss < minLoss || timesWithoutImproving > earlyStopping
   }
 
   def getWeights: SparseNumVector[Double] = bestWeights
