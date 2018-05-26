@@ -3,7 +3,7 @@ package model
 import dataset.Dataset
 
 case class StoppingCriterion(dataset: Dataset, minLoss: Double = 0d, maxTimesWithoutImproving: Int = Int.MaxValue) {
-  private lazy val (someFeatures, someLabels) = dataset.validationSet.unzip
+  private lazy val (someFeatures, someLabels) = dataset.testSet.unzip
 
   private var bestWeights = SparseNumVector.empty[Double]
   private var bestLoss = Double.MaxValue

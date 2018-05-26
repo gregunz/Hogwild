@@ -3,23 +3,37 @@ package dataset
 import model.SparseNumVector
 import utils.Label
 import utils.Label.Label
-import utils.Types.{Counts, TID}
+import utils.Types.Counts
 
+import scala.collection.mutable
 import scala.io.Source
 import scala.util.Random
 
-case class Dataset(dataPath: String, onlySamples: Boolean) {
+case class Dataset(dataPath: String) {
 
-  lazy val dids: Set[Int] = load("didSet") {
-    features.keySet
-  }
   lazy val tidCounts: Counts = load("tidCounts") {
-    features.flatMap(_._2.tids.toSeq)
-      .groupBy(tid => tid)
-      .mapValues(_.size)
+    var counts = mutable.Map.empty[Int, Int]
+    for {
+      f <- filePaths
+      line <- Source.fromFile(f).getLines
+      (tid, _) <- parseTailLine(line.split(" ").map(_.trim).filter(_.nonEmpty).drop(1))
+    }{
+      val count = counts.getOrElse(tid, 0)
+      counts.update(tid, count)
+    }
+    counts.toMap
   }
-  lazy val labels: Map[Int, Label] = load("labels") {
+  lazy val testSet: Seq[(SparseNumVector[Double], Label)] = {
+    val testPath = dataPath + "lyrl2004_vectors_train.dat"
+    for {
+      line <- Source.fromFile(testPath).getLines
+    } yield {
+      val (did, vect) = parseLine(line)
+      vect -> labels(did)
+    }
+  }.toSeq
 
+  private lazy val labels: Map[Int, Label] = load("labels") {
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"
     Source.fromFile(labelPath)
@@ -36,38 +50,68 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-  lazy val features: Map[Int, SparseNumVector[Double]] = load("features") {
-    if (onlySamples) {
-      filePaths.take(1)
-        .flatMap { path =>
-          Source.fromFile(path)
-            .getLines()
-            .take(20000)
-            .map { line => parseLine(line) }
-        }.toMap
-    } else {
-      filePaths
-        .flatMap { path =>
-          Source.fromFile(path)
-            .getLines
-            .grouped(50000)
-            .flatMap(lines => lines.par.map(parseLine))
-            //.map(parseLine)
-        }.toMap
-    }
-  }
 
-  lazy val filePaths: List[String] = {
+  private lazy val filePaths: List[String] = {
     (0 until 4).map(i => dataPath + filename(i)).toList
   }
+  private val n_tids = 47236
+  private val randomSampling = new Iterator[(SparseNumVector[Double], Label)] {
+    private var iterator: Iterator[Iterator[(SparseNumVector[Double], Label)]] = Nil.iterator
+    private var group: Iterator[(SparseNumVector[Double], Label)] = Nil.iterator
+    private var epoch = 0
+    private val numPerFile = 200000
+    private val groupSize = 40000
+    private var isStart = true
 
-  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
+    private def numDropAtStart = {
+      if (isStart) {
+        val nGroupToDrop = Random.nextInt(numPerFile / groupSize)
+        isStart = false
+        nGroupToDrop
+      } else {
+        0
+      }
+    }
 
-  def fullLoad(): Dataset = load("dataset") {
+    private def generateIterator = Random.shuffle(filePaths)
+      .iterator
+      .flatMap { path =>
+        Source.fromFile(path)
+          .getLines
+          .grouped(groupSize)
+      }
+      .drop(numDropAtStart)
+      .map(group => group
+        .par
+        .map { line =>
+          val (did, vect) = parseLine(line)
+          vect -> labels(did)
+        }
+        .toIterator)
+
+    override def next: (SparseNumVector[Double], Label) = {
+      if (group.isEmpty) {
+        if (iterator.isEmpty) {
+          println(s"[DATA] dataset random sampling epoch $epoch")
+          iterator = generateIterator
+          epoch += 1
+        }
+        group = iterator.next
+      }
+      group.next
+    }
+
+    override def hasNext: Boolean = true
+  }
+
+  def sample: (SparseNumVector[Double], Label) = randomSampling.next
+
+  def getReady(loadTest: Boolean = false): Dataset = load("dataset") {
     labels
-    features
     tidCounts
-    dids
+    if (loadTest) {
+      testSet
+    }
     this
   }
 
@@ -78,50 +122,20 @@ case class Dataset(dataPath: String, onlySamples: Boolean) {
     toReturn
   }
 
-  lazy val validationSet: IndexedSeq[(SparseNumVector[Double], Label)] = getSubset(500)
-
-  private def getSubset(n: Int): IndexedSeq[(SparseNumVector[Double], Label)] = {
-    val someDids: IndexedSeq[TID] = dids.take(n).toIndexedSeq
-    val someFeatures: IndexedSeq[SparseNumVector[Double]] = someDids.map(features)
-    val someLabels: IndexedSeq[Label] = someDids.map(labels)
-    someFeatures zip someLabels
-  }
-
-  def samples(withReplacement: Boolean = false): Stream[Int] = {
-    val docIndicesIndexSeq = dids.toIndexedSeq
-    if (!withReplacement) {
-      Stream.continually {
-        Random.shuffle(docIndicesIndexSeq).toStream
-      }.flatten
-    } else {
-      Stream.continually {
-        val randomIndex = Random.nextInt(docIndicesIndexSeq.size)
-        val did = docIndicesIndexSeq(randomIndex)
-        did
-      }
-    }
-  }
-
-  def getFeature(did: Int): SparseNumVector[Double] = {
-    features(did)
-  }
-
-  def getLabel(index: Int): Label = {
-    labels(index)
-  }
+  private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"
 
   private def parseLine(line: String): (Int, SparseNumVector[Double]) = {
-    val lineSplitted = line.split(" ").map(_.trim).filterNot(_.isEmpty).toList
-    val did: Int = lineSplitted.head.toInt
-    did -> pairsToVector(lineSplitted.tail)
+    val lineSplitted = line.split(" ").map(_.trim).filter(_.nonEmpty)
+    val did: Int = lineSplitted(0).toInt
+    val vector = SparseNumVector(parseTailLine(lineSplitted.drop(1)).toMap)
+    did -> vector
   }
 
-  private def pairsToVector(lineSplitted: List[String]): SparseNumVector[Double] = {
-    SparseNumVector(
-      lineSplitted.map(e => {
-        val pair: List[String] = e.split(":").map(_.trim).toList
-        pair.head.toInt -> pair.tail.head.toDouble
-      }).toMap)
+  private def parseTailLine(lineSplitted: Array[String]): Array[(Int, Double)] = {
+    lineSplitted.map { e =>
+      val idx = e.indexOf('.')
+      e.substring(0, idx).toInt -> e.substring(idx + 1).toDouble
+    }
   }
 
 }

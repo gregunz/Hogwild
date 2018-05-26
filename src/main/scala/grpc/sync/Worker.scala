@@ -14,7 +14,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
   private var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(mode: SyncWorkerMode): Unit = {
-    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
+    val dataset = Dataset(mode.dataPath).getReady()
     val channel = createChannel(mode.serverIp, mode.serverPort)
     val client = WorkerServiceSyncGrpc.stub(channel)
     val responseObserver = createObserver(dataset, mode.lambda, mode.interval)
@@ -49,10 +49,11 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
           println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
           sys.exit(0)
         }
+        val (feature, label) = dataset.sample
         val newGradient = SVM.computeStochasticGradient(
-          feature = dataset.getFeature(res.did),
-          label = dataset.getLabel(res.did),
-          weights = SparseNumVector(res.weights),
+          feature = feature,
+          label = label,
+          weights = SparseNumVector(res.weightsUpdate),
           lambda = lambda,
           tidCounts = dataset.tidCounts
         )

@@ -12,7 +12,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
 
   def run(mode: SyncCoordinatorMode): Unit = {
-    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
+    val dataset = Dataset(mode.dataPath).getReady()
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
 
     val service = WorkerService(dataset, svm, mode.interval)
@@ -31,7 +31,6 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
     private val instance = this
     private var weightsUpdate = SparseNumVector.empty[Double]
 
-    val samples: Iterator[Int] = dataset.samples().toIterator
     val stoppingCriterion = StoppingCriterion(dataset)
 
     override def updateWeights(responseObserver: StreamObserver[WorkerResponse]): StreamObserver[WorkerRequest] = {
@@ -40,7 +39,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
           println(s"One worker left.")
           safeRemoveWorker()
           if (stoppingCriterion.shouldStop && !WorkersAggregator.noWorkersAvailable) {
-            WeightsExport.uploadWeightsAndGetLink(svm.weights)
+            WeightsExport.uploadWeightsAndGetLink(stoppingCriterion.getWeights)
             sys.exit(0)
           }
         }
@@ -82,7 +81,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
       val did = samples.next
       WorkerResponse(
         did = did,
-        weights = weights.filterKeys(dataset.getFeature(did).tids).toMap
+        weights = weights.filterKeys(dataset.getFeature(did).keys).toMap
       )
     }
 

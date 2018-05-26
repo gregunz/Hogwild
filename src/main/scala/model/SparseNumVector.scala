@@ -56,11 +56,11 @@ case class SparseNumVector[T: Numeric](private var vector: Map[TID, T] = Map.emp
                  op: (T, T) => T,
                  keysOp: (Set[TID], Set[TID]) => Set[TID] = (a, b) => a.union(b)
                ): SparseNumVector[T] = {
-    val keys = keysOp(this.tids, that.tids)
+    val keys = keysOp(this.keys, that.keys)
     SparseNumVector(keys.map(k => k -> op(this.toMap(k), that.toMap(k))).toMap)
   }
 
-  def tids: Set[TID] = this.toMap.keySet
+  def keys: Set[TID] = this.toMap.keySet
 
   def firstNorm: T = this.toMap.values.foldLeft(zero)(_ + _)
 }

@@ -16,7 +16,7 @@ class SVM(lambda: Double, stepSize: LearningRate) {
     */
   def updateWeights(gradient: SparseNumVector[Double]): SparseNumVector[Double] = {
     val weightsUpdate = SparseNumVector(
-      gradient.tids.map { k =>
+      gradient.keys.map { k =>
         val weightUpdate = -stepSize * gradient.toMap(k)
         k -> weightUpdate
       }.toMap
@@ -37,15 +37,14 @@ class SVM(lambda: Double, stepSize: LearningRate) {
     predict(features).map(pred => Label.fromInt(Math.round(pred).toInt))
   }
 
-  def lossAndAccuracy(features: IndexedSeq[SparseNumVector[Double]], labels: IndexedSeq[Label], tidCounts: Counts): (Double, Double) = {
-    require(features.size == labels.size)
+  def lossAndAccuracy(features: Seq[SparseNumVector[Double]], labels: Seq[Label], tidCounts: Counts): (Double, Double) = {
     val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
 
     val (losses, correctPredictions) = features.zip(labels)
       .map { case (feature, label) =>
         val pred = feature dot weights
         val hinge = Math.max(0, 1 - (label.id * pred))
-        val w = weights.filterKeys(feature.tids)
+        val w = weights.filterKeys(feature.keys)
         val reg = 0.5 * lambda * (w * w * inverseTidCountsVector).firstNorm
         val loss = hinge + reg
         val correctPred = Math.abs(pred.toInt + label.id) / 2
@@ -73,7 +72,7 @@ object SVM {
                                 tidCounts: Counts): SparseNumVector[Double] = {
 
     val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
-    val gradRightPart = weights.filterKeys(feature.tids) * lambda * inverseTidCountsVector
+    val gradRightPart = weights.filterKeys(feature.keys) * lambda * inverseTidCountsVector
     if (label.id * (feature dot weights) >= 1) {
       gradRightPart
     } else {

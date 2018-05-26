@@ -19,7 +19,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   def run(mode: AsyncWorkerMode): Unit = {
 
-    val dataset = Dataset(mode.dataPath, mode.samples).fullLoad()
+    val dataset = Dataset(mode.dataPath).getReady()
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
     val myIp: String = InetAddress.getLocalHost.getHostAddress
     val myPort = mode.port
@@ -64,17 +64,16 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   def startComputations(myIp: String, myPort: Int, dataset: Dataset, svm: SVM, interval: Interval,
                         isMaster: Boolean): Unit = {
     val myWorkerDetail = WorkerDetail(myIp, myPort)
-    val samples: Iterator[Int] = dataset.samples().toIterator
     val stoppingCriterion = StoppingCriterion(dataset)
 
 
     println(">> Computations thread starting..")
 
     while (true) {
-      val random_did = samples.next
+      val (feature, label) = dataset.sample
       val newGradient = svm.computeStochasticGradient(
-        feature = dataset.getFeature(random_did),
-        label = dataset.getLabel(random_did),
+        feature = feature,
+        label = label,
         tidCounts = dataset.tidCounts
       )
       val weightsUpdate = svm.updateWeights(newGradient)
@@ -90,7 +89,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           stoppingCriterion.compute(svm, displayLoss = true)
           if (stoppingCriterion.shouldStop){
             broadcastersHandler.killAll()
-            WeightsExport.uploadWeightsAndGetLink(svm.weights)
+            WeightsExport.uploadWeightsAndGetLink(stoppingCriterion.getWeights)
             sys.exit(0)
           }
         }

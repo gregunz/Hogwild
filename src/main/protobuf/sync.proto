@@ -12,6 +12,6 @@ message WorkerRequest {
 }
 
 message WorkerResponse {
-    uint32 did = 1;
-    map<uint32, double> weights = 2;
+    map<uint32, double> weightsUpdate = 1;
+    bool stop = 2;
 }
