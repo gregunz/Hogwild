@@ -15,6 +15,7 @@ case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Doubl
   def compute(svm: SVM, displayLoss: Boolean): (Double, Double) = {
     val (loss, accuracy) = svm.lossAndAccuracy(dataset.testSet, dataset.inverseTidCountsVector)
     losses +:= loss
+    accuracies +:= accuracy
     if (displayLoss) {
       println(s"[LOSS = $loss][ACCURACY = ${accuracy * 100} %]")
     }
@@ -41,8 +42,8 @@ case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Doubl
 
   def export(): Unit = Seq(
     ("weights.csv", bestWeights.toMap.iterator.map{case (tid, value) => s"$tid, $value"}, "\n"),
-    ("losses.csv", losses.iterator.map(_.toString), ", "),
-    ("accuracy.csv", accuracies.iterator.map(_.toString), ", ")
+    ("losses.csv", losses.reverseIterator.map(_.toString), ", "),
+    ("accuracy.csv", accuracies.reverseIterator.map(_.toString), ", ")
   ).foreach{ case(filename, lines, sep) =>
     Utils.upload(filename, lines, sep)
   }
