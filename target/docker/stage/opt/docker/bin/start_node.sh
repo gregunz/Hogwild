@@ -20,5 +20,5 @@ sh hogwild \
     data-path=${DATASET_PATH} \
     lambda=${LAMBDA} \
     step-size=${STEP_SIZE} \
-    early-stopping=early_stop \
-    min-loss=loss
+    early-stopping=$early_stop \
+    min-loss=$loss
