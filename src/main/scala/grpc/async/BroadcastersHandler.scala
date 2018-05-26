@@ -52,6 +52,7 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker) {
     instance.synchronized {
       if (broadcasters.contains(worker)) {
         broadcasters = broadcasters.filterKeys(w => w != worker)
+        updateTidsPerBroadcaster()
         println(s"[BYE] Goodbye my lover, goodbye my friend... ($worker left)")
       }
     }
@@ -77,7 +78,7 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker) {
     }
   }
 
-  def updateTidsPerBroadcaster(): Unit = {
+  private def updateTidsPerBroadcaster(): Unit = {
     val tids = dataset.tids
     val activeWorkers = (this.broadcasters.keySet + meWorker).toList
     val nGroup = activeWorkers.size

@@ -17,11 +17,11 @@ object Utils {
   }
 
   def upload(filename: String, lines: Iterator[String], sep: String): Unit = {
-    writeWeightsToFile(outputDirPath, filename, lines, sep)
-    println(s"curl --upload-file $filename https://transfer.sh/weights.csv" !!)
+    writeLinesToFile(outputDirPath, filename, lines, sep)
+    println(s"curl --upload-file $outputDirPath/$filename https://transfer.sh/weights.csv" !!)
   }
 
-  private def writeWeightsToFile(dirPath: String, filename: String, lines: Iterator[String], sep: String): Unit = {
+  private def writeLinesToFile(dirPath: String, filename: String, lines: Iterator[String], sep: String): Unit = {
     createDir(dirPath)
     val file = new File(s"$dirPath/$filename")
     val bw = new BufferedWriter(new FileWriter(file))
