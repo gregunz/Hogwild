@@ -58,6 +58,8 @@ spec:
                value: "1"
              - name: EARLY_STOPPING
                value: "10"
+             - name: MIN_LOSS
+               value: "0.005"
              - name: STEP_SIZE
                value: "0.1"
            resources:
