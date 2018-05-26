@@ -26,7 +26,7 @@ final case class WorkerRequest(
     }
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
       gradient.foreach { __v =>
-        _output__.writeTag(2, 2)
+        _output__.writeTag(1, 2)
         _output__.writeUInt32NoTag(grpc.sync.WorkerRequest._typemapper_gradient.toBase(__v).serializedSize)
         grpc.sync.WorkerRequest._typemapper_gradient.toBase(__v).writeTo(_output__)
       };
@@ -38,7 +38,7 @@ final case class WorkerRequest(
         val _tag__ = _input__.readTag()
         _tag__ match {
           case 0 => _done__ = true
-          case 18 =>
+          case 10 =>
             __gradient += grpc.sync.WorkerRequest._typemapper_gradient.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.WorkerRequest.GradientEntry.defaultInstance))
           case tag => _input__.skipField(tag)
         }
@@ -53,13 +53,13 @@ final case class WorkerRequest(
     def withGradient(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerRequest = copy(gradient = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 2 => gradient.map(grpc.sync.WorkerRequest._typemapper_gradient.toBase)(_root_.scala.collection.breakOut)
+        case 1 => gradient.map(grpc.sync.WorkerRequest._typemapper_gradient.toBase)(_root_.scala.collection.breakOut)
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 2 => _root_.scalapb.descriptors.PRepeated(gradient.map(grpc.sync.WorkerRequest._typemapper_gradient.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 1 => _root_.scalapb.descriptors.PRepeated(gradient.map(grpc.sync.WorkerRequest._typemapper_gradient.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
@@ -79,7 +79,7 @@ object WorkerRequest extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerR
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
       grpc.sync.WorkerRequest(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerRequest.GradientEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerRequest.GradientEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerRequest._typemapper_gradient.toCustom)(_root_.scala.collection.breakOut)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -88,7 +88,7 @@ object WorkerRequest extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerR
   def messageCompanionForFieldNumber(__number: _root_.scala.Int): _root_.scalapb.GeneratedMessageCompanion[_] = {
     var __out: _root_.scalapb.GeneratedMessageCompanion[_] = null
     (__number: @_root_.scala.unchecked) match {
-      case 2 => __out = grpc.sync.WorkerRequest.GradientEntry
+      case 1 => __out = grpc.sync.WorkerRequest.GradientEntry
     }
     __out
   }
@@ -217,7 +217,7 @@ object WorkerRequest extends scalapb.GeneratedMessageCompanion[grpc.sync.WorkerR
   implicit class WorkerRequestLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerRequest]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerRequest](_l) {
     def gradient: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.gradient)((c_, f_) => c_.copy(gradient = f_))
   }
-  final val GRADIENT_FIELD_NUMBER = 2
+  final val GRADIENT_FIELD_NUMBER = 1
   @transient
   private val _typemapper_gradient: _root_.scalapb.TypeMapper[grpc.sync.WorkerRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.WorkerRequest.GradientEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }

@@ -6,6 +6,9 @@ version := "0.1"
 
 scalaVersion := "2.12.6"
 
+// Increase Java Max Heap Size (https://goo.gl/wuBkQM)
+javaOptions += "-Xmx20G"
+
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)
 enablePlugins(AshScriptPlugin)
@@ -27,7 +30,6 @@ mainClass in Compile := Some("launcher.Launcher")
 // hardcoding the docker image we want
 dockerCommands := Seq(
   Cmd("FROM", "openjdk:jre-alpine"),
-  Cmd("RUN", "apk add --no-cache bash"),
   Cmd("ADD", "opt", "/opt"),
   Cmd("WORKDIR", "/opt/docker/bin"),
   Cmd("RUN", """["chmod", "+x", "hogwild"]"""),

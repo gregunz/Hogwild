@@ -5,13 +5,15 @@ object ArgsHandler {
   type Options = Map[String, String]
 
   val defaults: Map[String, String] = Map(
+    "mode" -> "async",
     "data-path" -> "data/",
-    "samples" -> "0",
     "lambda" -> "0.1",
     "step-size" -> "0.1",
-    "mode" -> "async",
     "port" -> "50500",
     "interval" -> "500",
+    "in-second" -> "0",
+    "early-stopping" -> "10",
+    "min-loss" -> "0"
   )
 
   def argsToMap(args: Args): Options =

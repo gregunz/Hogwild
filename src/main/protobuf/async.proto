@@ -3,9 +3,11 @@ syntax = "proto3";
 package grpc;
 
 service WorkerServiceAsync {
-    rpc Hello (WorkerDetail) returns (HelloResponse) {
+    rpc Hello (HelloRequest) returns (HelloResponse) {
     }
     rpc Broadcast (stream BroadcastMessage) returns (Empty) {
+    }
+    rpc Kill (Empty) returns (Empty) {
     }
 }
 
@@ -20,9 +22,15 @@ message HelloResponse {
 
 }
 
-message WorkerDetail {
-    string address = 1;
+message HelloRequest {
+    string ip = 1;
     uint64 port = 2;
+}
+
+message WorkerDetail {
+    string ip = 1;
+    uint64 port = 2;
+    uint64 id = 3;
 }
 
 message Empty {

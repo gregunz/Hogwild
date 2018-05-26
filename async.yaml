@@ -52,10 +52,15 @@ spec:
                value: "/data/datasets/"
              - name: PORT_TO_OPEN
                value: "80"
+<<<<<<< HEAD
              - name: INTERVAL
                value: "50"
              - name: SAMPLES
                value: "1"
+=======
+             - name: EARLY_STOPPING
+               value: "10"
+>>>>>>> 4c20ae43dbf6ed519b6e10acd3bd029bbf86a0df
            resources:
              requests:
                memory: "10000Mi"
