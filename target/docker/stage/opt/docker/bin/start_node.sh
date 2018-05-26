@@ -6,7 +6,7 @@ first_ip="hogwild-0"
 ip_port=hogwild-pod-0.statefulset-service:${PORT_TO_OPEN}
 
 if [ "$n" == "0" ];then
-  ip_port=""
+  ip_port=hogwild-pod-1.statefulset-service:${PORT_TO_OPEN}
 fi
 
 sh hogwild \

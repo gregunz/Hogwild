@@ -19,7 +19,7 @@ spec:
    name: hogwild-pod
  spec:
    serviceName: statefulset-service
-   replicas: 5
+   replicas: 25
    selector:
     matchLabels:
       app: hogwild-pod
@@ -53,12 +53,12 @@ spec:
              - name: PORT_TO_OPEN
                value: "80"
              - name: INTERVAL
-               value: "500"
+               value: "50"
              - name: SAMPLES
                value: "1"
            resources:
              requests:
-               memory: "1000Mi"
+               memory: "10000Mi"
                cpu: "2000m"
              limits:
                memory: "12000Mi"

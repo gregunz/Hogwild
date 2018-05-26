@@ -53,7 +53,7 @@ spec:
              - name: PORT_TO_OPEN
                value: "80"
              - name: INTERVAL
-               value: "500"
+               value: "1"
              - name: SAMPLES
                value: "1"
            resources:
