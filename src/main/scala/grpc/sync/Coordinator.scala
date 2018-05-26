@@ -3,8 +3,9 @@ package grpc.sync
 import dataset.Dataset
 import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
+import launcher.SyncCoordinatorMode
 import model._
-import utils.{Interval, SyncCoordinatorMode}
+import utils.Interval
 
 import scala.concurrent.ExecutionContext
 
@@ -12,10 +13,11 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
 
   def run(mode: SyncCoordinatorMode): Unit = {
-    val dataset = Dataset(mode.dataPath).getReady()
+    val dataset = Dataset(mode.dataPath).getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
+    val stoppingCriterion = StoppingCriterion(dataset, mode.maxTimesWithoutImproving)
 
-    val service = WorkerService(dataset, svm, mode.interval)
+    val service = WorkerService(dataset, svm, mode.interval, stoppingCriterion)
     val ssd = WorkerServiceSyncGrpc.bindService(service, ExecutionContext.global)
     println(">> READY <<")
     runServer(ssd, mode.port).awaitTermination()
@@ -26,12 +28,11 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                             dataset: Dataset,
                             svm: SVM,
                             interval: Interval,
+                            stoppingCriterion: StoppingCriterion,
                           ) extends WorkerServiceSyncGrpc.WorkerServiceSync {
 
     private val instance = this
     private var weightsUpdate = SparseNumVector.empty[Double]
-
-    val stoppingCriterion = StoppingCriterion(dataset)
 
     override def updateWeights(responseObserver: StreamObserver[WorkerResponse]): StreamObserver[WorkerRequest] = {
       new StreamObserver[WorkerRequest] {
@@ -50,39 +51,32 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
         }
 
         def onNext(req: WorkerRequest): Unit = {
-          if (stoppingCriterion.shouldStop) {
-            responseObserver.onNext(WorkerResponse(did = -1, weights = Map.empty))
-          } else {
-            if (req.gradient.nonEmpty) {
-              instance.synchronized {
+          instance.synchronized {
+            if (stoppingCriterion.shouldStop) {
+              responseObserver.onNext(WorkerResponse(weightsUpdate = Map.empty))
+            } else {
+              if (req.gradient.nonEmpty) {
                 WorkersAggregator.addGradient(SparseNumVector(req.gradient))
                 if (WorkersAggregator.isWaitingOnSomeWorker) {
                   instance.wait()
                 } else {
                   weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
+                  if (interval.resetIfReachedElseIncrease()) {
+                    stoppingCriterion.compute(svm, displayLoss = true)
+                  }
                   instance.notifyAll()
                 }
+                responseObserver.onNext(WorkerResponse(
+                  weightsUpdate = weightsUpdate.toMap
+                ))
+              } else {
+                println("[NEW]: a worker wants to compute some gradients")
+                WorkersAggregator.addWorker()
               }
-            } else {
-              println("[NEW]: a worker wants to compute some gradients")
-              WorkersAggregator.addWorker()
             }
-            responseObserver.onNext(spawnWorkerResponse(weightsUpdate))
-          }
-          if (interval.resetIfReachedElseIncrease()) {
-            stoppingCriterion.compute(svm, displayLoss = true)
           }
         }
       }
-    }
-
-
-    private def spawnWorkerResponse(weights: SparseNumVector[Double]): WorkerResponse = {
-      val did = samples.next
-      WorkerResponse(
-        did = did,
-        weights = weights.filterKeys(dataset.getFeature(did).keys).toMap
-      )
     }
 
     private def safeRemoveWorker(): Unit = {

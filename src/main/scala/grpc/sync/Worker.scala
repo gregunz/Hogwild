@@ -4,17 +4,17 @@ import dataset.Dataset
 import grpc.GrpcRunnable
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import io.grpc.stub.StreamObserver
+import launcher.SyncWorkerMode
 import model.{SVM, SparseNumVector}
-import utils.{Interval, SyncWorkerMode}
+import utils.Interval
 
 object Worker extends GrpcRunnable[SyncWorkerMode] {
 
   private val instance = this
-  private var shouldStop = false
   private var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(mode: SyncWorkerMode): Unit = {
-    val dataset = Dataset(mode.dataPath).getReady()
+    val dataset = Dataset(mode.dataPath).getReady(mode.isMaster)
     val channel = createChannel(mode.serverIp, mode.serverPort)
     val client = WorkerServiceSyncGrpc.stub(channel)
     val responseObserver = createObserver(dataset, mode.lambda, mode.interval)
@@ -45,17 +45,17 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       }
 
       def onNext(res: WorkerResponse): Unit = {
-        if (res.did == -1){
+        if (res.weightsUpdate.isEmpty){
           println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
           sys.exit(0)
         }
-        val (feature, label) = dataset.sample
+        val (feature, label) = dataset.getSample
         val newGradient = SVM.computeStochasticGradient(
           feature = feature,
           label = label,
           weights = SparseNumVector(res.weightsUpdate),
           lambda = lambda,
-          tidCounts = dataset.tidCounts
+          inverseTidCountsVector = dataset.inverseTidCountsVector
         )
         if (interval.resetIfReachedElseIncrease()) {
           println(s"[CPT]: hardworking since ${interval.prettyLimit}")

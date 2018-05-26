@@ -2,7 +2,7 @@ package model
 
 import dataset.Dataset
 
-case class StoppingCriterion(dataset: Dataset, minLoss: Double = 0d, maxTimesWithoutImproving: Int = Int.MaxValue) {
+case class StoppingCriterion(dataset: Dataset, maxTimesWithoutImproving: Int, minLoss: Double = 0d) {
   private lazy val (someFeatures, someLabels) = dataset.testSet.unzip
 
   private var bestWeights = SparseNumVector.empty[Double]
@@ -11,9 +11,9 @@ case class StoppingCriterion(dataset: Dataset, minLoss: Double = 0d, maxTimesWit
   private var timesWithoutImproving = 0
 
   def compute(svm: SVM, displayLoss: Boolean): (Double, Double) = {
-    val (loss, accuracy) = svm.lossAndAccuracy(someFeatures, someLabels, dataset.tidCounts)
+    val (loss, accuracy) = svm.lossAndAccuracy(someFeatures, someLabels, dataset.inverseTidCountsVector)
     if(displayLoss) {
-      println(s"[LOSS = $loss][ACCURACY = ${accuracy * 100}%]")
+      println(s"[LOSS = $loss][ACCURACY = ${accuracy * 100} %]")
     }
     if (loss < bestLoss) {
       bestLoss = loss

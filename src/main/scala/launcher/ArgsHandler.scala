@@ -7,12 +7,11 @@ object ArgsHandler {
   val defaults: Map[String, String] = Map(
     "mode" -> "async",
     "data-path" -> "data/",
-    "samples" -> "0",
     "lambda" -> "0.1",
     "step-size" -> "0.1",
     "port" -> "50500",
     "interval" -> "500",
-    "in-second" -> "1",
+    "in-second" -> "0"
   )
 
   def argsToMap(args: Args): Options =

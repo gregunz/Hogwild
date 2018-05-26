@@ -1,6 +1,6 @@
 package grpc
 
-import utils.Mode
+import launcher.Mode
 
 trait GrpcRunnable[T <: Mode] {
   def run(mode: T): Unit

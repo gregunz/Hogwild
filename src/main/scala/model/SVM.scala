@@ -37,8 +37,8 @@ class SVM(lambda: Double, stepSize: LearningRate) {
     predict(features).map(pred => Label.fromInt(Math.round(pred).toInt))
   }
 
-  def lossAndAccuracy(features: Seq[SparseNumVector[Double]], labels: Seq[Label], tidCounts: Counts): (Double, Double) = {
-    val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
+  def lossAndAccuracy(features: Seq[SparseNumVector[Double]], labels: Seq[Label],
+                      inverseTidCountsVector: SparseNumVector[Double]): (Double, Double) = {
 
     val (losses, correctPredictions) = features.zip(labels)
       .map { case (feature, label) =>
@@ -59,8 +59,8 @@ class SVM(lambda: Double, stepSize: LearningRate) {
 
   def computeStochasticGradient(feature: SparseNumVector[Double],
                                 label: Label,
-                                tidCounts: Counts): SparseNumVector[Double] = {
-    SVM.computeStochasticGradient(feature, label, weights, lambda, tidCounts)
+                                inverseTidCountsVector: SparseNumVector[Double]): SparseNumVector[Double] = {
+    SVM.computeStochasticGradient(feature, label, weights, lambda, inverseTidCountsVector)
   }
 }
 
@@ -69,9 +69,8 @@ object SVM {
                                 label: Label,
                                 weights: SparseNumVector[Double],
                                 lambda: Double,
-                                tidCounts: Counts): SparseNumVector[Double] = {
+                                inverseTidCountsVector: SparseNumVector[Double]): SparseNumVector[Double] = {
 
-    val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
     val gradRightPart = weights.filterKeys(feature.keys) * lambda * inverseTidCountsVector
     if (label.id * (feature dot weights) >= 1) {
       gradRightPart
