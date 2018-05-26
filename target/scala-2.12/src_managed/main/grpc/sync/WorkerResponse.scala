@@ -7,13 +7,15 @@ package grpc.sync
 
 @SerialVersionUID(0L)
 final case class WorkerResponse(
-    weightsUpdate: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty
+    weightsUpdate: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty,
+    stop: _root_.scala.Boolean = false
     ) extends scalapb.GeneratedMessage with scalapb.Message[WorkerResponse] with scalapb.lenses.Updatable[WorkerResponse] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
     private[this] def __computeSerializedValue(): _root_.scala.Int = {
       var __size = 0
       weightsUpdate.foreach(weightsUpdate => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toBase(weightsUpdate).serializedSize) + grpc.sync.WorkerResponse._typemapper_weightsUpdate.toBase(weightsUpdate).serializedSize)
+      if (stop != false) { __size += _root_.com.google.protobuf.CodedOutputStream.computeBoolSize(2, stop) }
       __size
     }
     final override def serializedSize: _root_.scala.Int = {
@@ -30,9 +32,16 @@ final case class WorkerResponse(
         _output__.writeUInt32NoTag(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toBase(__v).serializedSize)
         grpc.sync.WorkerResponse._typemapper_weightsUpdate.toBase(__v).writeTo(_output__)
       };
+      {
+        val __v = stop
+        if (__v != false) {
+          _output__.writeBool(2, __v)
+        }
+      };
     }
     def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.sync.WorkerResponse = {
       val __weightsUpdate = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.weightsUpdate)
+      var __stop = this.stop
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
@@ -40,26 +49,35 @@ final case class WorkerResponse(
           case 0 => _done__ = true
           case 10 =>
             __weightsUpdate += grpc.sync.WorkerResponse._typemapper_weightsUpdate.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.sync.WorkerResponse.WeightsUpdateEntry.defaultInstance))
+          case 16 =>
+            __stop = _input__.readBool()
           case tag => _input__.skipField(tag)
         }
       }
       grpc.sync.WorkerResponse(
-          weightsUpdate = __weightsUpdate.result()
+          weightsUpdate = __weightsUpdate.result(),
+          stop = __stop
       )
     }
     def clearWeightsUpdate = copy(weightsUpdate = scala.collection.immutable.Map.empty)
     def addWeightsUpdate(__vs: (_root_.scala.Int, _root_.scala.Double)*): WorkerResponse = addAllWeightsUpdate(__vs)
     def addAllWeightsUpdate(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): WorkerResponse = copy(weightsUpdate = weightsUpdate ++ __vs)
     def withWeightsUpdate(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): WorkerResponse = copy(weightsUpdate = __v)
+    def withStop(__v: _root_.scala.Boolean): WorkerResponse = copy(stop = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
         case 1 => weightsUpdate.map(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toBase)(_root_.scala.collection.breakOut)
+        case 2 => {
+          val __t = stop
+          if (__t != false) __t else null
+        }
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
         case 1 => _root_.scalapb.descriptors.PRepeated(weightsUpdate.map(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
+        case 2 => _root_.scalapb.descriptors.PBoolean(stop)
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
@@ -72,14 +90,16 @@ object WorkerResponse extends scalapb.GeneratedMessageCompanion[grpc.sync.Worker
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
     grpc.sync.WorkerResponse(
-      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.WorkerResponse.WeightsUpdateEntry]].map(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut)
+      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.sync.WorkerResponse.WeightsUpdateEntry]].map(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut),
+      __fieldsMap.getOrElse(__fields.get(1), false).asInstanceOf[_root_.scala.Boolean]
     )
   }
   implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.sync.WorkerResponse] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
       grpc.sync.WorkerResponse(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerResponse.WeightsUpdateEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.sync.WorkerResponse.WeightsUpdateEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.sync.WorkerResponse._typemapper_weightsUpdate.toCustom)(_root_.scala.collection.breakOut),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.Boolean]).getOrElse(false)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -216,8 +236,10 @@ object WorkerResponse extends scalapb.GeneratedMessageCompanion[grpc.sync.Worker
   
   implicit class WorkerResponseLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.sync.WorkerResponse]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.sync.WorkerResponse](_l) {
     def weightsUpdate: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.weightsUpdate)((c_, f_) => c_.copy(weightsUpdate = f_))
+    def stop: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Boolean] = field(_.stop)((c_, f_) => c_.copy(stop = f_))
   }
   final val WEIGHTSUPDATE_FIELD_NUMBER = 1
+  final val STOP_FIELD_NUMBER = 2
   @transient
   private val _typemapper_weightsUpdate: _root_.scalapb.TypeMapper[grpc.sync.WorkerResponse.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.sync.WorkerResponse.WeightsUpdateEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }
