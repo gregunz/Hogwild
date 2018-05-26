@@ -9,7 +9,7 @@ ip_port=hogwild-pod-0.statefulset-service:${PORT_TO_OPEN}
 if [ "$n" == "0" ];then
   ip_port=hogwild-pod-1.statefulset-service:${PORT_TO_OPEN}
   early_stop=${EARLY_STOPPING}
-  loss=${EARLY_STOPPING}
+  loss=${MIN_LOSS}
 fi
 
 sh hogwild \
