@@ -6,8 +6,10 @@ import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import model.SparseNumVector
 import utils.Types.TID
 
+import scala.util.Try
 
-case class BroadcastersHandler(dataset: Dataset, myId: Int) {
+
+case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker) {
 
   type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
   type Broadcaster = (ManagedChannel, StreamObserver[BroadcastMessage])
@@ -22,6 +24,7 @@ case class BroadcastersHandler(dataset: Dataset, myId: Int) {
         waitingList -= worker
         println(s"[NEW] a new worker just joined the gang! welcome $worker")
         broadcasters += createBroadcaster(worker)
+        updateTidsPerBroadcaster()
       }
     }
   }
@@ -69,23 +72,40 @@ case class BroadcastersHandler(dataset: Dataset, myId: Int) {
       if (newWorkers.nonEmpty) {
         waitingList --= newWorkers
         broadcasters ++= newWorkers.map(createBroadcaster)
+        updateTidsPerBroadcaster()
       }
     }
   }
 
   def updateTidsPerBroadcaster(): Unit = {
     val tids = dataset.tids
-    val nGroup = this.broadcasters.size
+    val activeWorkers = (this.broadcasters.keySet + meWorker).toList
+    val nGroup = activeWorkers.size
     val groupSize = Math.round(tids.size / nGroup.toDouble)
-    tidsPerBroadcaster = this.broadcasters.keys.map(_.id).toList.map()
+    val ids = activeWorkers
+      .map(_.id)
+      .sorted
+    val tidsGrouped = tids
+      .grouped(groupSize.toInt)
+      .map(_.toSet)
+      .toList
+
+    require(ids.size == tidsGrouped.size, "grouping not done correctly :(")
+
+    val myTids = tidsGrouped(ids.indexOf(meWorker.id))
+
+    tidsPerBroadcaster = (ids zip tidsGrouped.map(_ ++ myTids)).toMap
   }
 
   def killAll(): Unit = {
     instance.synchronized {
       val channels = broadcasters.values.unzip._1 ++ waitingList.map(createChannel)
+      println()
       channels.foreach { c =>
-        val blockingStub = WorkerServiceAsyncGrpc.blockingStub(c)
-        blockingStub.kill(Empty())
+        Try {
+          val blockingStub = WorkerServiceAsyncGrpc.blockingStub(c)
+          blockingStub.kill(Empty())
+        }
       }
     }
   }
@@ -102,19 +122,18 @@ case class BroadcastersHandler(dataset: Dataset, myId: Int) {
         println(s"[SEND] feel like sharing some computations, here you go guys " +
           s"${broadcasters.keySet.mkString("[", ";", "]")}")
       }
-      broadcasters.foreach{ case (worker, (_, broadcaster)) =>
-        val tidsToBroadcast = tidsPerBroadcaster(worker.id) ++ tidsToBroadcast(myId)
+      broadcasters.foreach { case (worker, (_, broadcaster)) =>
         val msg = BroadcastMessage(
-          weightsUpdate = weights.filterKeys().toMap,
-          workerDetail = Some(worker.toWorkerDetail)
+          weightsUpdate = weights.filterKeys(tidsPerBroadcaster(worker.id)).toMap,
+          workerDetail = Some(meWorker.toWorkerDetail)
         )
-          broadcaster.onNext(msg)
+        broadcaster.onNext(msg)
       }
     }
   }
 
-  def activeWorkers: Set[RemoteWorker] = instance.synchronized {
-    broadcasters.keySet ++ waitingList
+  def allWorkers: Set[RemoteWorker] = instance.synchronized {
+    broadcasters.keySet ++ waitingList + meWorker
   }
 
 }

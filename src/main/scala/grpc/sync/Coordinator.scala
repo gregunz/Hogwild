@@ -5,7 +5,7 @@ import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
 import launcher.SyncCoordinatorMode
 import model._
-import utils.Interval
+import utils.{Interval, Utils}
 
 import scala.concurrent.ExecutionContext
 
@@ -13,11 +13,10 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
 
   def run(mode: SyncCoordinatorMode): Unit = {
-    val dataset = Dataset(mode.dataPath).getReady(mode.isMaster)
+    val dataset = mode.dataset.getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
-    val stoppingCriterion = StoppingCriteria(dataset, mode.maxTimesWithoutImproving)
 
-    val service = WorkerService(dataset, svm, mode.interval, stoppingCriterion)
+    val service = WorkerService(dataset, svm, mode.interval, mode.stoppingCriteria)
     val ssd = WorkerServiceSyncGrpc.bindService(service, ExecutionContext.global)
     println(">> READY <<")
     runServer(ssd, mode.port).awaitTermination()
@@ -28,7 +27,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                             dataset: Dataset,
                             svm: SVM,
                             interval: Interval,
-                            stoppingCriterion: StoppingCriteria,
+                            stoppingCriteria: StoppingCriteria,
                           ) extends WorkerServiceSyncGrpc.WorkerServiceSync {
 
     private val instance = this
@@ -39,8 +38,8 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
         def onError(t: Throwable): Unit = {
           println(s"One worker left.")
           safeRemoveWorker()
-          if (stoppingCriterion.shouldStop && !WorkersAggregator.noWorkersAvailable) {
-            WeightsExport.uploadWeightsAndGetLink(stoppingCriterion.getWeights)
+          if (stoppingCriteria.shouldStop && !WorkersAggregator.noWorkersAvailable) {
+            stoppingCriteria.export()
             sys.exit(0)
           }
         }
@@ -52,7 +51,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
         def onNext(req: WorkerRequest): Unit = {
           instance.synchronized {
-            if (stoppingCriterion.shouldStop) {
+            if (stoppingCriteria.shouldStop) {
               responseObserver.onNext(WorkerResponse(weightsUpdate = Map.empty))
             } else {
               if (req.gradient.nonEmpty) {
@@ -62,7 +61,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                 } else {
                   weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
                   if (interval.resetIfReachedElseIncrease()) {
-                    stoppingCriterion.compute(svm, displayLoss = true)
+                    stoppingCriteria.compute(svm, displayLoss = true)
                   }
                   instance.notifyAll()
                 }

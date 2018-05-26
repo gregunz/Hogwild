@@ -11,7 +11,7 @@ import scala.util.Random
 
 case class Dataset(dataPath: String) {
 
-  val tids: Seq[TID] = (1 until 47236).toSeq
+  val tids: Seq[TID] = 1 to 47236
   lazy val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
   lazy val testSet: Seq[(SparseNumVector[Double], Label)] = load("test-set") {
     val testPath = dataPath + "lyrl2004_vectors_train.dat"

@@ -37,10 +37,11 @@ class SVM(lambda: Double, stepSize: LearningRate) {
     features.map(_ dot weights)
   }
 
-  def lossAndAccuracy(features: Seq[SparseNumVector[Double]], labels: Seq[Label],
+  def lossAndAccuracy(testSet: Seq[(SparseNumVector[Double], Label)],
                       inverseTidCountsVector: SparseNumVector[Double]): (Double, Double) = {
 
-    val (losses, correctPredictions) = features.zip(labels)
+    val (losses, correctPredictions) = testSet
+      .par
       .map { case (feature, label) =>
         val pred = feature dot weights
         val hinge = Math.max(0, 1 - (label.id * pred))

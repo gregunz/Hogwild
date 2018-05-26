@@ -5,7 +5,7 @@ import grpc.async.{RemoteWorker, Worker => AsyncWorker}
 import grpc.sync.{Coordinator => SyncCoordinator, Worker => SyncWorker}
 import launcher.ArgsHandler.Options
 import model.StoppingCriteria
-import utils.Interval
+import utils.{Interval, Utils}
 import utils.Types.LearningRate
 
 import scala.util.Try
@@ -21,12 +21,13 @@ trait TopMode extends Mode {
   val lambda: Double
   val stepSize: LearningRate
   val interval: Interval
-  val isMaster: Boolean
+  def isMaster: Boolean
+  def isSlave: Boolean = !isMaster
 }
 
 case class SyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, interval: Interval,
                           serverIp: String, serverPort: Int) extends TopMode {
-  val isMaster = false
+  def isMaster = false
 
   def run(): Unit = {
     printMode(this)
@@ -36,7 +37,8 @@ case class SyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRa
 
 case class SyncCoordinatorMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, interval: Interval, port: Int,
                                stoppingCriteria: StoppingCriteria) extends TopMode {
-  val isMaster = true
+
+  def isMaster = true
 
   def run(): Unit = {
     printMode(this)
@@ -45,22 +47,16 @@ case class SyncCoordinatorMode(dataset: Dataset, lambda: Double, stepSize: Learn
 }
 
 case class AsyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, interval: Interval, port: Int,
-                           moreArgs: AsyncMoreArgs) extends TopMode {
+                           workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria])
+  extends TopMode {
 
-  val isMaster: Boolean = moreArgs match {
-    case MasterArgs(_) => true
-    case SlaveArgs(_, _) => false
-  }
+  def isMaster: Boolean = stoppingCriteria.isDefined
 
   def run(): Unit = {
     printMode(this)
     AsyncWorker.run(this)
   }
 }
-
-trait AsyncMoreArgs {}
-case class MasterArgs(stoppingCriteria: StoppingCriteria) extends AsyncMoreArgs
-case class SlaveArgs(masterIp: String, masterPort: String) extends AsyncMoreArgs
 
 case class DefaultMode(options: Options, t: Throwable) extends Mode {
   def run(): Unit = println(s"arguments mismatch ($options)\n${t.getMessage}")
@@ -76,9 +72,9 @@ case class ModeBuilder(dataset: Dataset, lambda: Double, stepSize: LearningRate,
     SyncCoordinatorMode(dataset = dataset, lambda = lambda, stepSize = stepSize, interval = interval, port = port,
       stoppingCriteria = stoppingCriteria)
 
-  def build(port: Int, moreArgs: AsyncMoreArgs) =
+  def build(port: Int, workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria]) =
     AsyncWorkerMode(dataset = dataset, lambda = lambda, stepSize = stepSize, interval = interval, port = port,
-      moreArgs = moreArgs)
+      stoppingCriteria = stoppingCriteria, workerIp = workerIp, workerPort = workerPort)
 }
 
 object Mode {
@@ -91,24 +87,22 @@ object Mode {
 
       options("mode") match {
         case "sync" if options.contains("ip:port") =>
-          options("ip:port").split(":").toList match {
-            case ip :: port :: Nil => modeBuilder.build(ip, port.toInt)
-          }
+          val (ip, port) = Utils.split("ip:port", ':')
+          modeBuilder.build(ip, port.toInt)
+
         case "sync" if options.contains("port") =>
           val stoppingCriteria = StoppingCriteria(dataset, options("early-stopping").toInt, options("min-loss").toDouble)
           modeBuilder.build(options("port").toInt, stoppingCriteria)
         case "async" =>
-          val moreArgs = {
-            if (options("master") == "1") {
-              val stoppingCriteria = StoppingCriteria(dataset, options("early-stopping").toInt, options("min-loss").toDouble)
-              MasterArgs(stoppingCriteria)
+          val stoppingCriteria = {
+            if (options.contains("early-stopping")) {
+              Some(StoppingCriteria(dataset, options("early-stopping").toInt, options("min-loss").toDouble))
             } else {
-              options("ip:port").split(":").toList match {
-                  case ip :: port :: Nil => SlaveArgs(ip, port)
-              }
+              None
             }
           }
-          modeBuilder.build(options("port").toInt, moreArgs)
+          val (workerIp, workerPort) = Utils.split(options("ip:port"), ':')
+          modeBuilder.build(options("port").toInt, workerIp, workerPort.toInt, stoppingCriteria)
       }
     }
     if (mode.isSuccess) {

@@ -14,7 +14,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
   private var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(mode: SyncWorkerMode): Unit = {
-    val dataset = Dataset(mode.dataPath).getReady(mode.isMaster)
+    val dataset = mode.dataset.getReady(mode.isMaster)
     val channel = createChannel(mode.serverIp, mode.serverPort)
     val client = WorkerServiceSyncGrpc.stub(channel)
     val responseObserver = createObserver(dataset, mode.lambda, mode.interval)

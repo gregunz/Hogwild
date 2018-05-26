@@ -19,18 +19,19 @@ message BroadcastMessage {
 message HelloResponse {
     repeated WorkerDetail workersDetails = 1;
     map<uint32, double> weights = 2;
+    uint32 id = 3;
 
 }
 
 message HelloRequest {
     string ip = 1;
-    uint64 port = 2;
+    uint32 port = 2;
 }
 
 message WorkerDetail {
     string ip = 1;
-    uint64 port = 2;
-    uint64 id = 3;
+    uint32 port = 2;
+    uint32 id = 3;
 }
 
 message Empty {
