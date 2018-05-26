@@ -18,7 +18,7 @@ object Utils {
 
   def upload(filename: String, lines: Iterator[String], sep: String): Unit = {
     writeLinesToFile(outputDirPath, filename, lines, sep)
-    println(s"curl --upload-file $outputDirPath/$filename https://transfer.sh/weights.csv" !!)
+    println(s"curl --upload-file $outputDirPath/$filename https://transfer.sh/$filename" !!)
   }
 
   private def writeLinesToFile(dirPath: String, filename: String, lines: Iterator[String], sep: String): Unit = {
