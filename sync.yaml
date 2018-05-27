@@ -57,13 +57,13 @@ spec:
              - name: MIN_LOSS
                value: "0.15"
              - name: LOSS_INTERVAL
-               value: "2000"
-             - name: LOSS_INTERVAL_IN_SECOND
                value: "10"
+             - name: LOSS_INTERVAL_IN_SECOND
+               value: "True"
              - name: BROADCAST_INTERVAL
                value: "1000"
              - name: BROADCAST_INTERVAL_IN_SECOND
-               value: "5"
+               value: "False"
              - name: STEP_SIZE
                value: "0.05"
            resources:
