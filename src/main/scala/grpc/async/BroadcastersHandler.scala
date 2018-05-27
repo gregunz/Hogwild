@@ -30,6 +30,32 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
     }
   }
 
+  private def createBroadcaster(worker: RemoteWorker): (RemoteWorker, Broadcaster) = {
+    createBroadcaster(worker, createChannel(worker))
+  }
+
+  private def createChannel(worker: RemoteWorker): ManagedChannel = {
+    ManagedChannelBuilder
+      .forAddress(worker.ip, worker.port)
+      .usePlaintext(true)
+      .build
+  }
+
+  private def createBroadcaster(worker: RemoteWorker, channel: ManagedChannel): (RemoteWorker, Broadcaster) = {
+    val broadcastObserver = new StreamObserver[Empty] {
+      override def onError(t: Throwable): Unit = {
+        instance.remove(worker)
+      }
+
+      override def onCompleted(): Unit = instance.remove(worker)
+
+      override def onNext(msg: Empty): Unit = {}
+    }
+
+    val stub = createStub(channel)
+    worker -> (channel -> stub.broadcast(broadcastObserver))
+  }
+
   def remove(worker: RemoteWorker): Unit = {
     instance.synchronized {
       if (broadcasters.contains(worker)) {
@@ -39,6 +65,32 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
       }
     }
   }
+
+  private def updateTidsPerBroadcaster(): Unit = {
+
+    val uids = (this.broadcasters.keySet + meWorker)
+      .map(_.uid)
+      .toList
+      .sorted
+
+    val tidsGrouped = cut(dataset.tids, uids.size)
+      .map(_.toSet)
+      .toList
+
+    require(uids.size == tidsGrouped.size, "grouping not done correctly :(")
+
+    val myTids = tidsGrouped(uids.indexOf(meWorker.uid))
+
+    tidsPerBroadcaster = (uids zip tidsGrouped.map(_ ++ myTids)).toMap
+  }
+
+  private def cut[A](xs: Seq[A], n: Int) = {
+    val (quot, rem) = (xs.size / n, xs.size % n)
+    val (smaller, bigger) = xs.splitAt(xs.size - rem * (quot + 1))
+    smaller.grouped(quot) ++ bigger.grouped(quot + 1)
+  }
+
+  private def createStub(channel: ManagedChannel): Stub = WorkerServiceAsyncGrpc.stub(channel)
 
   def addSomeActive(workers: Set[RemoteWorker]): Unit = {
     instance.synchronized {
@@ -61,13 +113,6 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
         }
       }
     }
-  }
-
-  private def createChannel(worker: RemoteWorker): ManagedChannel = {
-    ManagedChannelBuilder
-      .forAddress(worker.ip, worker.port)
-      .usePlaintext(true)
-      .build
   }
 
   def addToWaitingList(worker: RemoteWorker): Unit = {
@@ -94,51 +139,6 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
 
   def allWorkers: Set[RemoteWorker] = instance.synchronized {
     broadcasters.keySet ++ waitingList + meWorker
-  }
-
-  private def createBroadcaster(worker: RemoteWorker): (RemoteWorker, Broadcaster) = {
-    createBroadcaster(worker, createChannel(worker))
-  }
-
-  private def createBroadcaster(worker: RemoteWorker, channel: ManagedChannel): (RemoteWorker, Broadcaster) = {
-    val broadcastObserver = new StreamObserver[Empty] {
-      override def onError(t: Throwable): Unit = {
-        instance.remove(worker)
-      }
-
-      override def onCompleted(): Unit = instance.remove(worker)
-
-      override def onNext(msg: Empty): Unit = {}
-    }
-
-    val stub = createStub(channel)
-    worker -> (channel -> stub.broadcast(broadcastObserver))
-  }
-
-  private def createStub(channel: ManagedChannel): Stub = WorkerServiceAsyncGrpc.stub(channel)
-
-  private def cut[A](xs: Seq[A], n: Int) = {
-    val (quot, rem) = (xs.size / n, xs.size % n)
-    val (smaller, bigger) = xs.splitAt(xs.size - rem * (quot + 1))
-    smaller.grouped(quot) ++ bigger.grouped(quot + 1)
-  }
-
-  private def updateTidsPerBroadcaster(): Unit = {
-
-    val uids = (this.broadcasters.keySet + meWorker)
-      .map(_.uid)
-      .toList
-      .sorted
-
-    val tidsGrouped = cut(dataset.tids, uids.size)
-      .map(_.toSet)
-      .toList
-
-    require(uids.size == tidsGrouped.size, "grouping not done correctly :(")
-
-    val myTids = tidsGrouped(uids.indexOf(meWorker.uid))
-
-    tidsPerBroadcaster = (uids zip tidsGrouped.map(_ ++ myTids)).toMap
   }
 
 }

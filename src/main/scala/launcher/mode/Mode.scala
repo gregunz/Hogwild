@@ -10,7 +10,7 @@ import scala.util.Try
 trait Mode {
   def run(): Unit
 
-  def printMode(mode: Mode): String = s">> Starting $mode"
+  def printMode(mode: Mode): String = s" Starting $mode"
 }
 
 
@@ -20,7 +20,7 @@ object Mode {
   def apply(options: Options): Mode = {
 
     val mode = Try {
-      val logger = options.get("log").map(s => Logger(s.toInt)).getOrElse(Logger.minimal)
+      val logger = Logger(options("log").toInt)
       val dataset = Dataset(logger, options("data-path"))
       val modeBuilder = ModeBuilder(logger = logger, name = options.get("name"), dataset = dataset,
         lambda = options("lambda").toDouble, stepSize = options("step-size").toDouble)
