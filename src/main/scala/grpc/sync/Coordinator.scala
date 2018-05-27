@@ -62,7 +62,8 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                   instance.wait()
                 } else {
                   weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
-                  if (stoppingCriteria.interval.hasReachedOrKeepGoing && lossComputingFuture.isCompleted) {
+                  if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
+                    stoppingCriteria.interval.reset()
                     lossComputingFuture = Future {
                       stoppingCriteria.compute(svm, displayLoss = true)
                     }

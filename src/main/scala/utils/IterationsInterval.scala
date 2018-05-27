@@ -5,8 +5,11 @@ case class IterationsInterval(limit: Int) extends Interval {
 
   def reset(): Unit = counter = 0
 
-  def hasReached: Boolean = counter >= limit
+  def hasReached: Boolean = {
+    val reached = counter >= limit
+    counter += 1
+    reached
+  }
 
-  def increase(): Unit = counter += 1
 }
 

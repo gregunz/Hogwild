@@ -39,7 +39,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       BroadcastersHandler(mode.logger, mode.dataset, meWorker, mode.broadcastInterval)
     })
 
-    mode.logger.log(2)(s" ${if (mode.isMaster) "Master" else "Slave"} $meWorker ready")
+    mode.logger.log(2)(s"${if (mode.isMaster) "Master" else "Slave"} $meWorker starting...")
 
     startServer(mode.logger, svm, broadcastersHandler)
     startComputations(mode.logger, dataset, svm, broadcastersHandler, mode.stoppingCriteria)
@@ -92,14 +92,16 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       val weightsUpdate = svm.updateWeights(newGradient)
       WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
 
-      if (broadcastersHandler.broadcastInterval.hasReachedOrKeepGoing && broadcastFuture.isCompleted) {
+      if (broadcastersHandler.broadcastInterval.hasReachedOrFirst && broadcastFuture.isCompleted) {
+        broadcastersHandler.broadcastInterval.reset()
         broadcastFuture = Future {
           val weights = WeightsUpdateHandler.getAndResetWeightsUpdate()
           broadcastersHandler.broadcast(weights)
         }
       }
       someStoppingCriteria.foreach { stoppingCriteria =>
-        if (stoppingCriteria.interval.hasReachedOrKeepGoing && lossComputingFuture.isCompleted) {
+        if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
+          stoppingCriteria.interval.reset()
           lossComputingFuture = Future {
             stoppingCriteria.compute(svm, displayLoss = true)
           }
@@ -112,7 +114,8 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       someStoppingCriteria.get.export()
     }
 
-    Thread.sleep(Long.MaxValue)
+    logger.alwaysLog("I am done!")
+    //Thread.sleep(Long.MaxValue)
   }
 
   def tidsToBroadcast(dataset: Dataset, i: Int, n: Int): Set[TID] = {

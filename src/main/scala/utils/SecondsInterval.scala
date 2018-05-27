@@ -9,7 +9,5 @@ case class SecondsInterval(limit: Int) extends Interval {
 
   private def now: Long = System.currentTimeMillis()
 
-  def increase(): Unit = {}
-
   def reset(): Unit = fromTime = now
 }

@@ -30,6 +30,17 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
     }
   }
 
+  def addSomeActive(workers: Set[RemoteWorker]): Unit = {
+    instance.synchronized {
+      val newWorkers = workers.diff(broadcasters.keySet)
+      if (newWorkers.nonEmpty) {
+        waitingList --= newWorkers
+        broadcasters ++= newWorkers.map(createBroadcaster)
+        updateTidsPerBroadcaster()
+      }
+    }
+  }
+
   private def createBroadcaster(worker: RemoteWorker): (RemoteWorker, Broadcaster) = {
     createBroadcaster(worker, createChannel(worker))
   }
@@ -91,17 +102,6 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
   }
 
   private def createStub(channel: ManagedChannel): Stub = WorkerServiceAsyncGrpc.stub(channel)
-
-  def addSomeActive(workers: Set[RemoteWorker]): Unit = {
-    instance.synchronized {
-      val newWorkers = workers.diff(broadcasters.keySet)
-      if (newWorkers.nonEmpty) {
-        waitingList --= newWorkers
-        broadcasters ++= newWorkers.map(createBroadcaster)
-        updateTidsPerBroadcaster()
-      }
-    }
-  }
 
   def killAll(): Unit = {
     instance.synchronized {

@@ -2,25 +2,18 @@ package utils
 
 trait Interval {
   val limit: Int
-  private var firstRun: Boolean = true
+  private var first = true
 
-  def hasReachedOrKeepGoing: Boolean = {
-    increase()
-    if (firstRun) {
-      firstRun = false
+  def hasReachedOrFirst: Boolean = {
+    if (first) {
+      first = false
       true
     } else {
-      val reached = hasReached
-      if (reached) {
-        reset()
-      }
-      reached
+      hasReached
     }
   }
 
   def hasReached: Boolean
-
-  def increase(): Unit
 
   def reset(): Unit
 }
