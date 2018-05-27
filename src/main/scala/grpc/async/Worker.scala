@@ -17,6 +17,8 @@ import scala.util.{Random, Try}
 
 object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
+  private var keepComputing = true
+
   def run(mode: AsyncWorkerMode): Unit = {
 
     val dataset = mode.dataset.getReady(mode.isMaster)
@@ -26,7 +28,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
     val broadcastersHandler: BroadcastersHandler = Try {
         val (meWorker, weights, workers) = hello(myIp, myPort, mode.workerIp, mode.workerPort)
-        val broadcastersHandler = BroadcastersHandler(dataset, meWorker)
+        val broadcastersHandler = BroadcastersHandler(dataset, meWorker, mode.broadcastInterval)
         svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
         broadcastersHandler.addSomeActive(workers)
         broadcastersHandler
@@ -34,11 +36,11 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       if (mode.isSlave){
         throw new IllegalStateException(s"Failed to connect to ${mode.workerIp}:${mode.workerPort}")
       }
-      BroadcastersHandler(mode.dataset, RemoteWorker(myIp, myPort, 0))
+      BroadcastersHandler(mode.dataset, RemoteWorker(myIp, myPort, 0), mode.broadcastInterval)
     })
 
     startServer(svm, broadcastersHandler)
-    startComputations(dataset, svm, mode.interval, broadcastersHandler, mode.stoppingCriteria)
+    startComputations(dataset, svm, broadcastersHandler, mode.stoppingCriteria)
 
   }
 
@@ -70,13 +72,16 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     runServer(ssd, broadcastersHandler.meWorker.port)
   }
 
-  def startComputations(dataset: Dataset, svm: SVM, interval: Interval, broadcastersHandler: BroadcastersHandler,
+  def startComputations(dataset: Dataset, svm: SVM, broadcastersHandler: BroadcastersHandler,
                         someStoppingCriteria: Option[StoppingCriteria]): Unit = {
 
 
     println(">> Computations thread starting..")
 
-    while (someStoppingCriteria.isEmpty || !someStoppingCriteria.get.shouldStop) {
+    var broadcastFuture = Future.successful()
+    var lossComputingFuture = Future.successful()
+
+    while (keepComputing && someStoppingCriteria.forall(!_.shouldStop)) {
       val (feature, label) = dataset.getSample
       val newGradient = svm.computeStochasticGradient(
         feature = feature,
@@ -86,20 +91,26 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       val weightsUpdate = svm.updateWeights(newGradient)
       WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
 
-      if (interval.resetIfReachedElseIncrease()) {
-
-        val weights = WeightsUpdateHandler.getAndResetWeightsUpdate()
-        broadcastersHandler.broadcast(weights)
-
-        if (someStoppingCriteria.isDefined) {
-
-          someStoppingCriteria.get.compute(svm, displayLoss = true)
+      if (broadcastersHandler.broadcastInterval.hasReachedOrKeepGoing && broadcastFuture.isCompleted) {
+        broadcastFuture = Future {
+          val weights = WeightsUpdateHandler.getAndResetWeightsUpdate()
+          broadcastersHandler.broadcast(weights)
+        }
+      }
+      someStoppingCriteria.foreach{ stoppingCriteria =>
+        if (stoppingCriteria.interval.hasReachedOrKeepGoing && lossComputingFuture.isCompleted){
+          lossComputingFuture = Future{
+            stoppingCriteria.compute(svm, displayLoss = true)
+          }
         }
       }
     }
-    broadcastersHandler.killAll()
-    someStoppingCriteria.get.export()
-    sys.exit(0)
+    if (someStoppingCriteria.isDefined){
+      broadcastersHandler.killAll()
+      someStoppingCriteria.get.export()
+    }
+
+    Thread.sleep(Long.MaxValue)
   }
 
   def tidsToBroadcast(dataset: Dataset, i: Int, n: Int): Set[TID] = {
@@ -155,7 +166,8 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
     override def kill(request: Empty): Future[Empty] = {
       println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
-      sys.exit(0)
+      keepComputing = false
+      //sys.exit(0)
       Future(Empty())
     }
   }

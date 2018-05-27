@@ -4,12 +4,13 @@ import dataset.Dataset
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import model.SparseNumVector
+import utils.Interval
 import utils.Types.TID
 
 import scala.util.Try
 
 
-case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker) {
+case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker, broadcastInterval: Interval) {
 
   type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
   type Broadcaster = (ManagedChannel, StreamObserver[BroadcastMessage])
@@ -78,17 +79,19 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker) {
     }
   }
 
+  private def cut[A](xs: Seq[A], n: Int) = {
+    val (quot, rem) = (xs.size / n, xs.size % n)
+    val (smaller, bigger) = xs.splitAt(xs.size - rem * (quot + 1))
+    smaller.grouped(quot) ++ bigger.grouped(quot + 1)
+  }
   private def updateTidsPerBroadcaster(): Unit = {
 
-    val tids = dataset.tids
-    val activeWorkers = (this.broadcasters.keySet + meWorker).toList
-    val nGroup = activeWorkers.size
-    val groupSize = Math.round(tids.size / nGroup.toDouble + 1)
-    val ids = activeWorkers
+    val ids = (this.broadcasters.keySet + meWorker)
       .map(_.id)
+      .toList
       .sorted
-    val tidsGrouped = tids
-      .grouped(groupSize.toInt)
+
+    val tidsGrouped = cut(dataset.tids, ids.size)
       .map(_.toSet)
       .toList
 

@@ -7,7 +7,8 @@ import launcher.SyncCoordinatorMode
 import model._
 import utils.{Interval, Utils}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
@@ -16,7 +17,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
     val dataset = mode.dataset.getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
 
-    val service = WorkerService(dataset, svm, mode.interval, mode.stoppingCriteria)
+    val service = WorkerService(dataset, svm, mode.stoppingCriteria)
     val ssd = WorkerServiceSyncGrpc.bindService(service, ExecutionContext.global)
     println(">> READY <<")
     runServer(ssd, mode.port).awaitTermination()
@@ -26,12 +27,12 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
   case class WorkerService(
                             dataset: Dataset,
                             svm: SVM,
-                            interval: Interval,
                             stoppingCriteria: StoppingCriteria,
                           ) extends WorkerServiceSyncGrpc.WorkerServiceSync {
 
     private val instance = this
     private var weightsUpdate = SparseNumVector.empty[Double]
+    private var lossComputingFuture = Future.successful()
 
     override def updateWeights(responseObserver: StreamObserver[WorkerResponse]): StreamObserver[WorkerRequest] = {
       new StreamObserver[WorkerRequest] {
@@ -60,8 +61,10 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                   instance.wait()
                 } else {
                   weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
-                  if (interval.resetIfReachedElseIncrease()) {
-                    stoppingCriteria.compute(svm, displayLoss = true)
+                  if (stoppingCriteria.interval.hasReachedOrKeepGoing && lossComputingFuture.isCompleted) {
+                    lossComputingFuture = Future{
+                      stoppingCriteria.compute(svm, displayLoss = true)
+                    }
                   }
                   instance.notifyAll()
                 }

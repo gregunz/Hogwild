@@ -17,7 +17,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
     val dataset = mode.dataset.getReady(mode.isMaster)
     val channel = createChannel(mode.serverIp, mode.serverPort)
     val client = WorkerServiceSyncGrpc.stub(channel)
-    val responseObserver = createObserver(dataset, mode.lambda, mode.interval)
+    val responseObserver = createObserver(dataset, mode.lambda)
     val requestObserver = client.updateWeights(responseObserver)
 
     channel.shutdown()
@@ -32,7 +32,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       .build
   }
 
-  def createObserver(dataset: Dataset, lambda: Double, interval: Interval): StreamObserver[WorkerResponse] = {
+  def createObserver(dataset: Dataset, lambda: Double): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
       def onError(t: Throwable): Unit = {
         println(s"ON_ERROR: $t")
@@ -57,9 +57,6 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
           lambda = lambda,
           inverseTidCountsVector = dataset.inverseTidCountsVector
         )
-        if (interval.resetIfReachedElseIncrease()) {
-          println(s"[CPT]: hardworking since ${interval.prettyLimit}")
-        }
 
         instance.synchronized {
           someGradient = Some(newGradient)
