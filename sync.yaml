@@ -47,28 +47,28 @@ spec:
                  fieldRef:
                    fieldPath: status.podIP
              - name: MODE
-               value: "sync"
+               value: "async"
              - name: DATASET_PATH
                value: "/data/datasets/"
              - name: PORT_TO_OPEN
                value: "80"
              - name: INTERVAL
-               value: "50"
+               value: "1000"
              - name: SAMPLES
                value: "1"
              - name: EARLY_STOPPING
-               value: "10"
+               value: "3"
              - name: MIN_LOSS
-               value: "0.005"
+               value: "0.15"
              - name: STEP_SIZE
                value: "0.1"
            resources:
              requests:
-               memory: "1000Mi"
+               memory: "8000Mi"
                cpu: "2000m"
              limits:
                memory: "12000Mi"
-               cpu: "3000m"
+               cpu: "4000m"
            volumeMounts:
              - mountPath: "/data"
                name: dataset
