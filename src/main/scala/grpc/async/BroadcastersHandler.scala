@@ -125,7 +125,7 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker, broadca
     instance.synchronized {
       if (broadcasters.nonEmpty) {
         println(s"[SEND] feel like sharing some computations, here you go guys " +
-          s"${broadcasters.keySet.mkString("[", ";", "]")}")
+          s"${broadcasters.keySet.mkString("[", ", ", "]")}")
       }
       broadcasters.par.foreach { case (worker, (_, broadcaster)) =>
         val msg = BroadcastMessage(
