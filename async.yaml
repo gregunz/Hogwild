@@ -52,14 +52,18 @@ spec:
                value: "/data/datasets/"
              - name: PORT_TO_OPEN
                value: "80"
-             - name: INTERVAL
-               value: "50"
-             - name: SAMPLES
-               value: "1"
              - name: EARLY_STOPPING
                value: "10"
              - name: MIN_LOSS
                value: "0.005"
+             - name: LOSS_INTERVAL
+               value: "30"
+             - name: LOSS_INTERVAL_IN_SECOND
+               value: "1"
+             - name: BROADCAST_INTERVAL
+               value: "30"
+             - name: BROADCAST_INTERVAL_IN_SECOND
+               value: "1"
              - name: STEP_SIZE
                value: "0.1"
            resources:

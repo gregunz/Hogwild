@@ -16,18 +16,16 @@ object Utils {
     s1 -> s2
   }
 
-  def upload(filename: String, lines: Iterator[String], sep: String): Unit = {
-    writeLinesToFile(outputDirPath, filename, lines, sep)
+  def upload(filename: String, lines: Iterator[String]): Unit = {
+    writeLinesToFile(outputDirPath, filename, lines)
     println(s"curl --upload-file $outputDirPath/$filename https://transfer.sh/$filename" !!)
   }
 
-  private def writeLinesToFile(dirPath: String, filename: String, lines: Iterator[String], sep: String): Unit = {
+  private def writeLinesToFile(dirPath: String, filename: String, lines: Iterator[String], sep: String = "\n"): Unit = {
     createDir(dirPath)
     val file = new File(s"$dirPath/$filename")
     val bw = new BufferedWriter(new FileWriter(file))
-    while(lines.hasNext){
-      bw.write(lines.next + (if(lines.hasNext) sep else ""))
-    }
+    lines.map(_ + sep).foreach(bw.write)
     bw.close()
   }
 
