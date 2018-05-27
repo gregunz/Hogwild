@@ -27,7 +27,6 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
     val broadcastersHandler: BroadcastersHandler = Try {
       val (weights, workers) = hello(meWorker, mode.workerIp, mode.workerPort)
-      println(s"I AM $meWorker")
       val broadcastersHandler = BroadcastersHandler(dataset, meWorker, mode.broadcastInterval)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
       broadcastersHandler.addSomeActive(workers)
@@ -36,9 +35,10 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       if (mode.isSlave) {
         throw new IllegalStateException(s"Failed to connect to ${mode.workerIp}:${mode.workerPort}")
       }
-      println(s"I AM MASTER")
       BroadcastersHandler(mode.dataset, meWorker, mode.broadcastInterval)
     })
+
+    println(s">> ${if(mode.isMaster)"Master" else "Slave"} $meWorker ready")
 
     startServer(svm, broadcastersHandler)
     startComputations(dataset, svm, broadcastersHandler, mode.stoppingCriteria)
