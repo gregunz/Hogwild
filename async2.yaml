@@ -55,19 +55,19 @@ spec:
              - name: EARLY_STOPPING
                value: "3"
              - name: MIN_LOSS
-               value: "0.18"
+               value: "0.1"
              - name: LOSS_INTERVAL
-               value: "1000"
+               value: "500"
              - name: LOSS_INTERVAL_UNIT
                value: "i"
              - name: BROADCAST_INTERVAL
-               value: "1000"
+               value: "500"
              - name: BROADCAST_INTERVAL_UNIT
                value: "i"
              - name: LAMBDA
                value: "0.0001"
              - name: STEP_SIZE
-               value: "0.35"
+               value: "0.2"
              - name: LOG
                value: "2"
            resources:

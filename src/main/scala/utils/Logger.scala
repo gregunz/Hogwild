@@ -14,9 +14,9 @@ case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
   }
 
   def load[T](level: Int)(name: String)(toLoad: => T): T = {
-    log(2)(s"loading $name...")
+    log(2)(s"loading '$name'...")
     val toReturn = toLoad
-    log(2)(s"$name loaded.")
+    log(2)(s"'$name' loaded")
     toReturn
   }
 

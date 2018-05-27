@@ -83,22 +83,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     var lossComputingFuture = Future.successful()
 
     while (keepComputing && someStoppingCriteria.forall(!_.shouldStop)) {
-      val (feature, label) = dataset.getSample
-      val newGradient = svm.computeStochasticGradient(
-        feature = feature,
-        label = label,
-        inverseTidCountsVector = dataset.inverseTidCountsVector
-      )
-      val weightsUpdate = svm.updateWeights(newGradient)
-      WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
 
-      if (broadcastersHandler.broadcastInterval.hasReachedOrFirst && broadcastFuture.isCompleted) {
-        broadcastersHandler.broadcastInterval.reset()
-        broadcastFuture = Future {
-          val weights = WeightsUpdateHandler.getAndResetWeightsUpdate()
-          broadcastersHandler.broadcast(weights)
-        }
-      }
       someStoppingCriteria.foreach { stoppingCriteria =>
         if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
           stoppingCriteria.interval.reset()
@@ -107,6 +92,23 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           }
         }
       }
+
+      if (broadcastersHandler.broadcastInterval.hasReachedOrFirst && broadcastFuture.isCompleted) {
+        broadcastersHandler.broadcastInterval.reset()
+        broadcastFuture = Future {
+          val weights = WeightsUpdateHandler.getAndResetWeightsUpdate()
+          broadcastersHandler.broadcast(weights)
+        }
+      }
+
+      val (feature, label) = dataset.getSample
+      val newGradient = svm.computeStochasticGradient(
+        feature = feature,
+        label = label,
+        inverseTidCountsVector = dataset.inverseTidCountsVector
+      )
+      val weightsUpdate = svm.updateWeights(newGradient)
+      WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
     }
 
     if (someStoppingCriteria.isDefined) {
