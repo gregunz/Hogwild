@@ -52,23 +52,27 @@ spec:
                value: "/data/datasets/"
              - name: PORT_TO_OPEN
                value: "80"
-             - name: INTERVAL
-               value: "50"
-             - name: SAMPLES
-               value: "1"
              - name: EARLY_STOPPING
-               value: "10"
+               value: "3"
              - name: MIN_LOSS
-               value: "0.005"
+               value: "0.15"
+             - name: LOSS_INTERVAL
+               value: "30"
+             - name: LOSS_INTERVAL_IN_SECOND
+               value: "1"
+             - name: BROADCAST_INTERVAL
+               value: "30"
+             - name: BROADCAST_INTERVAL_IN_SECOND
+               value: "1"
              - name: STEP_SIZE
                value: "0.1"
            resources:
              requests:
-               memory: "1000Mi"
+               memory: "8000Mi"
                cpu: "2000m"
              limits:
                memory: "12000Mi"
-               cpu: "3000m"
+               cpu: "4000m"
            volumeMounts:
              - mountPath: "/data"
                name: dataset

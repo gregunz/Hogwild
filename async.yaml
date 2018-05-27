@@ -19,7 +19,7 @@ spec:
    name: hogwild-pod
  spec:
    serviceName: statefulset-service
-   replicas: 25
+   replicas: 5
    selector:
     matchLabels:
       app: hogwild-pod
@@ -53,9 +53,9 @@ spec:
              - name: PORT_TO_OPEN
                value: "80"
              - name: EARLY_STOPPING
-               value: "10"
+               value: "3"
              - name: MIN_LOSS
-               value: "0.005"
+               value: "0.15"
              - name: LOSS_INTERVAL
                value: "10"
              - name: LOSS_INTERVAL_IN_SECOND
@@ -70,11 +70,11 @@ spec:
                value: "0.1"
            resources:
              requests:
-               memory: "2000Mi"
+               memory: "8000Mi"
                cpu: "2000m"
              limits:
-               memory: "10000Mi"
-               cpu: "3000m"
+               memory: "12000Mi"
+               cpu: "4000m"
            volumeMounts:
              - mountPath: "/data"
                name: dataset
