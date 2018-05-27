@@ -1,6 +1,6 @@
 package grpc.async
 
-case class RemoteWorker(ip: String, port: Int, name: Option[String]){
+case class RemoteWorker(ip: String, port: Int, name: Option[String]) {
 
   val uid: String = s"$ip:$port"
 
@@ -11,6 +11,6 @@ case class RemoteWorker(ip: String, port: Int, name: Option[String]){
 
 object RemoteWorker {
   def fromWorkerDetails(w: WorkerDetail): RemoteWorker = {
-    RemoteWorker( ip = w.ip, port = w.port, name = Some(w.name).filter(_ != ""))
+    RemoteWorker(ip = w.ip, port = w.port, name = Some(w.name).filter(_ != ""))
   }
 }

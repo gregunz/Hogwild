@@ -4,9 +4,9 @@ import dataset.Dataset
 import grpc.GrpcRunnable
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
-import launcher.SyncWorkerMode
+import launcher.mode.SyncWorkerMode
 import model.{SVM, SparseNumVector}
-import utils.Interval
+import utils.Logger
 
 object Worker extends GrpcRunnable[SyncWorkerMode] {
 
@@ -17,11 +17,11 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
     val dataset = mode.dataset.getReady(mode.isMaster)
     val channel = createChannel(mode.serverIp, mode.serverPort)
     val client = WorkerServiceSyncGrpc.stub(channel)
-    val responseObserver = createObserver(dataset, mode.lambda)
+    val responseObserver = createObserver(mode.logger, dataset, mode.lambda)
     val requestObserver = client.updateWeights(responseObserver)
 
     channel.shutdown()
-    println(">> Ready to compute!")
+    mode.logger.log(2)(">> Ready to compute!")
     startComputingLoop(requestObserver)
   }
 
@@ -32,21 +32,21 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       .build
   }
 
-  def createObserver(dataset: Dataset, lambda: Double): StreamObserver[WorkerResponse] = {
+  def createObserver(logger: Logger, dataset: Dataset, lambda: Double): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
       def onError(t: Throwable): Unit = {
-        println(s"ON_ERROR: $t")
-        sys.exit(1)
+        logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field) (on error)")
+        sys.exit(0)
       }
 
       def onCompleted(): Unit = {
-        println("ON_COMPLETED")
+        logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field) (on completed)")
         sys.exit(0)
       }
 
       def onNext(res: WorkerResponse): Unit = {
         if (res.weightsUpdate.isEmpty) {
-          println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
+          logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
           sys.exit(0)
         }
         val (feature, label) = dataset.getSample

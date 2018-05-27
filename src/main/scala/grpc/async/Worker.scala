@@ -6,13 +6,14 @@ import dataset.Dataset
 import grpc.{GrpcRunnable, GrpcServer}
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
-import launcher.AsyncWorkerMode
+import launcher.mode.AsyncWorkerMode
 import model._
+import utils.Logger
 import utils.Types.TID
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Random, Try}
+import scala.util.Try
 
 object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
@@ -27,7 +28,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
     val broadcastersHandler: BroadcastersHandler = Try {
       val (weights, workers) = hello(meWorker, mode.workerIp, mode.workerPort)
-      val broadcastersHandler = BroadcastersHandler(dataset, meWorker, mode.broadcastInterval)
+      val broadcastersHandler = BroadcastersHandler(mode.logger, dataset, meWorker, mode.broadcastInterval)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
       broadcastersHandler.addSomeActive(workers)
       broadcastersHandler
@@ -35,13 +36,13 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       if (mode.isSlave) {
         throw new IllegalStateException(s"Failed to connect to ${mode.workerIp}:${mode.workerPort}")
       }
-      BroadcastersHandler(mode.dataset, meWorker, mode.broadcastInterval)
+      BroadcastersHandler(mode.logger, mode.dataset, meWorker, mode.broadcastInterval)
     })
 
-    println(s">> ${if(mode.isMaster)"Master" else "Slave"} $meWorker ready")
+    mode.logger.log(2)(s">> ${if (mode.isMaster) "Master" else "Slave"} $meWorker ready")
 
-    startServer(svm, broadcastersHandler)
-    startComputations(dataset, svm, broadcastersHandler, mode.stoppingCriteria)
+    startServer(mode.logger, svm, broadcastersHandler)
+    startComputations(mode.logger, dataset, svm, broadcastersHandler, mode.stoppingCriteria)
 
   }
 
@@ -65,17 +66,18 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       .build
   }
 
-  def startServer(svm: SVM, broadcastersHandler: BroadcastersHandler): Unit = {
-    val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService(svm, broadcastersHandler), ExecutionContext.global)
-    println(">> Server starting..")
+  def startServer(logger: Logger, svm: SVM, broadcastersHandler: BroadcastersHandler): Unit = {
+    val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService(logger, svm, broadcastersHandler), ExecutionContext.global)
+    logger.log(2)(">> Server starting...")
     runServer(ssd, broadcastersHandler.meWorker.port)
+    logger.log(2)(">> Server ready!")
   }
 
-  def startComputations(dataset: Dataset, svm: SVM, broadcastersHandler: BroadcastersHandler,
+  def startComputations(logger: Logger, dataset: Dataset, svm: SVM, broadcastersHandler: BroadcastersHandler,
                         someStoppingCriteria: Option[StoppingCriteria]): Unit = {
 
 
-    println(">> Computations thread starting..")
+    logger.log(2)(">> Computations thread starting...")
 
     var broadcastFuture = Future.successful()
     var lossComputingFuture = Future.successful()
@@ -96,16 +98,16 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           broadcastersHandler.broadcast(weights)
         }
       }
-      someStoppingCriteria.foreach{ stoppingCriteria =>
-        if (stoppingCriteria.interval.hasReachedOrKeepGoing && lossComputingFuture.isCompleted){
-          lossComputingFuture = Future{
+      someStoppingCriteria.foreach { stoppingCriteria =>
+        if (stoppingCriteria.interval.hasReachedOrKeepGoing && lossComputingFuture.isCompleted) {
+          lossComputingFuture = Future {
             stoppingCriteria.compute(svm, displayLoss = true)
           }
         }
       }
     }
 
-    if (someStoppingCriteria.isDefined){
+    if (someStoppingCriteria.isDefined) {
       broadcastersHandler.killAll()
       someStoppingCriteria.get.export()
     }
@@ -118,7 +120,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     allTids.filter(tid => tid % n == i).toSet
   }
 
-  case class WorkerServerService(svm: SVM, broadcastersHandler: BroadcastersHandler)
+  case class WorkerServerService(logger: Logger, svm: SVM, broadcastersHandler: BroadcastersHandler)
     extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
 
     override def hello(request: WorkerDetail): Future[HelloResponse] = {
@@ -144,7 +146,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           val worker = RemoteWorker.fromWorkerDetails(msg.workerDetail.get)
 
           broadcastersHandler.add(worker)
-          println(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
+          logger.log(3)(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
 
           val receivedWeights = SparseNumVector(msg.weightsUpdate)
           svm.addWeightsUpdate(receivedWeights)
@@ -153,7 +155,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     }
 
     override def kill(request: Empty): Future[Empty] = {
-      println(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
+      logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
       keepComputing = false
       //sys.exit(0)
       Future(Empty())

@@ -1,19 +1,18 @@
 package dataset
 
 import model.SparseNumVector
-import utils.Label
 import utils.Label.Label
 import utils.Types.{Counts, TID}
+import utils.{Label, Logger}
 
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.Random
 
-case class Dataset(dataPath: String) {
+case class Dataset(logger: Logger, dataPath: String) {
 
-  val tids: Seq[TID] = 1 to 47236
   lazy val inverseTidCountsVector = SparseNumVector(tidCounts.mapValues(1d / _))
-  lazy val testSet: Seq[(SparseNumVector[Double], Label)] = load("test-set") {
+  lazy val testSet: Seq[(SparseNumVector[Double], Label)] = logger.load(2)("test-set") {
     val testPath = dataPath + "lyrl2004_vectors_train.dat"
     for {
       line <- Source.fromFile(testPath).getLines
@@ -22,7 +21,7 @@ case class Dataset(dataPath: String) {
       vect -> labels(did)
     }
   }.toList
-  private lazy val tidCounts: Counts = load("tidCounts") {
+  private lazy val tidCounts: Counts = logger.load(2)("tidCounts") {
     var counts = mutable.Map.empty[Int, Int]
     for {
       f <- filePaths
@@ -34,7 +33,7 @@ case class Dataset(dataPath: String) {
     }
     counts.toMap
   }
-  private lazy val labels: Map[Int, Label] = load("labels") {
+  private lazy val labels: Map[Int, Label] = logger.load(2)("labels") {
     val labelPath = dataPath + "rcv1-v2.topics.qrels"
     val labelOfInterest = "CCAT"
     Source.fromFile(labelPath)
@@ -51,11 +50,10 @@ case class Dataset(dataPath: String) {
       .groupBy(_._1)
       .mapValues { v => Label(v.exists(_._2)) }
   }
-
   private lazy val filePaths: List[String] = {
     (0 until 4).map(i => dataPath + filename(i)).toList
   }
-  private lazy val randomSampling = load("samples") {
+  private lazy val randomSampling = logger.load(2)("samples") {
     new Iterator[(SparseNumVector[Double], Label)] {
       private var iterator: Iterator[Iterator[(SparseNumVector[Double], Label)]] = Nil.iterator
       private var group: Iterator[(SparseNumVector[Double], Label)] = Nil.iterator
@@ -95,7 +93,7 @@ case class Dataset(dataPath: String) {
       override def next: (SparseNumVector[Double], Label) = {
         if (group.isEmpty) {
           if (iterator.isEmpty) {
-            println(s"[DATA] dataset random sampling epoch $epoch")
+            logger.log(1)(s"[DATA] dataset random sampling epoch $epoch")
             iterator = generateIterator
             epoch += 1
           }
@@ -107,26 +105,20 @@ case class Dataset(dataPath: String) {
       override def hasNext: Boolean = true
     }
   }
+  val tids: Seq[TID] = 1 to 47236
 
   def getSample: (SparseNumVector[Double], Label) = randomSampling.next
 
   def getReady(loadTest: Boolean): Dataset = {
-    println(">> Loading Dataset")
+    logger.log(2)(">> Loading dataset")
     tidCounts
     labels
     randomSampling
     if (loadTest) {
       testSet
     }
-    println(">> Dataset Ready!!")
+    logger.log(2)(">> Dataset ready!!")
     this
-  }
-
-  private def load[T](name: String)(toLoad: => T): T = {
-    println(s"...loading $name...")
-    val toReturn = toLoad
-    println(s"$name loaded.")
-    toReturn
   }
 
   private def filename(i: Int) = s"lyrl2004_vectors_test_pt$i.dat"

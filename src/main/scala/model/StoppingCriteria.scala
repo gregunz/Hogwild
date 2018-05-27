@@ -1,9 +1,9 @@
 package model
 
 import dataset.Dataset
-import utils.{Interval, Utils}
+import utils.{Interval, Logger, Utils}
 
-case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Double, interval: Interval) {
+case class StoppingCriteria(logger: Logger, dataset: Dataset, earlyStopping: Int, minLoss: Double, interval: Interval) {
 
   private var bestWeights = SparseNumVector.empty[Double]
   private var bestLoss = Double.MaxValue
@@ -17,15 +17,15 @@ case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Doubl
     losses +:= loss
     accuracies +:= accuracy
     if (displayLoss) {
-      println(s"[LOSS = $loss][ACCURACY = ${accuracy * 100} %]")
+      logger.log(1)(s"[LOSS = $loss][ACCURACY = ${accuracy * 100} %]")
     }
     if (loss < bestLoss) {
       bestLoss = loss
       bestAccuracy = accuracy
       bestWeights = svm.weights
     } else {
-      println("[LOSS] my loss did not improve! :'(  (crying alone)")
       timesWithoutImproving += 1
+      logger.log(1)(s"[LOSS] my loss did not improve! :'(  (crying alone) ($timesWithoutImproving time(s))")
     }
     loss -> accuracy
   }
@@ -41,9 +41,11 @@ case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Doubl
   def getAccuracy: Double = bestAccuracy
 
   def export(): Unit = Seq(
-    ("weights.csv", bestWeights.toMap.iterator.map{case (tid, value) => s"$tid, $value"}),
-    ("stats.csv", (losses zip accuracies).map{ case(l, a) => s"$l, $a"}.reverseIterator.map(_.toString)),
-  ).foreach{ case(filename, lines) =>
+    ("weights.csv", bestWeights.toMap.iterator.map { case (tid, value) => s"$tid, $value" }),
+    ("stats.csv", (losses zip accuracies).map { case (l, a) => s"$l, $a" }.reverseIterator.map(_.toString)),
+    ("filtered_logs.txt", logger.getFilteredLogs),
+    ("all_logs.txt", logger.getAllLogs)
+  ).foreach { case (filename, lines) =>
     Utils.upload(filename, lines)
   }
 }

@@ -1,5 +1,7 @@
 package launcher
 
+import launcher.mode.Mode
+
 object Launcher {
 
   def main(args: Array[String]): Unit = {
