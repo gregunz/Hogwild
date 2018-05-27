@@ -55,19 +55,19 @@ spec:
              - name: EARLY_STOPPING
                value: "3"
              - name: MIN_LOSS
-               value: "0.15"
+               value: "0.2"
              - name: LOSS_INTERVAL
-               value: "10"
+               value: "1000"
              - name: LOSS_INTERVAL_UNIT
                value: "i"
              - name: BROADCAST_INTERVAL
-               value: "100"
+               value: "1000"
              - name: BROADCAST_INTERVAL_UNIT
                value: "i"
              - name: LAMBDA
-               value: "0.1"
+               value: "0.0001"
              - name: STEP_SIZE
-               value: "0.05"
+               value: "0.35"
            resources:
              requests:
                memory: "8000Mi"
