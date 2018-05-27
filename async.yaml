@@ -19,7 +19,7 @@ spec:
    name: hogwild-pod
  spec:
    serviceName: statefulset-service
-   replicas: 5
+   replicas: 2
    selector:
     matchLabels:
       app: hogwild-pod
@@ -55,7 +55,7 @@ spec:
              - name: EARLY_STOPPING
                value: "3"
              - name: MIN_LOSS
-               value: "0.2"
+               value: "0.18"
              - name: LOSS_INTERVAL
                value: "1000"
              - name: LOSS_INTERVAL_UNIT
@@ -68,6 +68,8 @@ spec:
                value: "0.0001"
              - name: STEP_SIZE
                value: "0.35"
+             - name: LOG
+               value: "2"
            resources:
              requests:
                memory: "8000Mi"

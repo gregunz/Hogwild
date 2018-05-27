@@ -14,6 +14,7 @@ fi
 
 sh hogwild \
     mode=${MODE} \
+    log=${LOG} \
     name=${MY_POD_NAME} \
     port=${PORT_TO_OPEN} \
     ip:port=${IP_PORT} \
