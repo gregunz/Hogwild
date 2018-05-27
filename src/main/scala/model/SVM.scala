@@ -48,7 +48,7 @@ class SVM(lambda: Double, stepSize: LearningRate) {
         val w = weights.filterKeys(feature.keys)
         val reg = 0.5 * lambda * (w * w * inverseTidCountsVector).firstNorm
         val loss = hinge + reg
-        val correctPred = Math.abs(pred.toInt + label.id) / 2
+        val correctPred = if (pred >= 0 && label.id == 1 || pred < 0 && label.id == -1) 1 else 0
         loss -> correctPred
       }.unzip
 
