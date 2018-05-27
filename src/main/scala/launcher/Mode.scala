@@ -89,13 +89,16 @@ object Mode {
       val modeBuilder = ModeBuilder(dataset = dataset, lambda = options("lambda").toDouble,
         stepSize = options("step-size").toDouble)
 
-      def getInterval(intervalName: String, inSecondName: String): Interval = {
-        val limit = options(intervalName).toInt
-        if(options(inSecondName) == "1"){ SecondsInterval(limit) } else { IterationsInterval(limit) }
+      def getInterval(name: String, unit: String): Interval = {
+        val limit = options(name).toInt
+        options(unit).toLowerCase match {
+          case "s" | "sec" | "second" | "seconds" => SecondsInterval(limit)
+          case "i" | "it" | "iteration" | "iterations" => IterationsInterval(limit)
+        }
       }
       def getStoppingCriteria: StoppingCriteria = {
         StoppingCriteria(dataset, options("early-stopping").toInt, options("min-loss").toDouble,
-          getInterval("loss-interval", "loss-interval-in-second"))
+          getInterval("loss-interval", "loss-interval-unit"))
       }
 
       options("mode") match {
@@ -106,7 +109,7 @@ object Mode {
         case "sync" if options.contains("port") =>
           modeBuilder.build(options("port").toInt, getStoppingCriteria)
         case "async" =>
-          val broadcastInterval = getInterval("broadcast-interval", "broadcast-interval-in-second")
+          val broadcastInterval = getInterval("broadcast-interval", "broadcast-interval-unit")
           val stoppingCriteria = {
             if (options.contains("early-stopping")) {
               Some(getStoppingCriteria)

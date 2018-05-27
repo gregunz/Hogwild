@@ -58,14 +58,14 @@ spec:
                value: "0.15"
              - name: LOSS_INTERVAL
                value: "10"
-             - name: LOSS_INTERVAL_IN_SECOND
-               value: "1"
+             - name: LOSS_INTERVAL_UNIT
+               value: "i"
              - name: BROADCAST_INTERVAL
                value: "100"
-             - name: BROADCAST_INTERVAL_IN_SECOND
-               value: "0"
+             - name: BROADCAST_INTERVAL_UNIT
+               value: "i"
              - name: LAMBDA
-               value:
+               value: "0.1"
              - name: STEP_SIZE
                value: "0.1"
            resources:

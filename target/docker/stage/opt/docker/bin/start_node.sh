@@ -9,7 +9,7 @@ else
     EARLY_STOPPING=""
     MIN_LOSS=""
     LOSS_INTERVAL=""
-    LOSS_INTERVAL_IN_SECOND=""
+    LOSS_INTERVAL_UNIT=""
 fi
 
 sh hogwild \
@@ -22,7 +22,7 @@ sh hogwild \
     early-stopping=${EARLY_STOPPING} \
     min-loss=${MIN_LOSS} \
     loss-interval=${LOSS_INTERVAL} \
-    loss-interval-in-second=${LOSS_INTERVAL_IN_SECOND} \
+    loss-interval-unit=${LOSS_INTERVAL_UNIT} \
     broadcast-interval=${BROADCAST_INTERVAL} \
-    broadcast-interval-in-second=${BROADCAST_INTERVAL_IN_SECOND}
+    broadcast-interval-unit=${BROADCAST_INTERVAL_UNIT}
 
