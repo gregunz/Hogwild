@@ -8,7 +8,6 @@ import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import launcher.AsyncWorkerMode
 import model._
-import utils.{Interval, Utils}
 import utils.Types.TID
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,6 +27,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
     val broadcastersHandler: BroadcastersHandler = Try {
         val (meWorker, weights, workers) = hello(myIp, myPort, mode.workerIp, mode.workerPort)
+        println(s"I AM $meWorker")
         val broadcastersHandler = BroadcastersHandler(dataset, meWorker, mode.broadcastInterval)
         svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
         broadcastersHandler.addSomeActive(workers)
@@ -36,6 +36,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       if (mode.isSlave){
         throw new IllegalStateException(s"Failed to connect to ${mode.workerIp}:${mode.workerPort}")
       }
+      println(s"I AM MASTER")
       BroadcastersHandler(mode.dataset, RemoteWorker(myIp, myPort, 0), mode.broadcastInterval)
     })
 
