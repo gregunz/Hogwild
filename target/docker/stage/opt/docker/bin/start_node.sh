@@ -14,7 +14,7 @@ fi
 
 sh hogwild \
     mode=${MODE} \
-    my-name=${MY_POD_NAME} \
+    name=${MY_POD_NAME} \
     port=${PORT_TO_OPEN} \
     ip:port=${IP_PORT} \
     data-path=${DATASET_PATH} \

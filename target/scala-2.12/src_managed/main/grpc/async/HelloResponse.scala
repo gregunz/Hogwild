@@ -8,8 +8,7 @@ package grpc.async
 @SerialVersionUID(0L)
 final case class HelloResponse(
     workersDetails: _root_.scala.collection.Seq[grpc.async.WorkerDetail] = _root_.scala.collection.Seq.empty,
-    weights: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty,
-    id: _root_.scala.Int = 0
+    weights: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double] = scala.collection.immutable.Map.empty
     ) extends scalapb.GeneratedMessage with scalapb.Message[HelloResponse] with scalapb.lenses.Updatable[HelloResponse] {
     @transient
     private[this] var __serializedSizeCachedValue: _root_.scala.Int = 0
@@ -17,7 +16,6 @@ final case class HelloResponse(
       var __size = 0
       workersDetails.foreach(workersDetails => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(workersDetails.serializedSize) + workersDetails.serializedSize)
       weights.foreach(weights => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(grpc.async.HelloResponse._typemapper_weights.toBase(weights).serializedSize) + grpc.async.HelloResponse._typemapper_weights.toBase(weights).serializedSize)
-      if (id != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeUInt32Size(3, id) }
       __size
     }
     final override def serializedSize: _root_.scala.Int = {
@@ -39,17 +37,10 @@ final case class HelloResponse(
         _output__.writeUInt32NoTag(grpc.async.HelloResponse._typemapper_weights.toBase(__v).serializedSize)
         grpc.async.HelloResponse._typemapper_weights.toBase(__v).writeTo(_output__)
       };
-      {
-        val __v = id
-        if (__v != 0) {
-          _output__.writeUInt32(3, __v)
-        }
-      };
     }
     def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): grpc.async.HelloResponse = {
       val __workersDetails = (_root_.scala.collection.immutable.Vector.newBuilder[grpc.async.WorkerDetail] ++= this.workersDetails)
       val __weights = (scala.collection.immutable.Map.newBuilder[_root_.scala.Int, _root_.scala.Double] ++= this.weights)
-      var __id = this.id
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
@@ -59,15 +50,12 @@ final case class HelloResponse(
             __workersDetails += _root_.scalapb.LiteParser.readMessage(_input__, grpc.async.WorkerDetail.defaultInstance)
           case 18 =>
             __weights += grpc.async.HelloResponse._typemapper_weights.toCustom(_root_.scalapb.LiteParser.readMessage(_input__, grpc.async.HelloResponse.WeightsEntry.defaultInstance))
-          case 24 =>
-            __id = _input__.readUInt32()
           case tag => _input__.skipField(tag)
         }
       }
       grpc.async.HelloResponse(
           workersDetails = __workersDetails.result(),
-          weights = __weights.result(),
-          id = __id
+          weights = __weights.result()
       )
     }
     def clearWorkersDetails = copy(workersDetails = _root_.scala.collection.Seq.empty)
@@ -78,15 +66,10 @@ final case class HelloResponse(
     def addWeights(__vs: (_root_.scala.Int, _root_.scala.Double)*): HelloResponse = addAllWeights(__vs)
     def addAllWeights(__vs: TraversableOnce[(_root_.scala.Int, _root_.scala.Double)]): HelloResponse = copy(weights = weights ++ __vs)
     def withWeights(__v: scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]): HelloResponse = copy(weights = __v)
-    def withId(__v: _root_.scala.Int): HelloResponse = copy(id = __v)
     def getFieldByNumber(__fieldNumber: _root_.scala.Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
         case 1 => workersDetails
         case 2 => weights.map(grpc.async.HelloResponse._typemapper_weights.toBase)(_root_.scala.collection.breakOut)
-        case 3 => {
-          val __t = id
-          if (__t != 0) __t else null
-        }
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
@@ -94,7 +77,6 @@ final case class HelloResponse(
       (__field.number: @_root_.scala.unchecked) match {
         case 1 => _root_.scalapb.descriptors.PRepeated(workersDetails.map(_.toPMessage)(_root_.scala.collection.breakOut))
         case 2 => _root_.scalapb.descriptors.PRepeated(weights.map(grpc.async.HelloResponse._typemapper_weights.toBase(_).toPMessage)(_root_.scala.collection.breakOut))
-        case 3 => _root_.scalapb.descriptors.PInt(id)
       }
     }
     def toProtoString: _root_.scala.Predef.String = _root_.scalapb.TextFormat.printToUnicodeString(this)
@@ -108,8 +90,7 @@ object HelloResponse extends scalapb.GeneratedMessageCompanion[grpc.async.HelloR
     val __fields = javaDescriptor.getFields
     grpc.async.HelloResponse(
       __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.async.WorkerDetail]],
-      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.async.HelloResponse.WeightsEntry]].map(grpc.async.HelloResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut),
-      __fieldsMap.getOrElse(__fields.get(2), 0).asInstanceOf[_root_.scala.Int]
+      __fieldsMap.getOrElse(__fields.get(1), Nil).asInstanceOf[_root_.scala.collection.Seq[grpc.async.HelloResponse.WeightsEntry]].map(grpc.async.HelloResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
     )
   }
   implicit def messageReads: _root_.scalapb.descriptors.Reads[grpc.async.HelloResponse] = _root_.scalapb.descriptors.Reads{
@@ -117,8 +98,7 @@ object HelloResponse extends scalapb.GeneratedMessageCompanion[grpc.async.HelloR
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
       grpc.async.HelloResponse(
         __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[grpc.async.WorkerDetail]]).getOrElse(_root_.scala.collection.Seq.empty),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[grpc.async.HelloResponse.WeightsEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.async.HelloResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(3).get).map(_.as[_root_.scala.Int]).getOrElse(0)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.scala.collection.Seq[grpc.async.HelloResponse.WeightsEntry]]).getOrElse(_root_.scala.collection.Seq.empty).map(grpc.async.HelloResponse._typemapper_weights.toCustom)(_root_.scala.collection.breakOut)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
@@ -257,11 +237,9 @@ object HelloResponse extends scalapb.GeneratedMessageCompanion[grpc.async.HelloR
   implicit class HelloResponseLens[UpperPB](_l: _root_.scalapb.lenses.Lens[UpperPB, grpc.async.HelloResponse]) extends _root_.scalapb.lenses.ObjectLens[UpperPB, grpc.async.HelloResponse](_l) {
     def workersDetails: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.collection.Seq[grpc.async.WorkerDetail]] = field(_.workersDetails)((c_, f_) => c_.copy(workersDetails = f_))
     def weights: _root_.scalapb.lenses.Lens[UpperPB, scala.collection.immutable.Map[_root_.scala.Int, _root_.scala.Double]] = field(_.weights)((c_, f_) => c_.copy(weights = f_))
-    def id: _root_.scalapb.lenses.Lens[UpperPB, _root_.scala.Int] = field(_.id)((c_, f_) => c_.copy(id = f_))
   }
   final val WORKERSDETAILS_FIELD_NUMBER = 1
   final val WEIGHTS_FIELD_NUMBER = 2
-  final val ID_FIELD_NUMBER = 3
   @transient
   private val _typemapper_weights: _root_.scalapb.TypeMapper[grpc.async.HelloResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)] = implicitly[_root_.scalapb.TypeMapper[grpc.async.HelloResponse.WeightsEntry, (_root_.scala.Int, _root_.scala.Double)]]
 }

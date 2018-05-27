@@ -17,7 +17,7 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker, broadca
   private val instance = this
   private var broadcasters: Map[RemoteWorker, Broadcaster] = Map.empty
   private var waitingList: Set[RemoteWorker] = Set.empty
-  private var tidsPerBroadcaster: Map[Int, Set[TID]] = Map.empty
+  private var tidsPerBroadcaster: Map[String, Set[TID]] = Map.empty
 
   def add(worker: RemoteWorker): Unit = {
     instance.synchronized {
@@ -86,20 +86,20 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker, broadca
   }
   private def updateTidsPerBroadcaster(): Unit = {
 
-    val ids = (this.broadcasters.keySet + meWorker)
-      .map(_.id)
+    val uids = (this.broadcasters.keySet + meWorker)
+      .map(_.uid)
       .toList
       .sorted
 
-    val tidsGrouped = cut(dataset.tids, ids.size)
+    val tidsGrouped = cut(dataset.tids, uids.size)
       .map(_.toSet)
       .toList
 
-    require(ids.size == tidsGrouped.size, "grouping not done correctly :(")
+    require(uids.size == tidsGrouped.size, "grouping not done correctly :(")
 
-    val myTids = tidsGrouped(ids.indexOf(meWorker.id))
+    val myTids = tidsGrouped(uids.indexOf(meWorker.uid))
 
-    tidsPerBroadcaster = (ids zip tidsGrouped.map(_ ++ myTids)).toMap
+    tidsPerBroadcaster = (uids zip tidsGrouped.map(_ ++ myTids)).toMap
   }
 
   def killAll(): Unit = {
@@ -125,11 +125,11 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker, broadca
     instance.synchronized {
       if (broadcasters.nonEmpty) {
         println(s"[SEND] feel like sharing some computations, here you go guys " +
-          s"${broadcasters.keySet.mkString("[", ";", "]")}")
+          s"${broadcasters.keySet.mkString("[", ", ", "]")}")
       }
       broadcasters.par.foreach { case (worker, (_, broadcaster)) =>
         val msg = BroadcastMessage(
-          weightsUpdate = weights.filterKeys(tidsPerBroadcaster(worker.id)).toMap,
+          weightsUpdate = weights.filterKeys(tidsPerBroadcaster(worker.uid)).toMap,
           workerDetail = Some(meWorker.toWorkerDetail)
         )
         broadcaster.onNext(msg)

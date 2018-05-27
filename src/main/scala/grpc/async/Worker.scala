@@ -23,41 +23,39 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     val dataset = mode.dataset.getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
     val myIp: String = InetAddress.getLocalHost.getHostAddress
-    val myPort = mode.port
+    val meWorker = RemoteWorker(myIp, mode.port, mode.name)
 
     val broadcastersHandler: BroadcastersHandler = Try {
-        val (meWorker, weights, workers) = hello(myIp, myPort, mode.workerIp, mode.workerPort)
-        println(s"I AM $meWorker")
-        val broadcastersHandler = BroadcastersHandler(dataset, meWorker, mode.broadcastInterval)
-        svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
-        broadcastersHandler.addSomeActive(workers)
-        broadcastersHandler
+      val (weights, workers) = hello(meWorker, mode.workerIp, mode.workerPort)
+      val broadcastersHandler = BroadcastersHandler(dataset, meWorker, mode.broadcastInterval)
+      svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
+      broadcastersHandler.addSomeActive(workers)
+      broadcastersHandler
     }.getOrElse({
-      if (mode.isSlave){
+      if (mode.isSlave) {
         throw new IllegalStateException(s"Failed to connect to ${mode.workerIp}:${mode.workerPort}")
       }
-      println(s"I AM MASTER")
-      BroadcastersHandler(mode.dataset, RemoteWorker(myIp, myPort, 0), mode.broadcastInterval)
+      BroadcastersHandler(mode.dataset, meWorker, mode.broadcastInterval)
     })
+
+    println(s">> ${if(mode.isMaster)"Master" else "Slave"} $meWorker ready")
 
     startServer(svm, broadcastersHandler)
     startComputations(dataset, svm, broadcastersHandler, mode.stoppingCriteria)
 
   }
 
-  def hello(myIp: String, myPort: Int, workerIp: String, workerPort: Int): (RemoteWorker, SparseNumVector[Double], Set[RemoteWorker]) = {
+  def hello(meWorker: RemoteWorker, workerIp: String, workerPort: Int): (SparseNumVector[Double], Set[RemoteWorker]) = {
     val channel = createChannel(workerIp, workerPort)
     val stub = WorkerServiceAsyncGrpc.blockingStub(channel)
-    val response = stub.hello(HelloRequest(ip = myIp, port = myPort))
-
-    val me = RemoteWorker(ip = myIp, port = myPort, id = response.id)
+    val response = stub.hello(meWorker.toWorkerDetail)
     val weights = SparseNumVector(response.weights)
     val workers = response
       .workersDetails
       .map(RemoteWorker.fromWorkerDetails)
       .toSet
 
-    (me, weights, workers)
+    (weights, workers)
   }
 
   private def createChannel(ip: String, port: Int): ManagedChannel = {
@@ -106,6 +104,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
         }
       }
     }
+
     if (someStoppingCriteria.isDefined){
       broadcastersHandler.killAll()
       someStoppingCriteria.get.export()
@@ -122,28 +121,16 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
   case class WorkerServerService(svm: SVM, broadcastersHandler: BroadcastersHandler)
     extends WorkerServiceAsyncGrpc.WorkerServiceAsync {
 
-    @scala.annotation.tailrec
-    final def generateId(takenIds: Set[Int]): Int = {
-      val workerId = Random.nextInt(Int.MaxValue)
-      if (takenIds(workerId)) {
-        generateId(takenIds)
-      } else {
-        workerId
-      }
-    }
-
-    override def hello(request: HelloRequest): Future[HelloResponse] = {
+    override def hello(request: WorkerDetail): Future[HelloResponse] = {
       val workersToSend = broadcastersHandler.allWorkers
-      val takenIds = workersToSend.map(_.id)
-      val newWorker = RemoteWorker(ip = request.ip, port = request.port, generateId(takenIds))
+      val newWorker = RemoteWorker.fromWorkerDetails(request)
       val weights = svm.weights
 
       broadcastersHandler.addToWaitingList(newWorker)
 
       Future(HelloResponse(
-        workersToSend.map { w => WorkerDetail(w.ip, w.port) }.toSeq,
-        weights.toMap,
-        id = newWorker.id
+        workersToSend.toSeq.map(_.toWorkerDetail),
+        weights.toMap
       ))
     }
 

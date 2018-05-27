@@ -42,8 +42,7 @@ case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Doubl
 
   def export(): Unit = Seq(
     ("weights.csv", bestWeights.toMap.iterator.map{case (tid, value) => s"$tid, $value"}),
-    ("losses.csv", losses.reverseIterator.map(_.toString)),
-    ("accuracy.csv", accuracies.reverseIterator.map(_.toString))
+    ("stats.csv", (losses zip accuracies).map{ case(l, a) => s"$l, $a"}.reverseIterator.map(_.toString)),
   ).foreach{ case(filename, lines) =>
     Utils.upload(filename, lines)
   }
