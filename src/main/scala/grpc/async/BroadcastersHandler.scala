@@ -4,12 +4,13 @@ import dataset.Dataset
 import io.grpc.stub.StreamObserver
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 import model.SparseNumVector
+import utils.Interval
 import utils.Types.TID
 
 import scala.util.Try
 
 
-case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker) {
+case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker, broadcastInterval: Interval) {
 
   type Stub = WorkerServiceAsyncGrpc.WorkerServiceAsyncStub
   type Broadcaster = (ManagedChannel, StreamObserver[BroadcastMessage])

@@ -1,9 +1,9 @@
 package model
 
 import dataset.Dataset
-import utils.Utils
+import utils.{Interval, Utils}
 
-case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Double) {
+case class StoppingCriteria(dataset: Dataset, earlyStopping: Int, minLoss: Double, interval: Interval) {
 
   private var bestWeights = SparseNumVector.empty[Double]
   private var bestLoss = Double.MaxValue

@@ -5,7 +5,7 @@ import grpc.async.{RemoteWorker, Worker => AsyncWorker}
 import grpc.sync.{Coordinator => SyncCoordinator, Worker => SyncWorker}
 import launcher.ArgsHandler.Options
 import model.StoppingCriteria
-import utils.{Interval, Utils}
+import utils.{Interval, IterationsInterval, SecondsInterval, Utils}
 import utils.Types.LearningRate
 
 import scala.util.Try
@@ -20,13 +20,12 @@ trait TopMode extends Mode {
   val dataset: Dataset
   val lambda: Double
   val stepSize: LearningRate
-  val interval: Interval
   def isMaster: Boolean
   def isSlave: Boolean = !isMaster
 }
 
-case class SyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, interval: Interval,
-                          serverIp: String, serverPort: Int) extends TopMode {
+case class SyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, serverIp: String, serverPort: Int)
+  extends TopMode {
   def isMaster = false
 
   def run(): Unit = {
@@ -35,7 +34,7 @@ case class SyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRa
   }
 }
 
-case class SyncCoordinatorMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, interval: Interval, port: Int,
+case class SyncCoordinatorMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, port: Int,
                                stoppingCriteria: StoppingCriteria) extends TopMode {
 
   def isMaster = true
@@ -46,8 +45,8 @@ case class SyncCoordinatorMode(dataset: Dataset, lambda: Double, stepSize: Learn
   }
 }
 
-case class AsyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, interval: Interval, port: Int,
-                           workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria])
+case class AsyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, port: Int, workerIp: String,
+                           workerPort: Int, stoppingCriteria: Option[StoppingCriteria], broadcastInterval: Interval)
   extends TopMode {
 
   def isMaster: Boolean = stoppingCriteria.isDefined
@@ -63,27 +62,41 @@ case class DefaultMode(options: Options, t: Throwable) extends Mode {
 }
 
 
-case class ModeBuilder(dataset: Dataset, lambda: Double, stepSize: LearningRate, interval: Interval) {
+case class ModeBuilder(dataset: Dataset, lambda: Double, stepSize: LearningRate) {
   def build(serverIp: String, serverPort: Int) =
-    SyncWorkerMode(dataset = dataset, lambda = lambda, stepSize = stepSize, interval = interval, serverIp = serverIp,
+    SyncWorkerMode(dataset = dataset, lambda = lambda, stepSize = stepSize, serverIp = serverIp,
       serverPort = serverPort)
 
   def build(port: Int, stoppingCriteria: StoppingCriteria) =
-    SyncCoordinatorMode(dataset = dataset, lambda = lambda, stepSize = stepSize, interval = interval, port = port,
+    SyncCoordinatorMode(dataset = dataset, lambda = lambda, stepSize = stepSize, port = port,
       stoppingCriteria = stoppingCriteria)
 
-  def build(port: Int, workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria]) =
-    AsyncWorkerMode(dataset = dataset, lambda = lambda, stepSize = stepSize, interval = interval, port = port,
-      stoppingCriteria = stoppingCriteria, workerIp = workerIp, workerPort = workerPort)
+  def build(port: Int, workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria],
+            broadcastInterval: Interval) =
+    AsyncWorkerMode(dataset = dataset, lambda = lambda, stepSize = stepSize, broadcastInterval = broadcastInterval,
+      port = port, stoppingCriteria = stoppingCriteria, workerIp = workerIp, workerPort = workerPort)
 }
 
 object Mode {
+
+
   def apply(options: Options): Mode = {
+
+
+
     val mode = Try {
       val dataset = Dataset(options("data-path"))
       val modeBuilder = ModeBuilder(dataset = dataset, lambda = options("lambda").toDouble,
-        stepSize = options("step-size").toDouble, interval = Interval(options("interval").toInt,
-          inSecond = options("in-second") == "1"))
+        stepSize = options("step-size").toDouble)
+
+      def getInterval(intervalName: String, inSecondName: String): Interval = {
+        val limit = options(intervalName).toInt
+        if(options(inSecondName) == "1"){ SecondsInterval(limit) } else { IterationsInterval(limit) }
+      }
+      def getStoppingCriteria: StoppingCriteria = {
+        StoppingCriteria(dataset, options("early-stopping").toInt, options("min-loss").toDouble,
+          getInterval("loss-interval", "loss-interval-in-second"))
+      }
 
       options("mode") match {
         case "sync" if options.contains("ip:port") =>
@@ -91,18 +104,18 @@ object Mode {
           modeBuilder.build(ip, port.toInt)
 
         case "sync" if options.contains("port") =>
-          val stoppingCriteria = StoppingCriteria(dataset, options("early-stopping").toInt, options("min-loss").toDouble)
-          modeBuilder.build(options("port").toInt, stoppingCriteria)
+          modeBuilder.build(options("port").toInt, getStoppingCriteria)
         case "async" =>
+          val broadcastInterval = getInterval("broadcast-interval", "broadcast-interval-in-second")
           val stoppingCriteria = {
             if (options.contains("early-stopping")) {
-              Some(StoppingCriteria(dataset, options("early-stopping").toInt, options("min-loss").toDouble))
+              Some(getStoppingCriteria)
             } else {
               None
             }
           }
           val (workerIp, workerPort) = Utils.split(options("ip:port"), ':')
-          modeBuilder.build(options("port").toInt, workerIp, workerPort.toInt, stoppingCriteria)
+          modeBuilder.build(options("port").toInt, workerIp, workerPort.toInt, stoppingCriteria, broadcastInterval)
       }
     }
     if (mode.isSuccess) {
