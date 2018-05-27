@@ -3,7 +3,7 @@ syntax = "proto3";
 package grpc;
 
 service WorkerServiceAsync {
-    rpc Hello (HelloRequest) returns (HelloResponse) {
+    rpc Hello (WorkerDetail) returns (HelloResponse) {
     }
     rpc Broadcast (stream BroadcastMessage) returns (Empty) {
     }
@@ -19,19 +19,12 @@ message BroadcastMessage {
 message HelloResponse {
     repeated WorkerDetail workersDetails = 1;
     map<uint32, double> weights = 2;
-    uint32 id = 3;
-
-}
-
-message HelloRequest {
-    string ip = 1;
-    uint32 port = 2;
 }
 
 message WorkerDetail {
     string ip = 1;
     uint32 port = 2;
-    uint32 id = 3;
+    string name = 3;
 }
 
 message Empty {

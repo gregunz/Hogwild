@@ -17,6 +17,7 @@ trait Mode {
 }
 
 trait TopMode extends Mode {
+  val name: Option[String]
   val dataset: Dataset
   val lambda: Double
   val stepSize: LearningRate
@@ -24,7 +25,8 @@ trait TopMode extends Mode {
   def isSlave: Boolean = !isMaster
 }
 
-case class SyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, serverIp: String, serverPort: Int)
+case class SyncWorkerMode(name: Option[String], dataset: Dataset, lambda: Double, stepSize: LearningRate,
+                          serverIp: String, serverPort: Int)
   extends TopMode {
   def isMaster = false
 
@@ -34,8 +36,8 @@ case class SyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRa
   }
 }
 
-case class SyncCoordinatorMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, port: Int,
-                               stoppingCriteria: StoppingCriteria) extends TopMode {
+case class SyncCoordinatorMode(name: Option[String], dataset: Dataset, lambda: Double, stepSize: LearningRate,
+                               port: Int, stoppingCriteria: StoppingCriteria) extends TopMode {
 
   def isMaster = true
 
@@ -45,8 +47,8 @@ case class SyncCoordinatorMode(dataset: Dataset, lambda: Double, stepSize: Learn
   }
 }
 
-case class AsyncWorkerMode(dataset: Dataset, lambda: Double, stepSize: LearningRate, port: Int, workerIp: String,
-                           workerPort: Int, stoppingCriteria: Option[StoppingCriteria], broadcastInterval: Interval)
+case class AsyncWorkerMode(name: Option[String], dataset: Dataset, lambda: Double, stepSize: LearningRate, port: Int,
+                           workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria], broadcastInterval: Interval)
   extends TopMode {
 
   def isMaster: Boolean = stoppingCriteria.isDefined
@@ -62,19 +64,20 @@ case class DefaultMode(options: Options, t: Throwable) extends Mode {
 }
 
 
-case class ModeBuilder(dataset: Dataset, lambda: Double, stepSize: LearningRate) {
+case class ModeBuilder(name: Option[String], dataset: Dataset, lambda: Double, stepSize: LearningRate) {
   def build(serverIp: String, serverPort: Int) =
-    SyncWorkerMode(dataset = dataset, lambda = lambda, stepSize = stepSize, serverIp = serverIp,
+    SyncWorkerMode(name = name, dataset = dataset, lambda = lambda, stepSize = stepSize, serverIp = serverIp,
       serverPort = serverPort)
 
   def build(port: Int, stoppingCriteria: StoppingCriteria) =
-    SyncCoordinatorMode(dataset = dataset, lambda = lambda, stepSize = stepSize, port = port,
+    SyncCoordinatorMode(name = name, dataset = dataset, lambda = lambda, stepSize = stepSize, port = port,
       stoppingCriteria = stoppingCriteria)
 
   def build(port: Int, workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria],
             broadcastInterval: Interval) =
-    AsyncWorkerMode(dataset = dataset, lambda = lambda, stepSize = stepSize, broadcastInterval = broadcastInterval,
-      port = port, stoppingCriteria = stoppingCriteria, workerIp = workerIp, workerPort = workerPort)
+    AsyncWorkerMode(name = name, dataset = dataset, lambda = lambda, stepSize = stepSize,
+      broadcastInterval = broadcastInterval, port = port, workerIp = workerIp, workerPort = workerPort,
+      stoppingCriteria = stoppingCriteria)
 }
 
 object Mode {
@@ -82,11 +85,9 @@ object Mode {
 
   def apply(options: Options): Mode = {
 
-
-
     val mode = Try {
       val dataset = Dataset(options("data-path"))
-      val modeBuilder = ModeBuilder(dataset = dataset, lambda = options("lambda").toDouble,
+      val modeBuilder = ModeBuilder(name = options.get("my-ip"), dataset = dataset, lambda = options("lambda").toDouble,
         stepSize = options("step-size").toDouble)
 
       def getInterval(name: String, unit: String): Interval = {
@@ -118,7 +119,8 @@ object Mode {
             }
           }
           val (workerIp, workerPort) = Utils.split(options("ip:port"), ':')
-          modeBuilder.build(options("port").toInt, workerIp, workerPort.toInt, stoppingCriteria, broadcastInterval)
+          modeBuilder.build(options("port").toInt, workerIp, workerPort.toInt, stoppingCriteria,
+            broadcastInterval)
       }
     }
     if (mode.isSuccess) {
