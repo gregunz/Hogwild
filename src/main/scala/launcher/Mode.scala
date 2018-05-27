@@ -87,7 +87,7 @@ object Mode {
 
     val mode = Try {
       val dataset = Dataset(options("data-path"))
-      val modeBuilder = ModeBuilder(name = options.get("my-ip"), dataset = dataset, lambda = options("lambda").toDouble,
+      val modeBuilder = ModeBuilder(name = options.get("name"), dataset = dataset, lambda = options("lambda").toDouble,
         stepSize = options("step-size").toDouble)
 
       def getInterval(name: String, unit: String): Interval = {
