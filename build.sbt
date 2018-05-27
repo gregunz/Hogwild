@@ -34,6 +34,8 @@ dockerCommands := Seq(
   Cmd("WORKDIR", "/opt/docker/bin"),
   Cmd("RUN", """["chmod", "+x", "hogwild"]"""),
   Cmd("RUN", """["chmod", "+x", "start_node.sh"]"""),
+  Cmd("RUN", "apk --no-cache add curl"),
+  Cmd("RUN", "apk --no-cache add ca-certificates"),
   Cmd("ENTRYPOINT", """["sh" , "start_node.sh"]"""),
   Cmd("CMD", "[]"),
 )

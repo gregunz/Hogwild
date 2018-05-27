@@ -57,21 +57,23 @@ spec:
              - name: MIN_LOSS
                value: "0.005"
              - name: LOSS_INTERVAL
-               value: "30"
+               value: "10"
              - name: LOSS_INTERVAL_IN_SECOND
                value: "1"
              - name: BROADCAST_INTERVAL
-               value: "30"
+               value: "100"
              - name: BROADCAST_INTERVAL_IN_SECOND
-               value: "1"
+               value: "0"
+             - name: LAMBDA
+               value:
              - name: STEP_SIZE
                value: "0.1"
            resources:
              requests:
-               memory: "10000Mi"
+               memory: "2000Mi"
                cpu: "2000m"
              limits:
-               memory: "12000Mi"
+               memory: "10000Mi"
                cpu: "3000m"
            volumeMounts:
              - mountPath: "/data"

@@ -127,7 +127,7 @@ case class BroadcastersHandler(dataset: Dataset, meWorker: RemoteWorker, broadca
         println(s"[SEND] feel like sharing some computations, here you go guys " +
           s"${broadcasters.keySet.mkString("[", ";", "]")}")
       }
-      broadcasters.foreach { case (worker, (_, broadcaster)) =>
+      broadcasters.par.foreach { case (worker, (_, broadcaster)) =>
         val msg = BroadcastMessage(
           weightsUpdate = weights.filterKeys(tidsPerBroadcaster(worker.id)).toMap,
           workerDetail = Some(meWorker.toWorkerDetail)
