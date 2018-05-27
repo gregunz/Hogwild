@@ -67,7 +67,7 @@ spec:
              - name: LAMBDA
                value: "0.1"
              - name: STEP_SIZE
-               value: "0.1"
+               value: "0.05"
            resources:
              requests:
                memory: "8000Mi"
