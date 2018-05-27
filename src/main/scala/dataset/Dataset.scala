@@ -110,14 +110,14 @@ case class Dataset(logger: Logger, dataPath: String) {
   def getSample: (SparseNumVector[Double], Label) = randomSampling.next
 
   def getReady(loadTest: Boolean): Dataset = {
-    logger.log(2)(">> Loading dataset")
+    logger.log(2)("Loading dataset")
     tidCounts
     labels
     randomSampling
     if (loadTest) {
       testSet
     }
-    logger.log(2)(">> Dataset ready!!")
+    logger.log(2)("Dataset ready!!")
     this
   }
 

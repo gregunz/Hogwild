@@ -39,7 +39,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       BroadcastersHandler(mode.logger, mode.dataset, meWorker, mode.broadcastInterval)
     })
 
-    mode.logger.log(2)(s">> ${if (mode.isMaster) "Master" else "Slave"} $meWorker ready")
+    mode.logger.log(2)(s" ${if (mode.isMaster) "Master" else "Slave"} $meWorker ready")
 
     startServer(mode.logger, svm, broadcastersHandler)
     startComputations(mode.logger, dataset, svm, broadcastersHandler, mode.stoppingCriteria)
@@ -68,16 +68,16 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   def startServer(logger: Logger, svm: SVM, broadcastersHandler: BroadcastersHandler): Unit = {
     val ssd = WorkerServiceAsyncGrpc.bindService(WorkerServerService(logger, svm, broadcastersHandler), ExecutionContext.global)
-    logger.log(2)(">> Server starting...")
+    logger.log(2)("Server starting...")
     runServer(ssd, broadcastersHandler.meWorker.port)
-    logger.log(2)(">> Server ready!")
+    logger.log(2)("Server ready!")
   }
 
   def startComputations(logger: Logger, dataset: Dataset, svm: SVM, broadcastersHandler: BroadcastersHandler,
                         someStoppingCriteria: Option[StoppingCriteria]): Unit = {
 
 
-    logger.log(2)(">> Computations thread starting...")
+    logger.log(2)("Computations thread starting...")
 
     var broadcastFuture = Future.successful()
     var lossComputingFuture = Future.successful()

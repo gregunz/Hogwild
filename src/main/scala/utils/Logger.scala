@@ -13,13 +13,6 @@ case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
     log(Logger.minLevel)(s)
   }
 
-  def load[T](level: Int)(name: String)(toLoad: => T): T = {
-    log(2)(s"...loading $name...")
-    val toReturn = toLoad
-    log(2)(s"$name loaded.")
-    toReturn
-  }
-
   def log(level: Int)(s: String): Unit = {
     val shouldLog = level <= verbosityLevel
     store(s, shouldLog)
@@ -31,6 +24,13 @@ case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
 
   private def store(s: String, shouldLog: Boolean): Unit = {
     logs = logs.enqueue(s -> shouldLog)
+  }
+
+  def load[T](level: Int)(name: String)(toLoad: => T): T = {
+    log(2)(s"loading $name...")
+    val toReturn = toLoad
+    log(2)(s"$name loaded.")
+    toReturn
   }
 
   def getAllLogs: Iterator[String] = logs.iterator.map(_._1)

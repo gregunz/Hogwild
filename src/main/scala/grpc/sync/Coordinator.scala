@@ -19,7 +19,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
     val service = WorkerService(mode.logger, dataset, svm, mode.stoppingCriteria)
     val ssd = WorkerServiceSyncGrpc.bindService(service, ExecutionContext.global)
-    mode.logger.log(2)(">> Coordinator ready <<")
+    mode.logger.log(2)("Coordinator ready ")
     runServer(ssd, mode.port).awaitTermination()
   }
 
