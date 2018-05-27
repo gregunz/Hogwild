@@ -13,13 +13,15 @@ import utils.Types.TID
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.util.{Random, Try}
 
 object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   private var keepComputing = true
 
   def run(mode: AsyncWorkerMode): Unit = {
+
+    Random.setSeed(0L)
 
     val dataset = mode.dataset.getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
@@ -31,15 +33,19 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       val broadcastersHandler = BroadcastersHandler(mode.logger, dataset, meWorker, mode.broadcastInterval)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
       broadcastersHandler.addSomeActive(workers)
+      mode.logger.log(2)("I am not alone!")
+      if(mode.isSlave){
+        // to be sure the master is ready!
+        Thread.sleep(5000)
+      }
       broadcastersHandler
     }.getOrElse({
       if (mode.isSlave) {
         throw new IllegalStateException(s"Failed to connect to ${mode.workerIp}:${mode.workerPort}")
       }
+      mode.logger.log(2)("I am alone for now...")
       BroadcastersHandler(mode.logger, mode.dataset, meWorker, mode.broadcastInterval)
     })
-
-    mode.logger.log(2)(s"${if (mode.isMaster) "Master" else "Slave"} $meWorker starting...")
 
     startServer(mode.logger, svm, broadcastersHandler)
     startComputations(mode.logger, dataset, svm, broadcastersHandler, mode.stoppingCriteria)

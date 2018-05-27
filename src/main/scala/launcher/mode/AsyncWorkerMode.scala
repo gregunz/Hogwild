@@ -13,7 +13,7 @@ case class AsyncWorkerMode(name: Option[String], logger: Logger, dataset: Datase
   def isMaster: Boolean = stoppingCriteria.isDefined
 
   def run(): Unit = {
-    printMode(this)
+    logger.log(2)(printMode(this))
     AsyncWorker.run(this)
   }
 }

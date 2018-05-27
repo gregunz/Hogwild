@@ -12,7 +12,7 @@ case class SyncCoordinatorMode(name: Option[String], logger: Logger, dataset: Da
   def isMaster = true
 
   def run(): Unit = {
-    printMode(this)
+    logger.log(2)(printMode(this))
     SyncCoordinator.run(this)
   }
 }

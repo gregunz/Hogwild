@@ -11,7 +11,7 @@ case class SyncWorkerMode(name: Option[String], logger: Logger, dataset: Dataset
   def isMaster = false
 
   def run(): Unit = {
-    printMode(this)
+    logger.log(2)(printMode(this))
     SyncWorker.run(this)
   }
 }
