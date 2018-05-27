@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: statefulset-service
+  labels:
+    app: hogwild-pod
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: hogwild-pod
+---
+ apiVersion: apps/v1
+ kind: StatefulSet
+ metadata:
+   name: hogwild-pod
+ spec:
+   serviceName: statefulset-service
+   replicas: 999999
+   selector:
+    matchLabels:
+      app: hogwild-pod
+   template:
+     metadata:
+       labels:
+         app: hogwild-pod
+     spec:
+       volumes:
+         - name: dataset
+           persistentVolumeClaim:
+             claimName: cs449g2-scratch
+       containers:
+         - name: hogwild
+           image: gregunz/hogwild:latest
+           ports:
+             - containerPort: 80
+           env:
+             - name: MY_POD_NAME
+               valueFrom:
+                 fieldRef:
+                   fieldPath: metadata.name
+             - name: MY_POD_IP
+               valueFrom:
+                 fieldRef:
+                   fieldPath: status.podIP
+             - name: MODE
+               value: "async"
+             - name: DATASET_PATH
+               value: "/data/datasets/"
+             - name: PORT_TO_OPEN
+               value: "80"
+             - name: EARLY_STOPPING
+               value: "3"
+             - name: MIN_LOSS
+               value: "0.18"
+             - name: LOSS_INTERVAL
+               value: "1000"
+             - name: LOSS_INTERVAL_UNIT
+               value: "i"
+             - name: BROADCAST_INTERVAL
+               value: "1000"
+             - name: BROADCAST_INTERVAL_UNIT
+               value: "i"
+             - name: LAMBDA
+               value: "0.0001"
+             - name: STEP_SIZE
+               value: "0.35"
+             - name: LOG
+               value: "2"
+           resources:
+             requests:
+               memory: "8000Mi"
+               cpu: "2000m"
+             limits:
+               memory: "12000Mi"
+               cpu: "4000m"
+           volumeMounts:
+             - mountPath: "/data"
+               name: dataset
