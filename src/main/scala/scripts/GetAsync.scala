@@ -20,20 +20,20 @@ object GetAsync {
     println(">> DONE")
   }
 
-  def start(pods: Int): Unit = {
+  def start(pods: Int, i: Int): Unit = {
     println(s">> STARTING $pods PODS")
-    runCmd("cat async2.yaml" #| s"sed 's/999999/$pods/g'" #| "kubectl create -f -")
+    runCmd("cat kubernetes/async_script.yaml" #| s"sed 's/999999/$pods/g'" #| "kubectl create -f -")
     Thread.sleep(10 * 1000)
     println("CATCHING LOGS.....")
-    runCmd("kubectl logs hogwild-pod-0 hogwild -f" #> new File(s"async_$pods.log"))
+    runCmd("kubectl logs hogwild-pod-0 hogwild -f" #> new File(s"logs/async_${"%03d".format(pods)}_pods_${"%02d".format(i)}.log"))
     println(">> DONE")
   }
 
-  def run(): Unit = {
+  def run(i: Int = 0): Unit = {
     deletePods()
     Seq(1, 2, 4, 6, 8, 12, 18, 26, 40, 64).foreach{ pods =>
       Thread.sleep(10 * 1000)
-      start(pods)
+      start(pods, i)
       Thread.sleep(10 * 1000)
       deletePods()
     }

@@ -29,15 +29,15 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     val meWorker = RemoteWorker(myIp, mode.port, mode.name)
 
     val broadcastersHandler: BroadcastersHandler = Try {
+      if(mode.isSlave){
+        // to be sure the master is ready!
+        Thread.sleep(5000)
+      }
       val (weights, workers) = hello(meWorker, mode.workerIp, mode.workerPort)
       val broadcastersHandler = BroadcastersHandler(mode.logger, dataset, meWorker, mode.broadcastInterval)
       svm.addWeightsUpdate(weights) // adding update when we are at zero is like setting weights
       broadcastersHandler.addSomeActive(workers)
       mode.logger.log(2)("I am not alone!")
-      if(mode.isSlave){
-        // to be sure the master is ready!
-        Thread.sleep(5000)
-      }
       broadcastersHandler
     }.getOrElse({
       if (mode.isSlave) {
