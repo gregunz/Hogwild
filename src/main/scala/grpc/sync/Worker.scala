@@ -8,18 +8,24 @@ import launcher.mode.SyncWorkerMode
 import model.{SVM, SparseNumVector}
 import utils.Logger
 
+import scala.util.Random
+
 object Worker extends GrpcRunnable[SyncWorkerMode] {
 
   private val instance = this
   private var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(mode: SyncWorkerMode): Unit = {
+
+    Random.setSeed(mode.seed)
+
     val dataset = mode.dataset.getReady(mode.isMaster)
     val channel = createChannel(mode.serverIp, mode.serverPort)
     val client = WorkerServiceSyncGrpc.stub(channel)
     val responseObserver = createObserver(mode.logger, dataset, mode.lambda)
     val requestObserver = client.updateWeights(responseObserver)
 
+    Thread.sleep(10 * 1000)
     mode.logger.log(2)("Ready to compute!")
     startComputingLoop(requestObserver)
   }
