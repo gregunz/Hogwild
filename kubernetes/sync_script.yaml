@@ -50,6 +50,8 @@ spec:
                value: "sync"
              - name: DATASET_PATH
                value: "/data/datasets/"
+             - name: SEED
+               value: "0"
              - name: PORT_TO_OPEN
                value: "80"
              - name: EARLY_STOPPING
