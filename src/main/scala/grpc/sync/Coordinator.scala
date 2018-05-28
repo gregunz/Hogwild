@@ -57,7 +57,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
         def onNext(req: WorkerRequest): Unit = {
           if (stoppingCriteria.shouldStop) {
-            responseObserver.onNext(WorkerResponse(weightsUpdate = Map.empty))
+            responseObserver.onNext(WorkerResponse(weightsUpdate = Map.empty, stop = true))
           } else {
             instance.synchronized {
               if (req.gradient.nonEmpty) {
@@ -78,11 +78,12 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                 }
                 require(weightsUpdate.toMap.nonEmpty)
                 responseObserver.onNext(WorkerResponse(
-                  weightsUpdate = weightsUpdate.toMap
+                  weightsUpdate = weightsUpdate.toMap,
+                  stop = false
                 ))
               } else {
                 logger.log(2)("[NEW] a worker wants to compute some gradients")
-                responseObserver.onNext(WorkerResponse(weightsUpdate = svm.weights.toMap))
+                responseObserver.onNext(WorkerResponse(weightsUpdate = svm.weights.toMap, stop = false))
                 WorkersAggregator.addWorker()
               }
             }

@@ -42,6 +42,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
     new StreamObserver[WorkerResponse] {
       val err = "[KILLED] this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)"
       def onError(t: Throwable): Unit = {
+        t.printStackTrace()
         logger.log(2)(s"$err (on error)")
         sys.exit(0)
       }
@@ -52,7 +53,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       }
 
       def onNext(res: WorkerResponse): Unit = {
-        if (res.weightsUpdate.isEmpty) {
+        if (res.stop) {
           logger.log(2)(s"$err")
           sys.exit(0)
         }
