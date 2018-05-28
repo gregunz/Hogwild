@@ -1,0 +1,48 @@
+[Mon May 28 11:04:13 GMT 2018] [DATA] dataset random sampling epoch 0
+[Mon May 28 11:04:14 GMT 2018] [LOSS = 1.0][ACCURACY = 46.5938053479632 %]
+[Mon May 28 11:04:36 GMT 2018] [LOSS = 0.52767007528138][ACCURACY = 85.2045444727634 %]
+[Mon May 28 11:05:01 GMT 2018] [LOSS = 0.371563590176297][ACCURACY = 89.01896410212105 %]
+[Mon May 28 11:05:30 GMT 2018] [LOSS = 0.29850418148332586][ACCURACY = 90.61298544213572 %]
+[Mon May 28 11:06:00 GMT 2018] [LOSS = 0.2571465853402069][ACCURACY = 91.37327746338934 %]
+[Mon May 28 11:06:36 GMT 2018] [LOSS = 0.23933657404321593][ACCURACY = 91.6799861765087 %]
+[Mon May 28 11:07:15 GMT 2018] [LOSS = 0.2310891940784064][ACCURACY = 91.71022506371766 %]
+[Mon May 28 11:07:55 GMT 2018] [LOSS = 0.22451407641630713][ACCURACY = 91.7750226791654 %]
+[Mon May 28 11:08:36 GMT 2018] [LOSS = 0.21829792469163414][ACCURACY = 91.97805520756836 %]
+[Mon May 28 11:09:18 GMT 2018] [LOSS = 0.21648321816314883][ACCURACY = 91.98669488962807 %]
+[Mon May 28 11:10:02 GMT 2018] [LOSS = 0.21368171500848568][ACCURACY = 92.14220916670266 %]
+[Mon May 28 11:10:47 GMT 2018] [LOSS = 0.2106534519762][ACCURACY = 92.03421314095641 %]
+[Mon May 28 11:11:35 GMT 2018] [LOSS = 0.20884684154442695][ACCURACY = 92.11629012052357 %]
+[Mon May 28 11:12:21 GMT 2018] [LOSS = 0.2086399797041762][ACCURACY = 92.06013218713551 %]
+[Mon May 28 11:13:07 GMT 2018] [LOSS = 0.2064671633767447][ACCURACY = 92.09469091537431 %]
+[Mon May 28 11:13:54 GMT 2018] [LOSS = 0.20592046079533743][ACCURACY = 92.11197027949372 %]
+[Mon May 28 11:14:40 GMT 2018] [LOSS = 0.20386072281744508][ACCURACY = 92.14652900773251 %]
+[Mon May 28 11:15:32 GMT 2018] [LOSS = 0.2045095102479969][ACCURACY = 92.14652900773251 %]
+[Mon May 28 11:16:23 GMT 2018] [LOSS = 0.20370682916436847][ACCURACY = 92.01693377683702 %]
+[Mon May 28 11:17:11 GMT 2018] [LOSS = 0.20329078744009116][ACCURACY = 92.09037107434447 %]
+[Mon May 28 11:18:00 GMT 2018] [LOSS = 0.20386218436595657][ACCURACY = 92.12924964361312 %]
+[Mon May 28 11:18:53 GMT 2018] [LOSS = 0.2029744045643963][ACCURACY = 92.09037107434447 %]
+[Mon May 28 11:19:43 GMT 2018] [LOSS = 0.20488910189316967][ACCURACY = 91.89597822800121 %]
+[Mon May 28 11:20:34 GMT 2018] [LOSS = 0.20109469807988348][ACCURACY = 92.23724566935937 %]
+[Mon May 28 11:21:27 GMT 2018] [LOSS = 0.20366831983735215][ACCURACY = 92.02989329992656 %]
+[Mon May 28 11:22:25 GMT 2018] [LOSS = 0.19921105088147098][ACCURACY = 92.18972741803103 %]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  666k  100    37  100  666k     32   577k  0:00:01  0:00:01 --:--:--  577k100  666k  100    37  100  666k     32   577k  0:00:01  0:00:01 --:--:--  577k
+[Mon May 28 11:22:29 GMT 2018] https://transfer.sh/zM0IR/weights.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1044  100    35  100  1009     58   1690 --:--:-- --:--:-- --:--:--  1748
+[Mon May 28 11:22:29 GMT 2018] https://transfer.sh/9t9rS/stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  2427    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  2471  100    44  100  2427     78   4349 --:--:-- --:--:-- --:--:--  4420
+[Mon May 28 11:22:30 GMT 2018] https://transfer.sh/14CeCD/filtered_logs.txt
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 75794  100    38  100 75756     46  93525 --:--:-- --:--:-- --:--:-- 93572100 75794  100    38  100 75756     46  93525 --:--:-- --:--:-- --:--:-- 93457
+[Mon May 28 11:22:31 GMT 2018] https://transfer.sh/OsCVx/all_logs.txt
+
+[Mon May 28 11:22:31 GMT 2018] I am done!

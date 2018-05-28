@@ -16,7 +16,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
   def run(mode: SyncCoordinatorMode): Unit = {
 
-    Random.setSeed(mode.name.map(s => s.substring(s.lastIndexOf('-') + 1, s.length).toLong).getOrElse(0L))
+    Random.setSeed(mode.name.map(s => s.substring(s.lastIndexOf('-') + 1).toLong).getOrElse(0L))
 
     val dataset = mode.dataset.getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)

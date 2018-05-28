@@ -61,7 +61,7 @@ spec:
              - name: LOSS_INTERVAL_UNIT
                value: "i"
              - name: BROADCAST_INTERVAL
-               value: "1000"
+               value: "100"
              - name: BROADCAST_INTERVAL_UNIT
                value: "i"
              - name: LAMBDA
