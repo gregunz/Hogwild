@@ -82,7 +82,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
           first = false
           logger.log(2)("[HI] i wanna help, give me something to compute!")
         } else {
-          logger.log(3)("[SEND] jobs done, here you go my master!")
+          //logger.log(3)("[SEND] jobs done, here you go my master!")
         }
         someGradient = None
       }

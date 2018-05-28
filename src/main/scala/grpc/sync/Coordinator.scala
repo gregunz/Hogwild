@@ -49,6 +49,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
             if(stoppingCriteria.shouldStop && exportOnce){
               exportOnce = false
               stoppingCriteria.export()
+              logger.alwaysLog("I am done!")
               sys.exit(0)
             }
           }
@@ -67,10 +68,10 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
               if (req.gradient.nonEmpty) {
                 WorkersAggregator.addGradient(SparseNumVector(req.gradient))
                 if (WorkersAggregator.isWaitingOnSomeWorker) {
-                  logger.log(3)("[RECEIVED] thanks for your gradient(s) worker! still waiting for some workers...")
+                  //logger.log(3)("[RECEIVED] thanks for your gradient(s) worker! still waiting for some workers...")
                   instance.wait()
                 } else {
-                  logger.log(3)(s"[RECEIVED] thanks you all (${WorkersAggregator.num} worker(s)) for the gradient(s)!")
+                  //logger.log(3)(s"[RECEIVED] thanks you all (${WorkersAggregator.num} worker(s)) for the gradient(s)!")
                   if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
                     stoppingCriteria.interval.reset()
                     lossComputingFuture = Future {
