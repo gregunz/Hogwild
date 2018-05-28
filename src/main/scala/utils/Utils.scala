@@ -31,7 +31,10 @@ object Utils {
     createDir(dirPath)
     val file = new File(s"$dirPath/$filename")
     val bw = new BufferedWriter(new FileWriter(file))
-    lines.map(_ + sep).foreach(bw.write)
+    lines.foreach{ line =>
+      println(line)
+      bw.write(line + sep)
+    }
     bw.close()
   }
 

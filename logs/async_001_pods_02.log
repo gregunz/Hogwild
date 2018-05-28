@@ -1,108 +1,24 @@
-May 28, 2018 8:26:57 PM io.grpc.internal.ManagedChannelImpl$NameResolverListenerImpl onError
-WARNING: [io.grpc.internal.ManagedChannelImpl-1] Failed to resolve name. status=Status{code=UNAVAILABLE, description=Unable to resolve host hogwild-pod-1.statefulset-service, cause=java.net.UnknownHostException: hogwild-pod-1.statefulset-service: Name does not resolve
-	at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
-	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
-	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
-	at java.net.InetAddress.getAllByName0(InetAddress.java:1276)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1192)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1126)
-	at io.grpc.internal.DnsNameResolver$JdkResolver.resolve(DnsNameResolver.java:361)
-	at io.grpc.internal.DnsNameResolver$1.run(DnsNameResolver.java:172)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-}
 [Mon May 28 20:26:58 GMT 2018] [DATA] dataset random sampling epoch 0
 [Mon May 28 20:27:02 GMT 2018] [VAL][LOSS = 1.0][ACCURACY = 46.5938053479632 %]
 [Mon May 28 20:27:17 GMT 2018] [TRAIN][LOSS = 0.5642358584589248][ACCURACY = 81.31868131868131 %][BATCH_SIZE = 1001]
 [Mon May 28 20:27:23 GMT 2018] [VAL][LOSS = 0.5276769383058859][ACCURACY = 85.59765000647977 %]
 [Mon May 28 20:27:44 GMT 2018] [TRAIN][LOSS = 0.26078619586130386][ACCURACY = 92.10000000000001 %][BATCH_SIZE = 1000]
 [Mon May 28 20:27:51 GMT 2018] [VAL][LOSS = 0.4050903240963542][ACCURACY = 88.23275303468833 %]
-May 28, 2018 8:27:57 PM io.grpc.internal.ManagedChannelImpl$NameResolverListenerImpl onError
-WARNING: [io.grpc.internal.ManagedChannelImpl-1] Failed to resolve name. status=Status{code=UNAVAILABLE, description=Unable to resolve host hogwild-pod-1.statefulset-service, cause=java.net.UnknownHostException: hogwild-pod-1.statefulset-service: Name does not resolve
-	at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
-	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
-	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
-	at java.net.InetAddress.getAllByName0(InetAddress.java:1276)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1192)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1126)
-	at io.grpc.internal.DnsNameResolver$JdkResolver.resolve(DnsNameResolver.java:361)
-	at io.grpc.internal.DnsNameResolver$1.run(DnsNameResolver.java:172)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-}
 [Mon May 28 20:28:09 GMT 2018] [TRAIN][LOSS = 0.29994145964508273][ACCURACY = 91.3 %][BATCH_SIZE = 1000]
 [Mon May 28 20:28:17 GMT 2018] [VAL][LOSS = 0.3326455037948671][ACCURACY = 89.43366884098664 %]
 [Mon May 28 20:28:37 GMT 2018] [TRAIN][LOSS = 0.23809517826907006][ACCURACY = 91.80819180819181 %][BATCH_SIZE = 1001]
 [Mon May 28 20:28:45 GMT 2018] [VAL][LOSS = 0.2829250388007402][ACCURACY = 90.69074258067303 %]
-May 28, 2018 8:28:57 PM io.grpc.internal.ManagedChannelImpl$NameResolverListenerImpl onError
-WARNING: [io.grpc.internal.ManagedChannelImpl-1] Failed to resolve name. status=Status{code=UNAVAILABLE, description=Unable to resolve host hogwild-pod-1.statefulset-service, cause=java.net.UnknownHostException: hogwild-pod-1.statefulset-service: Name does not resolve
-	at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
-	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
-	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
-	at java.net.InetAddress.getAllByName0(InetAddress.java:1276)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1192)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1126)
-	at io.grpc.internal.DnsNameResolver$JdkResolver.resolve(DnsNameResolver.java:361)
-	at io.grpc.internal.DnsNameResolver$1.run(DnsNameResolver.java:172)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-}
 [Mon May 28 20:29:06 GMT 2018] [TRAIN][LOSS = 0.21686796859231347][ACCURACY = 93.10689310689311 %][BATCH_SIZE = 1001]
 [Mon May 28 20:29:15 GMT 2018] [VAL][LOSS = 0.26148516307201747][ACCURACY = 91.25664175558339 %]
-[Mon May 28 20:29:38 GMT 2018] [TRAIN][LOSS = 0.2503107969674294][ACCURACY = 90.6093906093906 %][BATCH_SIZE = 1001]
+[Mon May 28 20:29:38 GMT 2018] [TRAIN][LOSS = 0.2503107969674294][ACCURA<CY = 90.6093906093906 %][BATCH_SIZE = 1001]
 [Mon May 28 20:29:48 GMT 2018] [VAL][LOSS = 0.2553671021999211][ACCURACY = 91.12272668365804 %]
-May 28, 2018 8:29:57 PM io.grpc.internal.ManagedChannelImpl$NameResolverListenerImpl onError
-WARNING: [io.grpc.internal.ManagedChannelImpl-1] Failed to resolve name. status=Status{code=UNAVAILABLE, description=Unable to resolve host hogwild-pod-1.statefulset-service, cause=java.net.UnknownHostException: hogwild-pod-1.statefulset-service: Name does not resolve
-	at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
-	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
-	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
-	at java.net.InetAddress.getAllByName0(InetAddress.java:1276)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1192)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1126)
-	at io.grpc.internal.DnsNameResolver$JdkResolver.resolve(DnsNameResolver.java:361)
-	at io.grpc.internal.DnsNameResolver$1.run(DnsNameResolver.java:172)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-}
 [Mon May 28 20:30:11 GMT 2018] [TRAIN][LOSS = 0.20325372652574836][ACCURACY = 93.20679320679321 %][BATCH_SIZE = 1001]
 [Mon May 28 20:30:21 GMT 2018] [VAL][LOSS = 0.23975060745524637][ACCURACY = 91.87869886388181 %]
 [Mon May 28 20:30:44 GMT 2018] [TRAIN][LOSS = 0.1456863891854293][ACCURACY = 94.8051948051948 %][BATCH_SIZE = 1001]
 [Mon May 28 20:30:52 GMT 2018] [VAL][LOSS = 0.22951206212606123][ACCURACY = 91.99101473065792 %]
-May 28, 2018 8:30:57 PM io.grpc.internal.ManagedChannelImpl$NameResolverListenerImpl onError
-WARNING: [io.grpc.internal.ManagedChannelImpl-1] Failed to resolve name. status=Status{code=UNAVAILABLE, description=Unable to resolve host hogwild-pod-1.statefulset-service, cause=java.net.UnknownHostException: hogwild-pod-1.statefulset-service: Name does not resolve
-	at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
-	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
-	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
-	at java.net.InetAddress.getAllByName0(InetAddress.java:1276)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1192)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1126)
-	at io.grpc.internal.DnsNameResolver$JdkResolver.resolve(DnsNameResolver.java:361)
-	at io.grpc.internal.DnsNameResolver$1.run(DnsNameResolver.java:172)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-}
 [Mon May 28 20:31:17 GMT 2018] [TRAIN][LOSS = 0.23268676318869863][ACCURACY = 90.6093906093906 %][BATCH_SIZE = 1001]
 [Mon May 28 20:31:28 GMT 2018] [VAL][LOSS = 0.2263418751586648][ACCURACY = 92.18972741803103 %]
 [Mon May 28 20:31:53 GMT 2018] [TRAIN][LOSS = 0.2252750802182856][ACCURACY = 91.30869130869131 %][BATCH_SIZE = 1001]
-May 28, 2018 8:31:58 PM io.grpc.internal.ManagedChannelImpl$NameResolverListenerImpl onError
-WARNING: [io.grpc.internal.ManagedChannelImpl-1] Failed to resolve name. status=Status{code=UNAVAILABLE, description=Unable to resolve host hogwild-pod-1.statefulset-service, cause=java.net.UnknownHostException: hogwild-pod-1.statefulset-service: Name does not resolve
-	at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
-	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
-	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
-	at java.net.InetAddress.getAllByName0(InetAddress.java:1276)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1192)
-	at java.net.InetAddress.getAllByName(InetAddress.java:1126)
-	at io.grpc.internal.DnsNameResolver$JdkResolver.resolve(DnsNameResolver.java:361)
-	at io.grpc.internal.DnsNameResolver$1.run(DnsNameResolver.java:172)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-}
 [Mon May 28 20:32:04 GMT 2018] [VAL][LOSS = 0.22187266461491023][ACCURACY = 92.24588535141906 %]
 [Mon May 28 20:32:30 GMT 2018] [TRAIN][LOSS = 0.18748754127826148][ACCURACY = 93.3066933066933 %][BATCH_SIZE = 1001]
 [Mon May 28 20:32:41 GMT 2018] [VAL][LOSS = 0.21626141194680185][ACCURACY = 92.33660201304592 %]

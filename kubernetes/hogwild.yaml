@@ -57,7 +57,7 @@ spec:
              - name: EARLY_STOPPING
                value: "3"
              - name: MIN_LOSS
-               value: "0.2"
+               value: "0.22"
              - name: LOSS_INTERVAL
                value: "1000"
              - name: LOSS_INTERVAL_UNIT

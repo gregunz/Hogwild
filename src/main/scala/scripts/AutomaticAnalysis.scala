@@ -48,7 +48,7 @@ object AutomaticAnalysis {
     require(version >= 0)
 
     deletePods()
-    val nWorkers = Seq(2, 4, 6, 8, 12, 18, 26, 40, 64)
+    val nWorkers = Seq(1, 2, 4, 6, 8, 12, 18, 26, 40, 64)
     val nPods = mode match {
       case "sync" => nWorkers.map(_ + 1)
       case "async" => nWorkers
