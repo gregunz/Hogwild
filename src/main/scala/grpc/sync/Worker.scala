@@ -23,7 +23,8 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
     val dataset = mode.dataset.getReady(mode.isMaster)
     val channel = createChannel(mode.serverIp, mode.serverPort)
     val client = WorkerServiceSyncGrpc.stub(channel)
-    val responseObserver = createObserver(mode.logger, dataset, mode.lambda)
+    val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
+    val responseObserver = createObserver(mode.logger, dataset, svm)
     val requestObserver = client.updateWeights(responseObserver)
 
     Thread.sleep(10 * 1000)
@@ -38,7 +39,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       .build
   }
 
-  def createObserver(logger: Logger, dataset: Dataset, lambda: Double): StreamObserver[WorkerResponse] = {
+  def createObserver(logger: Logger, dataset: Dataset, svm: SVM): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
       val err = "[KILLED] this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)"
       def onError(t: Throwable): Unit = {
@@ -57,15 +58,13 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
           logger.log(2)(s"$err")
           sys.exit(0)
         }
+        svm.addWeightsUpdate(SparseNumVector(res.weightsUpdate))
         val (feature, label) = dataset.getSample
-        val newGradient = SVM.computeStochasticGradient(
+        val newGradient = svm.computeStochasticGradient(
           feature = feature,
           label = label,
-          weights = SparseNumVector(res.weightsUpdate),
-          lambda = lambda,
           inverseTidCountsVector = dataset.inverseTidCountsVector
         )
-
         instance.synchronized {
           someGradient = Some(newGradient)
           instance.notifyAll()

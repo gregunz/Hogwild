@@ -22,7 +22,7 @@ object GetAsync {
 
   def start(mode: String, pods: Int, filepath: String): Unit = {
     println(s">> STARTING $pods PODS")
-    runCmd(s"cat kubernetes/${mode}_script.yaml" #| s"sed 's/999999/$pods/g'" #| "kubectl create -f -")
+    runCmd(s"cat kubernetes/hogwild_script.yaml" #| s"sed 's/__REPLICAS__/$pods/g'" #| s"sed 's/__MODE__/$mode/g'" #| "kubectl create -f -")
     Thread.sleep(20 * 1000)
     println("CATCHING LOGS.....")
     runCmd("kubectl logs hogwild-pod-0 hogwild -f" #> new File(filepath))

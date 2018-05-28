@@ -1,19 +1,27 @@
-[Mon May 28 15:35:57 GMT 2018] Starting SyncCoordinatorMode(0,Some(hogwild-pod-0),Logger(3),Dataset(Logger(3),/data/datasets/),1.0E-4,0.35,80,StoppingCriteria(Logger(3),Dataset(Logger(3),/data/datasets/),3,0.2,IterationsInterval(100)))
-[Mon May 28 15:35:57 GMT 2018] Loading dataset
-[Mon May 28 15:35:57 GMT 2018] loading 'tidCounts'...
-[Mon May 28 15:36:38 GMT 2018] 'tidCounts' loaded
-[Mon May 28 15:36:38 GMT 2018] loading 'labels'...
-[Mon May 28 15:36:41 GMT 2018] 'labels' loaded
-[Mon May 28 15:36:41 GMT 2018] loading 'samples'...
-[Mon May 28 15:36:41 GMT 2018] 'samples' loaded
-[Mon May 28 15:36:41 GMT 2018] loading 'test-set'...
-[Mon May 28 15:36:41 GMT 2018] 'test-set' loaded
-[Mon May 28 15:36:42 GMT 2018] Dataset ready!!
-[Mon May 28 15:36:42 GMT 2018] Coordinator ready 
-[Mon May 28 15:36:59 GMT 2018] [NEW] a worker wants to compute some gradients
-[Mon May 28 15:37:00 GMT 2018] One worker left. (on error)
-May 28, 2018 3:37:00 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@610a5f
+[Mon May 28 15:54:12 GMT 2018] Starting SyncCoordinatorMode(0,Some(hogwild-pod-0),Logger(2),Dataset(Logger(2),/data/datasets/),1.0E-4,0.35,80,StoppingCriteria(Logger(2),Dataset(Logger(2),/data/datasets/),3,0.2,IterationsInterval(1000)))
+[Mon May 28 15:54:12 GMT 2018] Loading dataset
+[Mon May 28 15:54:12 GMT 2018] loading 'tidCounts'...
+[Mon May 28 15:54:51 GMT 2018] 'tidCounts' loaded
+[Mon May 28 15:54:51 GMT 2018] loading 'labels'...
+[Mon May 28 15:54:55 GMT 2018] 'labels' loaded
+[Mon May 28 15:54:55 GMT 2018] loading 'samples'...
+[Mon May 28 15:54:55 GMT 2018] 'samples' loaded
+[Mon May 28 15:54:55 GMT 2018] loading 'test-set'...
+[Mon May 28 15:54:55 GMT 2018] 'test-set' loaded
+[Mon May 28 15:54:57 GMT 2018] Dataset ready!!
+[Mon May 28 15:54:57 GMT 2018] Coordinator ready 
+[Mon May 28 15:55:15 GMT 2018] [NEW] a worker wants to compute some gradients
+[Mon May 28 15:55:23 GMT 2018] [LOSS = 0.992150017728812][ACCURACY = 56.02833815715582 %]
+[Mon May 28 15:55:39 GMT 2018] [LOSS = 0.8504912890632408][ACCURACY = 61.06095295693118 %]
+[Mon May 28 15:56:01 GMT 2018] [LOSS = 1.5645414794662904][ACCURACY = 57.08237936843924 %]
+[Mon May 28 15:56:01 GMT 2018] [LOSS] my loss did not improve! :'(  (crying alone) (1 time(s))
+[Mon May 28 15:56:28 GMT 2018] [LOSS = 2.2108910782592943][ACCURACY = 55.583394531081254 %]
+[Mon May 28 15:56:28 GMT 2018] [LOSS] my loss did not improve! :'(  (crying alone) (2 time(s))
+[Mon May 28 15:56:57 GMT 2018] [LOSS = 2.4457887901665347][ACCURACY = 57.34156983023024 %]
+[Mon May 28 15:56:57 GMT 2018] [LOSS] my loss did not improve! :'(  (crying alone) (3 time(s))
+[Mon May 28 15:56:58 GMT 2018] One worker left. (on error)
+May 28, 2018 3:56:58 PM io.grpc.internal.SerializingExecutor run
+SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@23c7ff5e
 java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
 	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
@@ -22,7 +30,7 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
 	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
 	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:99)
+	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
 	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
 	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
 	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
@@ -33,10 +41,9 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 	at java.lang.Thread.run(Thread.java:748)
 
-[Mon May 28 15:37:57 GMT 2018] [NEW] a worker wants to compute some gradients
-[Mon May 28 15:37:57 GMT 2018] One worker left. (on error)
-May 28, 2018 3:37:57 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@1478b7cf
+[Mon May 28 15:57:56 GMT 2018] One worker left. (on error)
+May 28, 2018 3:57:56 PM io.grpc.internal.SerializingExecutor run
+SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@2a38e955
 java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
 	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
@@ -45,7 +52,7 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
 	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
 	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:99)
+	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
 	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
 	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
 	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
@@ -56,10 +63,9 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 	at java.lang.Thread.run(Thread.java:748)
 
-[Mon May 28 15:39:08 GMT 2018] [NEW] a worker wants to compute some gradients
-[Mon May 28 15:39:09 GMT 2018] One worker left. (on error)
-May 28, 2018 3:39:09 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@5b1ca189
+[Mon May 28 15:59:07 GMT 2018] One worker left. (on error)
+May 28, 2018 3:59:07 PM io.grpc.internal.SerializingExecutor run
+SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@26511ff3
 java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
 	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
@@ -68,7 +74,7 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
 	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
 	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:99)
+	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
 	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
 	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
 	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
@@ -79,10 +85,9 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 	at java.lang.Thread.run(Thread.java:748)
 
-[Mon May 28 15:40:30 GMT 2018] [NEW] a worker wants to compute some gradients
-[Mon May 28 15:40:30 GMT 2018] One worker left. (on error)
-May 28, 2018 3:40:30 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@149000ff
+[Mon May 28 16:00:30 GMT 2018] One worker left. (on error)
+May 28, 2018 4:00:30 PM io.grpc.internal.SerializingExecutor run
+SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@6c38d3ca
 java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
 	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
@@ -91,7 +96,7 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
 	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
 	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:99)
+	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
 	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
 	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
 	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
@@ -102,10 +107,9 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 	at java.lang.Thread.run(Thread.java:748)
 
-[Mon May 28 15:42:19 GMT 2018] [NEW] a worker wants to compute some gradients
-[Mon May 28 15:42:19 GMT 2018] One worker left. (on error)
-May 28, 2018 3:42:19 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@5af7c4ba
+[Mon May 28 16:02:09 GMT 2018] One worker left. (on error)
+May 28, 2018 4:02:09 PM io.grpc.internal.SerializingExecutor run
+SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@224a7eb5
 java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
 	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
@@ -114,7 +118,7 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
 	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
 	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:99)
+	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
 	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
 	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
 	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)

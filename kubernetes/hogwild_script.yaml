@@ -19,7 +19,7 @@ spec:
    name: hogwild-pod
  spec:
    serviceName: statefulset-service
-   replicas: 999999
+   replicas: __REPLICAS__
    selector:
     matchLabels:
       app: hogwild-pod
@@ -47,11 +47,11 @@ spec:
                  fieldRef:
                    fieldPath: status.podIP
              - name: MODE
-               value: "async"
-             - name: SEED
-               value: "0"
+               value: __MODE__
              - name: DATASET_PATH
                value: "/data/datasets/"
+             - name: SEED
+               value: "0"
              - name: PORT_TO_OPEN
                value: "80"
              - name: EARLY_STOPPING
@@ -71,7 +71,7 @@ spec:
              - name: STEP_SIZE
                value: "0.35"
              - name: LOG
-               value: "1"
+               value: "2"
            resources:
              requests:
                memory: "8000Mi"

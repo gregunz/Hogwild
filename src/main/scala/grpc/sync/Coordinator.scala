@@ -76,7 +76,6 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                   }
                   instance.notifyAll()
                 }
-                require(weightsUpdate.toMap.nonEmpty)
                 responseObserver.onNext(WorkerResponse(
                   weightsUpdate = weightsUpdate.toMap,
                   stop = false

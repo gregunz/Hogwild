@@ -19,7 +19,7 @@ spec:
    name: hogwild-pod
  spec:
    serviceName: statefulset-service
-   replicas: 5
+   replicas: __REPLICAS__
    selector:
     matchLabels:
       app: hogwild-pod
@@ -47,21 +47,23 @@ spec:
                  fieldRef:
                    fieldPath: status.podIP
              - name: MODE
-               value: "sync"
+               value: __MODE__
              - name: DATASET_PATH
                value: "/data/datasets/"
+             - name: SEED
+               value: "0"
              - name: PORT_TO_OPEN
                value: "80"
              - name: EARLY_STOPPING
                value: "3"
              - name: MIN_LOSS
-               value: "0.18"
+               value: "0.2"
              - name: LOSS_INTERVAL
                value: "1000"
              - name: LOSS_INTERVAL_UNIT
                value: "i"
              - name: BROADCAST_INTERVAL
-               value: "1000"
+               value: "200"
              - name: BROADCAST_INTERVAL_UNIT
                value: "i"
              - name: LAMBDA
@@ -73,10 +75,10 @@ spec:
            resources:
              requests:
                memory: "8000Mi"
-               cpu: "2000m"
+               cpu: "4000m"
              limits:
                memory: "12000Mi"
-               cpu: "4000m"
+               cpu: "8000m"
            volumeMounts:
              - mountPath: "/data"
                name: dataset
