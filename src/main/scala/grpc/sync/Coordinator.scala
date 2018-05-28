@@ -9,11 +9,15 @@ import utils.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Random
 
 object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
 
   def run(mode: SyncCoordinatorMode): Unit = {
+
+    Random.setSeed(mode.name.map(s => s.substring(s.lastIndexOf('-') + 1, s.length).toLong).getOrElse(0L))
+
     val dataset = mode.dataset.getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)
 
