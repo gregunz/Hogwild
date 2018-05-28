@@ -1,0 +1,13 @@
+[Mon May 28 14:59:04 GMT 2018] Starting SyncCoordinatorMode(0,Some(hogwild-pod-0),Logger(3,utils.Logger$$$Lambda$13/55909012@36d4b5c),Dataset(Logger(3,utils.Logger$$$Lambda$13/55909012@36d4b5c),/data/datasets/),1.0E-4,0.35,80,StoppingCriteria(Logger(3,utils.Logger$$$Lambda$13/55909012@36d4b5c),Dataset(Logger(3,utils.Logger$$$Lambda$13/55909012@36d4b5c),/data/datasets/),3,0.2,IterationsInterval(100)))
+[Mon May 28 14:59:04 GMT 2018] Loading dataset
+[Mon May 28 14:59:04 GMT 2018] loading 'tidCounts'...
+[Mon May 28 14:59:46 GMT 2018] 'tidCounts' loaded
+[Mon May 28 14:59:46 GMT 2018] loading 'labels'...
+[Mon May 28 14:59:49 GMT 2018] 'labels' loaded
+[Mon May 28 14:59:49 GMT 2018] loading 'samples'...
+[Mon May 28 14:59:49 GMT 2018] 'samples' loaded
+[Mon May 28 14:59:49 GMT 2018] loading 'test-set'...
+[Mon May 28 14:59:49 GMT 2018] 'test-set' loaded
+[Mon May 28 14:59:49 GMT 2018] Dataset ready!!
+[Mon May 28 14:59:50 GMT 2018] Coordinator ready 
+[Mon May 28 15:00:01 GMT 2018] [NEW]: a worker wants to compute some gradients

@@ -124,7 +124,7 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
   def broadcast(weightsUpdate: SparseNumVector[Double]): Unit = {
     instance.synchronized {
       if (broadcasters.nonEmpty) {
-        logger.log(3)(s"[SEND] feel like sharing some computations, here you go guys " +
+        logger.log(3)(s"[SEND] feel like sharing some computations, here you go guys" +
           s"${broadcasters.keySet.mkString("[", ", ", "]")}")
       }
       broadcasters.par.foreach { case (worker, (_, broadcaster)) =>

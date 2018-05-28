@@ -27,7 +27,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
 
     Thread.sleep(10 * 1000)
     mode.logger.log(2)("Ready to compute!")
-    startComputingLoop(requestObserver)
+    startComputingLoop(mode.logger, requestObserver)
   }
 
   def createChannel(ip: String, port: Int): ManagedChannel = {
@@ -39,19 +39,20 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
 
   def createObserver(logger: Logger, dataset: Dataset, lambda: Double): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
+      val err = "[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)"
       def onError(t: Throwable): Unit = {
-        logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field) (on error)")
+        logger.log(2)(s"$err (on error)")
         sys.exit(0)
       }
 
       def onCompleted(): Unit = {
-        logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field) (on completed)")
+        logger.log(2)(s"$err (on completed)")
         sys.exit(0)
       }
 
       def onNext(res: WorkerResponse): Unit = {
         if (res.weightsUpdate.isEmpty) {
-          logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
+          logger.log(2)(s"$err")
           sys.exit(0)
         }
         val (feature, label) = dataset.getSample
@@ -71,11 +72,12 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
     }
   }
 
-  def startComputingLoop(requestObserver: StreamObserver[WorkerRequest]): Unit = {
+  def startComputingLoop(logger: Logger, requestObserver: StreamObserver[WorkerRequest]): Unit = {
     while (true) {
       instance.synchronized {
-        while (someGradient.isEmpty) instance.wait()
+        while (someGradient.isEmpty) {instance.wait()}
         requestObserver.onNext(WorkerRequest(someGradient.get.toMap))
+        logger.log(3)("[SEND] jobs done, here you go my master!")
         someGradient = None
       }
     }

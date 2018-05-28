@@ -37,6 +37,8 @@ case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
   def getAllLogs: Iterator[String] = logs.iterator.map(_._1)
 
   def getFilteredLogs: Iterator[String] = logs.iterator.filter(_._2).map(_._1)
+
+  override def toString: String = s"Logger($verbosityLevel)"
 }
 
 object Logger {
