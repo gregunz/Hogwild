@@ -59,7 +59,7 @@ spec:
              - name: MIN_LOSS
                value: "0.2"
              - name: LOSS_INTERVAL
-               value: "1000"
+               value: "100"
              - name: LOSS_INTERVAL_UNIT
                value: "i"
              - name: BROADCAST_INTERVAL
@@ -71,7 +71,7 @@ spec:
              - name: STEP_SIZE
                value: "0.35"
              - name: LOG
-               value: "1"
+               value: "2"
            resources:
              requests:
                memory: "8000Mi"

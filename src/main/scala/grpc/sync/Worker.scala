@@ -20,7 +20,6 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
     val responseObserver = createObserver(mode.logger, dataset, mode.lambda)
     val requestObserver = client.updateWeights(responseObserver)
 
-    channel.shutdown()
     mode.logger.log(2)("Ready to compute!")
     startComputingLoop(requestObserver)
   }
