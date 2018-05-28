@@ -18,6 +18,7 @@ import scala.util.{Random, Try}
 object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   private var keepComputing = true
+  val instance = this
 
   def run(mode: AsyncWorkerMode): Unit = {
 
@@ -118,9 +119,11 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
         label = label,
         inverseTidCountsVector = dataset.inverseTidCountsVector
       )
-      val weightsUpdate = svm.updateWeights(newGradient)
+      instance.synchronized{
+        val weightsUpdate = svm.updateWeights(newGradient)
+        WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
+      }
 
-      WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
     }
 
     someStoppingCriteria.foreach{ stoppingCriteria =>
