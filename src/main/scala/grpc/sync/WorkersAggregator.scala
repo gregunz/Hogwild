@@ -7,6 +7,9 @@ object WorkersAggregator {
   private var numWorkers = 0
   private var gradients: List[SparseNumVector[Double]] = List()
 
+
+  def num: Int = numWorkers
+
   def addWorker(): Unit = {
     numWorkers += 1
   }

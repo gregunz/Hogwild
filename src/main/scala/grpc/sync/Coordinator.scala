@@ -56,15 +56,17 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
         }
 
         def onNext(req: WorkerRequest): Unit = {
-          instance.synchronized {
-            if (stoppingCriteria.shouldStop) {
-              responseObserver.onNext(WorkerResponse(weightsUpdate = Map.empty))
-            } else {
+          if (stoppingCriteria.shouldStop) {
+            responseObserver.onNext(WorkerResponse(weightsUpdate = Map.empty))
+          } else {
+            instance.synchronized {
               if (req.gradient.nonEmpty) {
                 WorkersAggregator.addGradient(SparseNumVector(req.gradient))
                 if (WorkersAggregator.isWaitingOnSomeWorker) {
+                  logger.log(3)("[RECEIVED]: thanks for your gradient(s) worker! still waiting for some workers...")
                   instance.wait()
                 } else {
+                  logger.log(3)(s"[RECEIVED]: thanks you all (${WorkersAggregator.num} worker(s)) for the gradient(s)!")
                   weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
                   if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
                     stoppingCriteria.interval.reset()
@@ -74,6 +76,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                   }
                   instance.notifyAll()
                 }
+                require(weightsUpdate.toMap.nonEmpty)
                 responseObserver.onNext(WorkerResponse(
                   weightsUpdate = weightsUpdate.toMap
                 ))
@@ -86,6 +89,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
         }
       }
     }
+
 
     private def safeRemoveWorker(): Unit = {
       instance.synchronized {
