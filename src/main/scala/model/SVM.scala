@@ -2,11 +2,14 @@ package model
 
 import utils.Label
 import utils.Label.Label
-import utils.Types.LearningRate
+import utils.Types.{LearningRate, TID}
+
+import scala.collection.immutable.Queue
 
 
 class SVM(lambda: Double, stepSize: LearningRate) {
   var weights: SparseNumVector[Double] = SparseNumVector.empty
+  var losses: Queue[Double] = Queue.empty
 
   /**
     * update the weights of the model and return the weights coordinates by how much they've changed
@@ -37,6 +40,14 @@ class SVM(lambda: Double, stepSize: LearningRate) {
     features.map(_ dot weights)
   }
 
+  def computeLoss(pred: Double, weightKeys: Set[TID], label: Label, inverseTidCountsVector: SparseNumVector[Double]): Double = {
+    val hinge = Math.max(0, 1 - (label.id * pred))
+    val w = weights.filterKeys(weightKeys)
+    val reg = 0.5 * lambda * (w * w * inverseTidCountsVector).firstNorm
+    val loss = hinge + reg
+    loss
+  }
+
   def lossAndAccuracy(testSet: Seq[(SparseNumVector[Double], Label)],
                       inverseTidCountsVector: SparseNumVector[Double]): (Double, Double) = {
 
@@ -44,10 +55,7 @@ class SVM(lambda: Double, stepSize: LearningRate) {
       .par
       .map { case (feature, label) =>
         val pred = feature dot weights
-        val hinge = Math.max(0, 1 - (label.id * pred))
-        val w = weights.filterKeys(feature.keys)
-        val reg = 0.5 * lambda * (w * w * inverseTidCountsVector).firstNorm
-        val loss = hinge + reg
+        val loss = computeLoss(pred, feature.keys, label, inverseTidCountsVector)
         val correctPred = if (pred >= 0 && label.id == 1 || pred < 0 && label.id == -1) 1 else 0
         loss -> correctPred
       }.unzip

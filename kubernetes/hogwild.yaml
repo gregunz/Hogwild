@@ -71,7 +71,7 @@ spec:
              - name: STEP_SIZE
                value: "0.35"
              - name: LOG
-               value: "2"
+               value: __LOG__
            resources:
              requests:
                memory: "8000Mi"

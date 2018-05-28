@@ -1,27 +1,29 @@
-[Mon May 28 15:54:12 GMT 2018] Starting SyncCoordinatorMode(0,Some(hogwild-pod-0),Logger(2),Dataset(Logger(2),/data/datasets/),1.0E-4,0.35,80,StoppingCriteria(Logger(2),Dataset(Logger(2),/data/datasets/),3,0.2,IterationsInterval(1000)))
-[Mon May 28 15:54:12 GMT 2018] Loading dataset
-[Mon May 28 15:54:12 GMT 2018] loading 'tidCounts'...
-[Mon May 28 15:54:51 GMT 2018] 'tidCounts' loaded
-[Mon May 28 15:54:51 GMT 2018] loading 'labels'...
-[Mon May 28 15:54:55 GMT 2018] 'labels' loaded
-[Mon May 28 15:54:55 GMT 2018] loading 'samples'...
-[Mon May 28 15:54:55 GMT 2018] 'samples' loaded
-[Mon May 28 15:54:55 GMT 2018] loading 'test-set'...
-[Mon May 28 15:54:55 GMT 2018] 'test-set' loaded
-[Mon May 28 15:54:57 GMT 2018] Dataset ready!!
-[Mon May 28 15:54:57 GMT 2018] Coordinator ready 
-[Mon May 28 15:55:15 GMT 2018] [NEW] a worker wants to compute some gradients
-[Mon May 28 15:55:23 GMT 2018] [LOSS = 0.992150017728812][ACCURACY = 56.02833815715582 %]
-[Mon May 28 15:55:39 GMT 2018] [LOSS = 0.8504912890632408][ACCURACY = 61.06095295693118 %]
-[Mon May 28 15:56:01 GMT 2018] [LOSS = 1.5645414794662904][ACCURACY = 57.08237936843924 %]
-[Mon May 28 15:56:01 GMT 2018] [LOSS] my loss did not improve! :'(  (crying alone) (1 time(s))
-[Mon May 28 15:56:28 GMT 2018] [LOSS = 2.2108910782592943][ACCURACY = 55.583394531081254 %]
-[Mon May 28 15:56:28 GMT 2018] [LOSS] my loss did not improve! :'(  (crying alone) (2 time(s))
-[Mon May 28 15:56:57 GMT 2018] [LOSS = 2.4457887901665347][ACCURACY = 57.34156983023024 %]
-[Mon May 28 15:56:57 GMT 2018] [LOSS] my loss did not improve! :'(  (crying alone) (3 time(s))
-[Mon May 28 15:56:58 GMT 2018] One worker left. (on error)
-May 28, 2018 3:56:58 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@23c7ff5e
+[Mon May 28 16:21:29 GMT 2018] [LOSS = 0.9928572912023681][ACCURACY = 55.950581018618514 %]
+[Mon May 28 16:22:02 GMT 2018] [LOSS = 0.5282558466548174][ACCURACY = 85.36437859086786 %]
+[Mon May 28 16:22:45 GMT 2018] [LOSS = 0.40103731473830945][ACCURACY = 88.29323080910623 %]
+[Mon May 28 16:23:37 GMT 2018] [LOSS = 0.3306944047692694][ACCURACY = 89.55030454879261 %]
+[Mon May 28 16:24:30 GMT 2018] [LOSS = 0.28296072256259736][ACCURACY = 90.72962114994169 %]
+[Mon May 28 16:25:24 GMT 2018] [LOSS = 0.2613876869348799][ACCURACY = 91.28688064279234 %]
+[Mon May 28 16:26:23 GMT 2018] [LOSS = 0.25463222211364506][ACCURACY = 91.17024493498639 %]
+[Mon May 28 16:27:24 GMT 2018] [LOSS = 0.2397038822536266][ACCURACY = 91.84845997667286 %]
+[Mon May 28 16:28:25 GMT 2018] [LOSS = 0.22917781854304398][ACCURACY = 92.03853298198626 %]
+[Mon May 28 16:29:24 GMT 2018] [LOSS = 0.22627240426256467][ACCURACY = 92.26748455656832 %]
+[Mon May 28 16:30:28 GMT 2018] [LOSS = 0.22197889385009736][ACCURACY = 92.28476392068772 %]
+[Mon May 28 16:31:33 GMT 2018] [LOSS = 0.21633720584088403][ACCURACY = 92.33660201304592 %]
+[Mon May 28 16:32:37 GMT 2018] [LOSS = 0.21304407532677097][ACCURACY = 92.26316471553847 %]
+[Mon May 28 16:33:41 GMT 2018] [LOSS = 0.21156861807582475][ACCURACY = 92.25884487450861 %]
+[Mon May 28 16:34:47 GMT 2018] [LOSS = 0.20852169561048697][ACCURACY = 92.40139962849368 %]
+[Mon May 28 16:35:58 GMT 2018] [LOSS = 0.20725325791829763][ACCURACY = 92.39275994643397 %]
+[Mon May 28 16:37:06 GMT 2018] [LOSS = 0.20560450052647594][ACCURACY = 92.51803533629962 %]
+[Mon May 28 16:38:14 GMT 2018] [LOSS = 0.20442781178955857][ACCURACY = 92.46619724394142 %]
+[Mon May 28 16:39:22 GMT 2018] [LOSS = 0.20419693944866826][ACCURACY = 92.39707978746382 %]
+[Mon May 28 16:40:30 GMT 2018] [LOSS = 0.20304027132368496][ACCURACY = 92.71242818264288 %]
+[Mon May 28 16:41:45 GMT 2018] [LOSS = 0.2021838807853402][ACCURACY = 92.47051708497128 %]
+[Mon May 28 16:42:56 GMT 2018] [LOSS = 0.20136212835682593][ACCURACY = 92.53099485938917 %]
+[Mon May 28 16:44:15 GMT 2018] [LOSS = 0.20083568895172585][ACCURACY = 92.43595835673247 %]
+[Mon May 28 16:45:35 GMT 2018] [LOSS = 0.1971112351318254][ACCURACY = 92.66059009028467 %]
+May 28, 2018 4:45:36 PM io.grpc.internal.SerializingExecutor run
+SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@73eedaf0
 java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
 	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
@@ -30,7 +32,7 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
 	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
 	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
+	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:99)
 	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
 	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
 	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
@@ -41,9 +43,8 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
 	at java.lang.Thread.run(Thread.java:748)
 
-[Mon May 28 15:57:56 GMT 2018] One worker left. (on error)
-May 28, 2018 3:57:56 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@2a38e955
+May 28, 2018 4:46:21 PM io.grpc.internal.SerializingExecutor run
+SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@5304a5dd
 java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
 	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
@@ -52,73 +53,7 @@ java.lang.UnsupportedOperationException: empty.reduceLeft
 	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
 	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
 	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
-	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
-	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
-	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
-	at io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed.runInContext(ServerImpl.java:684)
-	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
-	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:123)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-
-[Mon May 28 15:59:07 GMT 2018] One worker left. (on error)
-May 28, 2018 3:59:07 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@26511ff3
-java.lang.UnsupportedOperationException: empty.reduceLeft
-	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
-	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
-	at scala.collection.immutable.List.reduceLeft(List.scala:86)
-	at scala.collection.TraversableOnce.reduce(TraversableOnce.scala:208)
-	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
-	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
-	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
-	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
-	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
-	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
-	at io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed.runInContext(ServerImpl.java:684)
-	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
-	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:123)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-
-[Mon May 28 16:00:30 GMT 2018] One worker left. (on error)
-May 28, 2018 4:00:30 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@6c38d3ca
-java.lang.UnsupportedOperationException: empty.reduceLeft
-	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
-	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
-	at scala.collection.immutable.List.reduceLeft(List.scala:86)
-	at scala.collection.TraversableOnce.reduce(TraversableOnce.scala:208)
-	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
-	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
-	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
-	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
-	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
-	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)
-	at io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed.runInContext(ServerImpl.java:684)
-	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
-	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:123)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-
-[Mon May 28 16:02:09 GMT 2018] One worker left. (on error)
-May 28, 2018 4:02:09 PM io.grpc.internal.SerializingExecutor run
-SEVERE: Exception while executing runnable io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1Closed@224a7eb5
-java.lang.UnsupportedOperationException: empty.reduceLeft
-	at scala.collection.LinearSeqOptimized.reduceLeft(LinearSeqOptimized.scala:135)
-	at scala.collection.LinearSeqOptimized.reduceLeft$(LinearSeqOptimized.scala:134)
-	at scala.collection.immutable.List.reduceLeft(List.scala:86)
-	at scala.collection.TraversableOnce.reduce(TraversableOnce.scala:208)
-	at scala.collection.TraversableOnce.reduce$(TraversableOnce.scala:208)
-	at scala.collection.AbstractTraversable.reduce(Traversable.scala:104)
-	at grpc.sync.WorkersAggregator$.getMeanGradient(WorkersAggregator.scala:30)
-	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:100)
+	at grpc.sync.Coordinator$WorkerService.grpc$sync$Coordinator$WorkerService$$safeRemoveWorker(Coordinator.scala:99)
 	at grpc.sync.Coordinator$WorkerService$$anon$1.onError(Coordinator.scala:46)
 	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onCancel(ServerCalls.java:269)
 	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.closed(ServerCallImpl.java:282)

@@ -27,7 +27,9 @@ object WorkersAggregator {
   }
 
   def getMeanGradient: SparseNumVector[Double] = {
-    val meanGradient = gradients.reduce(_ + _).mapValues(_ / gradients.size)
+    val meanGradient = gradients
+      .foldLeft(SparseNumVector.empty[Double])(_ + _)
+      .mapValues(_ / Math.max(1, gradients.size))
     gradients = List()
     meanGradient
   }

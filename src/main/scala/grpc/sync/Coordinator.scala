@@ -67,13 +67,13 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                   instance.wait()
                 } else {
                   logger.log(3)(s"[RECEIVED] thanks you all (${WorkersAggregator.num} worker(s)) for the gradient(s)!")
-                  weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
                   if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
                     stoppingCriteria.interval.reset()
                     lossComputingFuture = Future {
                       stoppingCriteria.compute(svm, displayLoss = true)
                     }
                   }
+                  weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
                   instance.notifyAll()
                 }
                 responseObserver.onNext(WorkerResponse(
