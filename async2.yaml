@@ -55,28 +55,28 @@ spec:
              - name: EARLY_STOPPING
                value: "3"
              - name: MIN_LOSS
-               value: "0.1"
+               value: "0.17"
              - name: LOSS_INTERVAL
-               value: "500"
+               value: "1000"
              - name: LOSS_INTERVAL_UNIT
                value: "i"
              - name: BROADCAST_INTERVAL
-               value: "500"
+               value: "1000"
              - name: BROADCAST_INTERVAL_UNIT
                value: "i"
              - name: LAMBDA
                value: "0.0001"
              - name: STEP_SIZE
-               value: "0.2"
+               value: "0.35"
              - name: LOG
-               value: "2"
+               value: "1"
            resources:
              requests:
                memory: "8000Mi"
-               cpu: "2000m"
+               cpu: "4000m"
              limits:
                memory: "12000Mi"
-               cpu: "4000m"
+               cpu: "8000m"
            volumeMounts:
              - mountPath: "/data"
                name: dataset

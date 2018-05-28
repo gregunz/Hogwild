@@ -26,13 +26,13 @@ case class StoppingCriteria(logger: Logger, dataset: Dataset, earlyStopping: Int
       timesWithoutImproving = 0
     } else {
       timesWithoutImproving += 1
-      logger.log(1)(s"[LOSS] my loss did not improve! :'(  (crying alone) ($timesWithoutImproving time(s))")
+      logger.log(2)(s"[LOSS] my loss did not improve! :'(  (crying alone) ($timesWithoutImproving time(s))")
     }
     loss -> accuracy
   }
 
   def shouldStop: Boolean = {
-    bestLoss < minLoss || timesWithoutImproving > earlyStopping
+    bestLoss < minLoss || timesWithoutImproving >= earlyStopping
   }
 
   def getWeights: SparseNumVector[Double] = bestWeights
