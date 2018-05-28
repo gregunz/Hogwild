@@ -31,7 +31,7 @@ object GetAsync {
 
   def gitPush(filepath: String): Unit = {
     val filename = filepath.substring(filepath.lastIndexOf('/') + 1)
-    runCmd(s"git add $filepath" #&& s"git commit -m '$filename added'" #&& "git push")
+    runCmd(s"git add $filepath" #&& s"git commit -m '$filename added'" #&& "git pull" #&& "git push")
     println(">> DONE")
   }
 
