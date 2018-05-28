@@ -23,6 +23,7 @@ case class StoppingCriteria(logger: Logger, dataset: Dataset, earlyStopping: Int
       bestLoss = loss
       bestAccuracy = accuracy
       bestWeights = svm.weights
+      timesWithoutImproving = 0
     } else {
       timesWithoutImproving += 1
       logger.log(1)(s"[LOSS] my loss did not improve! :'(  (crying alone) ($timesWithoutImproving time(s))")

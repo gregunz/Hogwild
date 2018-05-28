@@ -10,7 +10,7 @@ import scala.util.Try
 trait Mode {
   def run(): Unit
 
-  def printMode(mode: Mode): String = s" Starting $mode"
+  def printMode(mode: Mode): String = s"Starting $mode"
 }
 
 

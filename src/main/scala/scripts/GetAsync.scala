@@ -31,12 +31,11 @@ object GetAsync {
 
   def run(): Unit = {
     deletePods()
-    Thread.sleep(10 * 1000)
-    Seq(1, 2, 3, 4, 7, 11, 17, 27, 41, 64, 100).foreach{ pods =>
+    Seq(1, 2, 3, 4, 8, 12, 18, 28, 40, 64, 100).foreach{ pods =>
+      Thread.sleep(10 * 1000)
       start(pods)
       Thread.sleep(10 * 1000)
       deletePods()
-      Thread.sleep(10 * 1000)
     }
   }
 }

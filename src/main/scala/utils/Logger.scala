@@ -22,10 +22,11 @@ case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
 
   def log(level: Int)(s: String): Unit = {
     val shouldLog = level <= verbosityLevel
-    store(s, shouldLog)
+    val time = Calendar.getInstance.getTime.toString
+    val txt = s"[$time] $s"
+    store(txt, shouldLog)
     if (shouldLog) {
-      val time = Calendar.getInstance.getTime.toString
-      logFun(s"[$time] $s")
+      logFun(txt)
     }
   }
 
