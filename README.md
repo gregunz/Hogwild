@@ -1,25 +1,23 @@
-# Hogwild
-Hogwild! implementation : "A Lock-Free Approach to Parallelizing Stochastic Gradient Descent"
+# A Distributed version of Hogwild!
 Team : Grégoire Clément, Maxime Delisle, Sylvain Beaud
 
 ## Description
-Data should be placed in the root of the project in a "data" folder.
-At the moment, as we are working on our machines (laptops), we are only loading a subset of the data in memory (which is in the file "samples.dat").
-Otherwise, keep the files (vectors and labels) named as on the website linked below.
+Nowadays, robust and reliable systems are a core component of a respectable setup, for this reason, we focused more particularly on this side of the problem. 
 
-We have added a JPG file which simply represents our design choices so far. 
-This sketch does NOT fully detail our implementation but gives a quick overview of it.
-(Design_Milestone1.jpeg)
+One of the main highlights of our implementation is the possibility to add and remove workers at will and at any time. Indeed, in the synchronous implementation, the coordinator monitors the number of workers and if a worker crashes, the computation can continue without him. On the contrary, if the user want to add more workers to the system, the new workers will connect to the coordinator or other workers and the computation will continue with these additional workers. In the asynchronous version, a new worker arrives, it will retrieve the list of workers from another worker and broadcast its updates to them and receive their computations; this is the only phase where a locking mechanism is used. When a worker encounters an error, it broadcasts an error message to the other workers and they will stop to communicate with the faulty node.
+
+Another interesting feature of our implementation is the fact that once the computations are finished, the logs and statistics are uploaded and stored on transfer.sh and can be downloaded for a later use. We have also put options to adjust the level of verbosity of the logs.
 
 ## How to run the project
-1. Use SBT to build and compile the project
-2. Run the Master
-3. Wait for the Master to be ready (std_output)
-4. Run as many Slaves as you want
+`$ sh run.sh $1 $2 $3`
 
+`$1` argument is either `sync` or `async`
 
-![Design_Milestone1.jpeg][design]
-[Dataset available here][dataset]
+`$2` argument is the number of replicas `1` to `100` (or more)
 
-[design]: https://imgur.com/R7I3OYk.jpg
+`$3` argument is the log level (or verbosity) from `0` (minimal) to `3` (maximal)
+
+### Reference
+Hogwild! implementation : "A Lock-Free Approach to Parallelizing Stochastic Gradient Descent"
+
 [dataset]: http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/lyrl2004_rcv1v2_README.htm
