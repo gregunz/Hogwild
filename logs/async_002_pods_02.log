@@ -1,0 +1,44 @@
+[Mon May 28 20:35:51 GMT 2018] [DATA] dataset random sampling epoch 0
+[Mon May 28 20:35:52 GMT 2018] [VAL][LOSS = 1.0][ACCURACY = 46.5938053479632 %]
+[Mon May 28 20:36:07 GMT 2018] [TRAIN][LOSS = 0.5642358584589248][ACCURACY = 81.31868131868131 %][BATCH_SIZE = 1001]
+[Mon May 28 20:36:13 GMT 2018] [VAL][LOSS = 0.5033355330033243][ACCURACY = 86.19378806859908 %]
+[Mon May 28 20:36:29 GMT 2018] [TRAIN][LOSS = 0.2251277697421294][ACCURACY = 93.4 %][BATCH_SIZE = 1000]
+[Mon May 28 20:36:36 GMT 2018] [VAL][LOSS = 0.34481555926660895][ACCURACY = 88.30619033219578 %]
+[Mon May 28 20:36:54 GMT 2018] [TRAIN][LOSS = 0.16877204190844253][ACCURACY = 94.2057942057942 %][BATCH_SIZE = 1001]
+[Mon May 28 20:37:02 GMT 2018] [VAL][LOSS = 0.2727301422197979][ACCURACY = 91.01041081688194 %]
+[Mon May 28 20:37:21 GMT 2018] [TRAIN][LOSS = 0.1476234129923663][ACCURACY = 94.8051948051948 %][BATCH_SIZE = 1001]
+[Mon May 28 20:37:29 GMT 2018] [VAL][LOSS = 0.2552644663754562][ACCURACY = 91.49423301222515 %]
+[Mon May 28 20:37:51 GMT 2018] [TRAIN][LOSS = 0.17774961497632008][ACCURACY = 94.69999999999999 %][BATCH_SIZE = 1000]
+[Mon May 28 20:37:59 GMT 2018] [VAL][LOSS = 0.23295167195714542][ACCURACY = 91.85709965873255 %]
+[Mon May 28 20:38:23 GMT 2018] [TRAIN][LOSS = 0.14182402609937222][ACCURACY = 94.7052947052947 %][BATCH_SIZE = 1001]
+[Mon May 28 20:38:32 GMT 2018] [VAL][LOSS = 0.22913612543467266][ACCURACY = 91.99101473065792 %]
+[Mon May 28 20:38:56 GMT 2018] [TRAIN][LOSS = 0.18257802727240868][ACCURACY = 93.3066933066933 %][BATCH_SIZE = 1001]
+[Mon May 28 20:39:06 GMT 2018] [VAL][LOSS = 0.22001184563346746][ACCURACY = 92.19836710009072 %]
+[Mon May 28 20:39:30 GMT 2018] [TRAIN][LOSS = 0.10576489713377504][ACCURACY = 96.6033966033966 %][BATCH_SIZE = 1001]
+[Mon May 28 20:39:38 GMT 2018] [VAL][LOSS = 0.21464363005074696][ACCURACY = 92.24588535141906 %]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  436k  100    37  100  436k     41   491k --:--:-- --:--:-- --:--:--  491k100  436k  100    37  100  436k     41   491k --:--:-- --:--:-- --:--:--  491k
+[Mon May 28 20:39:39 GMT 2018] https://transfer.sh/EXR7j/weights.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   381  100    39  100   342     52    460 --:--:-- --:--:-- --:--:--   512100   381  100    39  100   342     52    460 --:--:-- --:--:-- --:--:--   512
+[Mon May 28 20:39:40 GMT 2018] https://transfer.sh/7AGcE/val_stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   378  100    41  100   337     72    599 --:--:-- --:--:-- --:--:--   672
+[Mon May 28 20:39:41 GMT 2018] https://transfer.sh/qC39t/train_stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  1846    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1889  100    43  100  1846     53   2293 --:--:-- --:--:-- --:--:--  2343
+[Mon May 28 20:39:41 GMT 2018] https://transfer.sh/n3zCO/filtered_logs.txt
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 16113    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 16151  100    38  100 16113     33  14399  0:00:01  0:00:01 --:--:-- 14446
+[Mon May 28 20:39:43 GMT 2018] https://transfer.sh/r836R/all_logs.txt
+
+[Mon May 28 20:39:43 GMT 2018] I am done!
