@@ -48,6 +48,8 @@ spec:
                    fieldPath: status.podIP
              - name: MODE
                value: "async"
+             - name: SEED
+               value: "0"
              - name: DATASET_PATH
                value: "/data/datasets/"
              - name: PORT_TO_OPEN

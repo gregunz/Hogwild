@@ -1,0 +1,2 @@
+[Mon May 28 14:11:20 GMT 2018] ERROR, arguments mismatch: key not found: seed
+	with options: Map(early-stopping -> 3, broadcast-interval-unit -> i, name -> hogwild-pod-0, loss-interval-unit -> i, ip:port -> hogwild-pod-1.statefulset-service:80, lambda -> 0.0001, broadcast-interval -> 200, port -> 80, min-loss -> 0.2, mode -> sync, step-size -> 0.35, data-path -> /data/datasets/, loss-interval -> 1000, log -> 1)

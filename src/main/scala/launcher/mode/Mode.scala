@@ -44,7 +44,7 @@ object Mode {
           modeBuilder.build(options("port").toInt, getStoppingCriteria)
 
         case "sync" =>
-          val (ip, port) = Utils.split("ip:port", ':')
+          val (ip, port) = Utils.split(options("ip:port"), ':')
           modeBuilder.build(ip, port.toInt)
 
         case "async" =>
