@@ -1,0 +1,44 @@
+[Mon May 28 20:45:19 GMT 2018] [DATA] dataset random sampling epoch 0
+[Mon May 28 20:45:20 GMT 2018] [VAL][LOSS = 1.0][ACCURACY = 46.5938053479632 %]
+[Mon May 28 20:45:34 GMT 2018] [TRAIN][LOSS = 0.5643362893779721][ACCURACY = 81.31868131868131 %][BATCH_SIZE = 1001]
+[Mon May 28 20:45:40 GMT 2018] [VAL][LOSS = 0.5233373360641406][ACCURACY = 85.66676746295737 %]
+[Mon May 28 20:45:57 GMT 2018] [TRAIN][LOSS = 0.25103967007129724][ACCURACY = 92.9 %][BATCH_SIZE = 1000]
+[Mon May 28 20:46:04 GMT 2018] [VAL][LOSS = 0.39188477698008706][ACCURACY = 87.88284591127046 %]
+[Mon May 28 20:46:22 GMT 2018] [TRAIN][LOSS = 0.2487509105414283][ACCURACY = 91.80819180819181 %][BATCH_SIZE = 1001]
+[Mon May 28 20:46:29 GMT 2018] [VAL][LOSS = 0.29097821320621403][ACCURACY = 90.56546719080738 %]
+[Mon May 28 20:46:50 GMT 2018] [TRAIN][LOSS = 0.1767546779090118][ACCURACY = 93.9060939060939 %][BATCH_SIZE = 1001]
+[Mon May 28 20:46:59 GMT 2018] [VAL][LOSS = 0.2532439087779784][ACCURACY = 91.10112747850879 %]
+[Mon May 28 20:47:19 GMT 2018] [TRAIN][LOSS = 0.1423139154489511][ACCURACY = 95.30469530469531 %][BATCH_SIZE = 1001]
+[Mon May 28 20:47:29 GMT 2018] [VAL][LOSS = 0.23620428046878583][ACCURACY = 91.54607110458335 %]
+[Mon May 28 20:47:52 GMT 2018] [TRAIN][LOSS = 0.1717403142489271][ACCURACY = 93.4065934065934 %][BATCH_SIZE = 1001]
+[Mon May 28 20:48:02 GMT 2018] [VAL][LOSS = 0.22993423433064594][ACCURACY = 91.73614410989676 %]
+[Mon May 28 20:48:26 GMT 2018] [TRAIN][LOSS = 0.14762484735477543][ACCURACY = 94.60539460539461 %][BATCH_SIZE = 1001]
+[Mon May 28 20:48:36 GMT 2018] [VAL][LOSS = 0.22470027714301033][ACCURACY = 91.80526156637436 %]
+[Mon May 28 20:49:02 GMT 2018] [TRAIN][LOSS = 0.1118726625573339][ACCURACY = 95.6043956043956 %][BATCH_SIZE = 1001]
+[Mon May 28 20:49:13 GMT 2018] [VAL][LOSS = 0.21835658697143026][ACCURACY = 91.90461791006092 %]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  446k  100    24    0     0    123      0 --:--:-- --:--:-- --:--:--   122
+[Mon May 28 20:49:14 GMT 2018] Could not save metadata
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  6   367  100    24    0     0    180      0 --:--:-- --:--:-- --:--:--   181
+[Mon May 28 20:49:14 GMT 2018] Could not save metadata
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  6   372  100    24    0     0    183      0 --:--:-- --:--:-- --:--:--   183
+[Mon May 28 20:49:14 GMT 2018] Could not save metadata
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  1  1870  100    24    0     0    169      0 --:--:-- --:--:-- --:--:--   169
+[Mon May 28 20:49:15 GMT 2018] Could not save metadata
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 36925  100    24    0     0     91      0 --:--:-- --:--:-- --:--:--    91
+[Mon May 28 20:49:15 GMT 2018] Could not save metadata
+
+[Mon May 28 20:49:15 GMT 2018] I am done!
