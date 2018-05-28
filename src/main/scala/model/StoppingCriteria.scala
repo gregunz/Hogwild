@@ -85,11 +85,11 @@ case class StoppingCriteria(logger: Logger, dataset: Dataset, earlyStopping: Int
       ("val_stats.csv", (valLosses zip valAccuracies).map { case (l, a) => s"$l, $a" }.iterator.map(_.toString)),
       ("train_stats.csv", (trainLosses zip trainAccuracies zip trainBatchSizes).map { case ((l, a), b) => s"$l, $a, $b" }.iterator.map(_.toString))
     ).foreach { case (filename, lines) =>
-      Utils.upload(filename, lines)
+      Utils.upload(filename, lines, andPrint = true)
     }
 
-    Utils.upload("filtered_logs.txt", logger.getFilteredLogs)
-    Utils.upload("all_logs.txt", logger.getAllLogs)
+    Utils.upload("filtered_logs.txt", logger.getFilteredLogs, andPrint = false)
+    Utils.upload("all_logs.txt", logger.getAllLogs, andPrint = false)
   }
 
 }

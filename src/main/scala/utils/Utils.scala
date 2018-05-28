@@ -18,21 +18,23 @@ object Utils {
     s1 -> s2
   }
 
-  def upload(filename: String, lines: Iterator[String]): Unit = {
+  def upload(filename: String, lines: Iterator[String], andPrint: Boolean): Unit = {
     if (lines.hasNext) {
-      writeLinesToFile(outputDirPath, filename, lines)
+      writeLinesToFile(outputDirPath, filename, lines, andPrint = andPrint)
       Logger.minimal.alwaysLog(s"curl --upload-file $outputDirPath/$filename https://transfer.sh/$filename" !!)
     } else {
       Logger.minimal.alwaysLog(s"Not uploading $filename because it is empty")
     }
   }
 
-  private def writeLinesToFile(dirPath: String, filename: String, lines: Iterator[String], sep: String = "\n"): Unit = {
+  private def writeLinesToFile(dirPath: String, filename: String, lines: Iterator[String], sep: String = "\n", andPrint: Boolean = false): Unit = {
     createDir(dirPath)
     val file = new File(s"$dirPath/$filename")
     val bw = new BufferedWriter(new FileWriter(file))
     lines.foreach{ line =>
-      println(line)
+      if(andPrint){
+        println(line)
+      }
       bw.write(line + sep)
     }
     bw.close()

@@ -17,6 +17,10 @@ Another interesting feature of our implementation is the fact that once the comp
 
 `$3` argument is the log level (or verbosity) from `0` (minimal) to `3` (maximal)
 
+## Results
+
+Results are uploaded on transfer.sh (linked displayed in the console). In case of failure (if server transfer.sh is down) we also print them in the console (just to be sure!).
+
 ### Reference
 Hogwild! implementation : "A Lock-Free Approach to Parallelizing Stochastic Gradient Descent"
 
