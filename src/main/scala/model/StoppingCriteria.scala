@@ -24,26 +24,32 @@ case class StoppingCriteria(logger: Logger, dataset: Dataset, earlyStopping: Int
   private var valLosses = Queue.empty[Double]
   private var valAccuracies = Queue.empty[Double]
 
-  def computeValidationStats(svm: SVM, displayLoss: Boolean): (Double, Double) = {
+  def computeStats(svm: SVM, displayStats: Boolean): (Double, Double) = {
+
+    val batchSize = trainLossesBatch.size
+    if (batchSize > 0) {
+
+      trainBatchSizes = trainBatchSizes.enqueue(batchSize)
+      val trainLoss = trainLossesBatch.sum / batchSize
+      trainLosses = trainLosses.enqueue(trainLoss)
+      val trainAcc = trainAccuraciesBatch.sum / batchSize
+      trainAccuracies = trainAccuracies.enqueue(trainAcc)
+
+      if (displayStats) {
+        logger.log(1)(s"[TRAIN][LOSS = $trainLoss][ACCURACY = ${trainAcc * 100} %][BATCH_SIZE = $batchSize]")
+      }
+
+      trainLossesBatch = Queue.empty
+      trainAccuraciesBatch = Queue.empty
+    }
 
     val (valLoss, valAcc) = svm.lossAndAccuracy(dataset.testSet, dataset.inverseTidCountsVector)
     valLosses = valLosses.enqueue(valLoss)
     valAccuracies = valAccuracies.enqueue(valAcc)
 
-    val batchSize = trainLossesBatch.size
-    trainBatchSizes = trainBatchSizes.enqueue(batchSize)
-    val trainLoss = trainLossesBatch.sum / batchSize
-    trainLosses = trainLosses.enqueue(trainLoss)
-    val trainAcc = trainAccuraciesBatch.sum / batchSize
-    trainAccuracies = trainAccuracies.enqueue(trainAcc)
-
-    if (displayLoss) {
+    if (displayStats) {
       logger.log(1)(s"[VAL][LOSS = $valLoss][ACCURACY = ${valAcc * 100} %]")
-      logger.log(1)(s"[TRAIN][LOSS = $trainLoss][ACCURACY = ${trainAcc * 100} %][BATCH_SIZE = $batchSize]")
     }
-
-    trainLossesBatch = Queue.empty
-    trainAccuraciesBatch = Queue.empty
 
     if (valLoss < bestValLoss) {
       bestValLoss = valLoss

@@ -94,7 +94,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
         if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
           stoppingCriteria.interval.reset()
           lossComputingFuture = Future {
-            stoppingCriteria.computeValidationStats(svm, displayLoss = true)
+            stoppingCriteria.computeStats(svm, displayStats = true)
           }
         }
       }
