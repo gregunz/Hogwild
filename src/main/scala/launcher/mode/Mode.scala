@@ -22,7 +22,8 @@ object Mode {
     val mode = Try {
       val logger = Logger(options("log").toInt)
       val dataset = Dataset(logger, options("data-path"))
-      val modeBuilder = ModeBuilder(logger = logger, name = options.get("name"), dataset = dataset,
+      val seed = options("seed").toLong
+      val modeBuilder = ModeBuilder(seed = seed, logger = logger, name = options.get("name"), dataset = dataset,
         lambda = options("lambda").toDouble, stepSize = options("step-size").toDouble)
 
       def getInterval(name: String, unit: String): Interval = {
@@ -39,12 +40,13 @@ object Mode {
       }
 
       options("mode") match {
-        case "sync" if options.contains("ip:port") =>
+        case "sync" if options.contains("early-stopping") =>
+          modeBuilder.build(options("port").toInt, getStoppingCriteria)
+
+        case "sync" =>
           val (ip, port) = Utils.split("ip:port", ':')
           modeBuilder.build(ip, port.toInt)
 
-        case "sync" if options.contains("port") =>
-          modeBuilder.build(options("port").toInt, getStoppingCriteria)
         case "async" =>
           val broadcastInterval = getInterval("broadcast-interval", "broadcast-interval-unit")
           val stoppingCriteria = {

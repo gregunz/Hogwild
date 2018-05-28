@@ -6,7 +6,7 @@ import model.StoppingCriteria
 import utils.Types.LearningRate
 import utils.{Interval, Logger}
 
-case class AsyncWorkerMode(name: Option[String], logger: Logger, dataset: Dataset, lambda: Double, stepSize: LearningRate, port: Int,
+case class AsyncWorkerMode(seed: Long, name: Option[String], logger: Logger, dataset: Dataset, lambda: Double, stepSize: LearningRate, port: Int,
                            workerIp: String, workerPort: Int, stoppingCriteria: Option[StoppingCriteria], broadcastInterval: Interval)
   extends TopMode {
 

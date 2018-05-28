@@ -5,7 +5,7 @@ import grpc.sync.{Worker => SyncWorker}
 import utils.Logger
 import utils.Types.LearningRate
 
-case class SyncWorkerMode(name: Option[String], logger: Logger, dataset: Dataset, lambda: Double, stepSize: LearningRate,
+case class SyncWorkerMode(seed: Long, name: Option[String], logger: Logger, dataset: Dataset, lambda: Double, stepSize: LearningRate,
                           serverIp: String, serverPort: Int)
   extends TopMode {
   def isMaster = false

@@ -6,7 +6,7 @@ import model.StoppingCriteria
 import utils.Logger
 import utils.Types.LearningRate
 
-case class SyncCoordinatorMode(name: Option[String], logger: Logger, dataset: Dataset, lambda: Double, stepSize: LearningRate,
+case class SyncCoordinatorMode(seed: Long, name: Option[String], logger: Logger, dataset: Dataset, lambda: Double, stepSize: LearningRate,
                                port: Int, stoppingCriteria: StoppingCriteria) extends TopMode {
 
   def isMaster = true

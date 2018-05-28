@@ -47,7 +47,7 @@ spec:
                  fieldRef:
                    fieldPath: status.podIP
              - name: MODE
-               value: "async"
+               value: "sync"
              - name: DATASET_PATH
                value: "/data/datasets/"
              - name: PORT_TO_OPEN

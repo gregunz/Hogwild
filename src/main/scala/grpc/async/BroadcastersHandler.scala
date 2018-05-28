@@ -121,7 +121,7 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
     }
   }
 
-  def broadcast(weights: SparseNumVector[Double]): Unit = {
+  def broadcast(weightsUpdate: SparseNumVector[Double]): Unit = {
     instance.synchronized {
       if (broadcasters.nonEmpty) {
         logger.log(3)(s"[SEND] feel like sharing some computations, here you go guys " +
@@ -129,7 +129,7 @@ case class BroadcastersHandler(logger: Logger, dataset: Dataset, meWorker: Remot
       }
       broadcasters.par.foreach { case (worker, (_, broadcaster)) =>
         val msg = BroadcastMessage(
-          weightsUpdate = weights.filterKeys(tidsPerBroadcaster(worker.uid)).toMap,
+          weightsUpdate = weightsUpdate.filterKeys(tidsPerBroadcaster(worker.uid)).toMap,
           workerDetail = Some(meWorker.toWorkerDetail)
         )
         broadcaster.onNext(msg)

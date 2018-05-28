@@ -6,8 +6,8 @@ import scala.util.Try
 
 object GetAsync {
 
-  private def runCmd(cmd: ProcessBuilder): Try[String] = Try{
-    val output: String = (cmd !!)
+  private def runCmd(cmd: ProcessBuilder): Try[String] = Try {
+    val output: String = {cmd !!}
     println(output)
     output
   }
@@ -20,27 +20,35 @@ object GetAsync {
     println(">> DONE")
   }
 
-  def start(pods: Int, i: Int): Unit = {
-    val filename = s"logs/async_${"%03d".format(pods)}_pods_${"%02d".format(i)}.log"
+  def start(mode: String, pods: Int, filepath: String): Unit = {
     println(s">> STARTING $pods PODS")
-    runCmd("cat kubernetes/async_script.yaml" #| s"sed 's/999999/$pods/g'" #| "kubectl create -f -")
-    Thread.sleep(10 * 1000)
+    runCmd(s"cat kubernetes/${mode}_script.yaml" #| s"sed 's/999999/$pods/g'" #| "kubectl create -f -")
+    Thread.sleep(20 * 1000)
     println("CATCHING LOGS.....")
-    runCmd("kubectl logs hogwild-pod-0 hogwild -f" #> new File(filename))
-    println(">> DONE")
-    runCmd(s"git add $filename")
-    runCmd(s"git commit -m '${filename.substring(filename.lastIndexOf('/') + 1)}'")
-    runCmd(s"git push")
+    runCmd("kubectl logs hogwild-pod-0 hogwild -f" #> new File(filepath))
     println(">> DONE")
   }
 
-  def run(i: Int = 0): Unit = {
+  def gitPush(filepath: String): Unit = {
+    val filename = filepath.substring(filepath.lastIndexOf('/') + 1)
+    runCmd(s"git add $filepath" #&& s"git commit -m '$filename added'" #&& "git push")
+    println(">> DONE")
+  }
+
+  def run(mode: String, version: Int = 0): Unit = {
     deletePods()
-    Seq(6, 8, 12, 18, 26, 40, 64).foreach{ pods =>
-      Thread.sleep(10 * 1000)
-      start(pods, i)
-      Thread.sleep(10 * 1000)
-      deletePods()
-    }
+    (mode match {
+      case "sync" => Seq(2, 4, 6, 8, 12, 18, 26, 40, 64)
+      case "async" => Seq(1, 2, 4, 6, 8, 12, 18, 26, 40, 64)
+    })
+      .foreach { pods =>
+        val filepath = s"logs/${mode}_${"%03d".format(pods)}_pods_${"%02d".format(version)}.log"
+        start(mode, pods, filepath)
+        Thread.sleep(2 * 1000)
+        gitPush(filepath)
+        Thread.sleep(2 * 1000)
+        deletePods()
+        Thread.sleep(2 * 1000)
+      }
   }
 }

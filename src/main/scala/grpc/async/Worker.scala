@@ -21,7 +21,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
 
   def run(mode: AsyncWorkerMode): Unit = {
 
-    Random.setSeed(mode.name.map(s => s.substring(s.lastIndexOf('-') + 1).toLong).getOrElse(0L))
+    Random.setSeed(mode.seed)
 
     val dataset = mode.dataset.getReady(mode.isMaster)
     val svm = new SVM(lambda = mode.lambda, stepSize = mode.stepSize)

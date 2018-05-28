@@ -5,6 +5,7 @@ import utils.Logger
 import utils.Types.LearningRate
 
 trait TopMode extends Mode {
+  val seed: Long
   val name: Option[String]
   val dataset: Dataset
   val lambda: Double

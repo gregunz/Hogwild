@@ -1,0 +1,330 @@
+scala> GetAsync.run(1)
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+
+>> DONE
+>> STARTING 1 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master e44298b] 'async_001_pods_01.log'
+ 1 file changed, 228 insertions(+)
+
+To github.com:gregunz/Hogwild.git
+   1a722f3..e44298b  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+
+>> DONE
+>> STARTING 2 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master 5d33a60] 'async_002_pods_01.log'
+ 1 file changed, 40 insertions(+)
+ create mode 100644 logs/async_002_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   e44298b..5d33a60  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+
+>> DONE
+>> STARTING 4 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master 5f50f55] 'async_004_pods_01.log'
+ 1 file changed, 39 insertions(+)
+ create mode 100644 logs/async_004_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   5d33a60..5f50f55  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+pod "hogwild-pod-2" deleted
+pod "hogwild-pod-3" deleted
+
+>> DONE
+>> STARTING 6 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master 34d9173] 'async_006_pods_01.log'
+ 1 file changed, 39 insertions(+)
+ create mode 100644 logs/async_006_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   5f50f55..34d9173  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+pod "hogwild-pod-2" deleted
+pod "hogwild-pod-3" deleted
+pod "hogwild-pod-4" deleted
+pod "hogwild-pod-5" deleted
+
+>> DONE
+>> STARTING 8 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master 5508b1f] 'async_008_pods_01.log'
+ 1 file changed, 37 insertions(+)
+ create mode 100644 logs/async_008_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   34d9173..5508b1f  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+pod "hogwild-pod-2" deleted
+pod "hogwild-pod-3" deleted
+pod "hogwild-pod-4" deleted
+pod "hogwild-pod-5" deleted
+pod "hogwild-pod-6" deleted
+pod "hogwild-pod-7" deleted
+
+>> DONE
+>> STARTING 12 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master debb92f] 'async_012_pods_01.log'
+ 1 file changed, 39 insertions(+)
+ create mode 100644 logs/async_012_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   5508b1f..debb92f  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+pod "hogwild-pod-2" deleted
+pod "hogwild-pod-3" deleted
+pod "hogwild-pod-4" deleted
+pod "hogwild-pod-5" deleted
+pod "hogwild-pod-6" deleted
+pod "hogwild-pod-7" deleted
+pod "hogwild-pod-8" deleted
+pod "hogwild-pod-9" deleted
+
+>> DONE
+>> STARTING 18 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master 647654e] 'async_018_pods_01.log'
+ 1 file changed, 39 insertions(+)
+ create mode 100644 logs/async_018_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   debb92f..647654e  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+pod "hogwild-pod-10" deleted
+pod "hogwild-pod-2" deleted
+pod "hogwild-pod-3" deleted
+pod "hogwild-pod-4" deleted
+pod "hogwild-pod-5" deleted
+pod "hogwild-pod-6" deleted
+pod "hogwild-pod-7" deleted
+pod "hogwild-pod-8" deleted
+pod "hogwild-pod-9" deleted
+
+>> DONE
+>> STARTING 26 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master 3885ea2] 'async_026_pods_01.log'
+ 1 file changed, 39 insertions(+)
+ create mode 100644 logs/async_026_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   647654e..3885ea2  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+pod "hogwild-pod-10" deleted
+pod "hogwild-pod-11" deleted
+pod "hogwild-pod-2" deleted
+pod "hogwild-pod-3" deleted
+pod "hogwild-pod-4" deleted
+pod "hogwild-pod-5" deleted
+pod "hogwild-pod-6" deleted
+pod "hogwild-pod-7" deleted
+pod "hogwild-pod-8" deleted
+pod "hogwild-pod-9" deleted
+
+>> DONE
+>> STARTING 40 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+
+>> DONE
+
+[master b4beacc] 'async_040_pods_01.log'
+ 1 file changed, 34 insertions(+)
+ create mode 100644 logs/async_040_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   3885ea2..b4beacc  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+pod "hogwild-pod-1" deleted
+pod "hogwild-pod-10" deleted
+pod "hogwild-pod-11" deleted
+pod "hogwild-pod-12" deleted
+pod "hogwild-pod-13" deleted
+pod "hogwild-pod-14" deleted
+pod "hogwild-pod-15" deleted
+pod "hogwild-pod-16" deleted
+pod "hogwild-pod-17" deleted
+pod "hogwild-pod-18" deleted
+pod "hogwild-pod-19" deleted
+pod "hogwild-pod-2" deleted
+pod "hogwild-pod-20" deleted
+pod "hogwild-pod-21" deleted
+pod "hogwild-pod-22" deleted
+pod "hogwild-pod-23" deleted
+pod "hogwild-pod-3" deleted
+pod "hogwild-pod-4" deleted
+pod "hogwild-pod-5" deleted
+pod "hogwild-pod-6" deleted
+pod "hogwild-pod-7" deleted
+pod "hogwild-pod-8" deleted
+pod "hogwild-pod-9" deleted
+
+>> DONE
+>> STARTING 64 PODS
+service "statefulset-service" created
+statefulset "hogwild-pod" created
+
+CATCHING LOGS.....
+Error from server (BadRequest): container "hogwild" in pod "hogwild-pod-0" is waiting to start: ContainerCreating
+>> DONE
+
+[master 37a4935] 'async_064_pods_01.log'
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 logs/async_064_pods_01.log
+
+To github.com:gregunz/Hogwild.git
+   b4beacc..37a4935  master -> master
+
+>> DONE
+>> DELETING ALL PODS
+service "statefulset-service" deleted
+
+statefulset "hogwild-pod" deleted
+
+warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. The resource may continue to run on the cluster indefinitely.
+pod "hogwild-pod-0" deleted
+
+>> DONE
+

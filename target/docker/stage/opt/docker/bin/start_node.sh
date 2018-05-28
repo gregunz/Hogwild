@@ -13,6 +13,7 @@ else
 fi
 
 sh hogwild \
+    seed=${SEED} \
     mode=${MODE} \
     log=${LOG} \
     name=${MY_POD_NAME} \
