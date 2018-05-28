@@ -40,6 +40,11 @@ class SVM(lambda: Double, stepSize: LearningRate) {
     features.map(_ dot weights)
   }
 
+  def computeLoss(feature: SparseNumVector[Double], label: Label, inverseTidCountsVector: SparseNumVector[Double]): Double = {
+    val pred = feature dot weights
+    computeLoss(pred, feature.keys, label, inverseTidCountsVector)
+  }
+
   def computeLoss(pred: Double, weightKeys: Set[TID], label: Label, inverseTidCountsVector: SparseNumVector[Double]): Double = {
     val hinge = Math.max(0, 1 - (label.id * pred))
     val w = weights.filterKeys(weightKeys)

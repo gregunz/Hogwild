@@ -94,7 +94,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
         if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
           stoppingCriteria.interval.reset()
           lossComputingFuture = Future {
-            stoppingCriteria.compute(svm, displayLoss = true)
+            stoppingCriteria.computeValidationStats(svm, displayLoss = true)
           }
         }
       }
@@ -108,22 +108,27 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
       }
 
       val (feature, label) = dataset.getSample
+
+      someStoppingCriteria.foreach{ stoppingCriteria =>
+        stoppingCriteria.addTrainSample(svm, feature, label)
+      }
+
       val newGradient = svm.computeStochasticGradient(
         feature = feature,
         label = label,
         inverseTidCountsVector = dataset.inverseTidCountsVector
       )
       val weightsUpdate = svm.updateWeights(newGradient)
+
       WeightsUpdateHandler.addWeightsUpdate(weightsUpdate)
     }
 
-    if (someStoppingCriteria.isDefined) {
+    someStoppingCriteria.foreach{ stoppingCriteria =>
       broadcastersHandler.killAll()
-      someStoppingCriteria.get.export()
+      stoppingCriteria.export()
     }
 
     logger.alwaysLog("I am done!")
-    //Thread.sleep(Long.MaxValue)
   }
 
   def tidsToBroadcast(dataset: Dataset, i: Int, n: Int): Set[TID] = {

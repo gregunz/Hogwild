@@ -1,0 +1,44 @@
+[Mon May 28 17:19:13 GMT 2018] [LOSS = 0.9997804750313054][ACCURACY = 49.928722623007474 %]
+[Mon May 28 17:19:52 GMT 2018] [LOSS = 0.5379334853477391][ACCURACY = 85.87411983239018 %]
+[Mon May 28 17:20:39 GMT 2018] [LOSS = 0.41285809659800965][ACCURACY = 88.41418635794203 %]
+[Mon May 28 17:21:32 GMT 2018] [LOSS = 0.3386389609736302][ACCURACY = 89.87429262603136 %]
+[Mon May 28 17:22:26 GMT 2018] [LOSS = 0.2897246481099258][ACCURACY = 90.89377510907597 %]
+[Mon May 28 17:23:24 GMT 2018] [LOSS = 0.26869982982049034][ACCURACY = 91.47695364810575 %]
+[Mon May 28 17:24:21 GMT 2018] [LOSS = 0.2598603780281055][ACCURACY = 91.3603179402998 %]
+[Mon May 28 17:25:20 GMT 2018] [LOSS = 0.24645677359929075][ACCURACY = 91.92189727418031 %]
+[Mon May 28 17:26:20 GMT 2018] [LOSS = 0.23486759453444064][ACCURACY = 92.13788932567282 %]
+[Mon May 28 17:27:26 GMT 2018] [LOSS = 0.2321213369354427][ACCURACY = 92.26316471553847 %]
+[Mon May 28 17:28:33 GMT 2018] [LOSS = 0.22710632708329595][ACCURACY = 92.39707978746382 %]
+[Mon May 28 17:29:41 GMT 2018] [LOSS = 0.22005557960329614][ACCURACY = 92.42299883364292 %]
+[Mon May 28 17:30:50 GMT 2018] [LOSS = 0.21836905075226157][ACCURACY = 92.38412026437427 %]
+[Mon May 28 17:31:59 GMT 2018] [LOSS = 0.21678129924339973][ACCURACY = 92.39275994643397 %]
+[Mon May 28 17:33:10 GMT 2018] [LOSS = 0.2128461747326191][ACCURACY = 92.40571946952352 %]
+[Mon May 28 17:34:22 GMT 2018] [LOSS = 0.21183181477779156][ACCURACY = 92.46187740291157 %]
+[Mon May 28 17:35:32 GMT 2018] [LOSS = 0.20961325943247347][ACCURACY = 92.60443215689662 %]
+[Mon May 28 17:36:46 GMT 2018] [LOSS = 0.20841054295721245][ACCURACY = 92.53099485938917 %]
+[Mon May 28 17:37:57 GMT 2018] [LOSS = 0.20810244497057914][ACCURACY = 92.46187740291157 %]
+[Mon May 28 17:39:08 GMT 2018] [LOSS = 0.2073037160000677][ACCURACY = 92.67354961337423 %]
+[Mon May 28 17:40:21 GMT 2018] [LOSS = 0.20568960494859434][ACCURACY = 92.60443215689662 %]
+[Mon May 28 17:41:35 GMT 2018] [LOSS = 0.20409350634675796][ACCURACY = 92.63467104410557 %]
+[Mon May 28 17:42:51 GMT 2018] [LOSS = 0.2039006846470412][ACCURACY = 92.46187740291157 %]
+[Mon May 28 17:44:08 GMT 2018] [LOSS = 0.19972269853132316][ACCURACY = 92.72538770573243 %]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  538k  100    38  100  538k     27   395k  0:00:01  0:00:01 --:--:--  395k
+[Mon May 28 17:44:55 GMT 2018] https://transfer.sh/15UZ5U/weights.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   985  100    35  100   950     43   1178 --:--:-- --:--:-- --:--:--  1220
+[Mon May 28 17:44:55 GMT 2018] https://transfer.sh/tPoud/stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  2199    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  2243  100    44  100  2199     46   2329 --:--:-- --:--:-- --:--:--  2373
+[Mon May 28 17:44:56 GMT 2018] https://transfer.sh/14qdWm/filtered_logs.txt
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 4595k    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  4 4595k    0     0    4  224k      0   187k  0:00:24  0:00:01  0:00:23  187k100 4595k    0     0  100 4595k      0  1733k  0:00:02  0:00:02 --:--:-- 1733k100 4595k  100    38  100 4595k     14  1704k  0:00:02  0:00:02 --:--:-- 1703k
+[Mon May 28 17:44:59 GMT 2018] https://transfer.sh/Kbm4Y/all_logs.txt
+

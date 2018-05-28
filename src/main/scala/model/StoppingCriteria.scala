@@ -1,50 +1,83 @@
 package model
 
 import dataset.Dataset
+import utils.Label.Label
 import utils.{Interval, Logger, Utils}
+
+import scala.collection.immutable.Queue
 
 case class StoppingCriteria(logger: Logger, dataset: Dataset, earlyStopping: Int, minLoss: Double, interval: Interval) {
 
   private var bestWeights = SparseNumVector.empty[Double]
-  private var bestLoss = Double.MaxValue
-  private var losses: Seq[Double] = Seq.empty
-  private var bestAccuracy = 0d
-  private var accuracies: Seq[Double] = Seq.empty
+  private var bestValLoss = Double.MaxValue
+  private var bestValAccuracy = 0d
+
   private var timesWithoutImproving = 0
 
-  def compute(svm: SVM, displayLoss: Boolean): (Double, Double) = {
-    val (loss, accuracy) = svm.lossAndAccuracy(dataset.testSet, dataset.inverseTidCountsVector)
-    losses +:= loss
-    accuracies +:= accuracy
+  private var trainLosses = Queue.empty[Double]
+  private var trainAccuracies = Queue.empty[Double]
+  private var trainBatchSizes = Queue.empty[Int]
+
+  private var trainLossesBatch = Queue.empty[Double]
+  private var trainAccuraciesBatch = Queue.empty[Double]
+
+  private var valLosses = Queue.empty[Double]
+  private var valAccuracies = Queue.empty[Double]
+
+  def computeValidationStats(svm: SVM, displayLoss: Boolean): (Double, Double) = {
+
+    val (valLoss, valAcc) = svm.lossAndAccuracy(dataset.testSet, dataset.inverseTidCountsVector)
+    valLosses = valLosses.enqueue(valLoss)
+    valAccuracies = valAccuracies.enqueue(valAcc)
+
+    val batchSize = trainLossesBatch.size
+    trainBatchSizes = trainBatchSizes.enqueue(batchSize)
+    val trainLoss = trainLossesBatch.sum / batchSize
+    trainLosses = trainLosses.enqueue(trainLoss)
+    val trainAcc = trainAccuraciesBatch.sum / batchSize
+    trainAccuracies = trainAccuracies.enqueue(trainAcc)
+
     if (displayLoss) {
-      logger.log(1)(s"[LOSS = $loss][ACCURACY = ${accuracy * 100} %]")
+      logger.log(1)(s"[VAL][LOSS = $valLoss][ACCURACY = ${valAcc * 100} %]")
+      logger.log(1)(s"[TRAIN][LOSS = $trainLoss][ACCURACY = ${trainAcc * 100} %][BATCH_SIZE = $batchSize]")
     }
-    if (loss < bestLoss) {
-      bestLoss = loss
-      bestAccuracy = accuracy
+
+    trainLossesBatch = Queue.empty
+    trainAccuraciesBatch = Queue.empty
+
+    if (valLoss < bestValLoss) {
+      bestValLoss = valLoss
+      bestValAccuracy = valAcc
       bestWeights = svm.weights
       timesWithoutImproving = 0
     } else {
       timesWithoutImproving += 1
       logger.log(2)(s"[LOSS] my loss did not improve! :'(  (crying alone) ($timesWithoutImproving time(s))")
     }
-    loss -> accuracy
+    valLoss -> valAcc
+  }
+
+  def addTrainSample(svm: SVM, feature: SparseNumVector[Double], label: Label): Unit = {
+    val (trainLoss, trainAcc) = svm.lossAndAccuracy(Seq(feature -> label), dataset.inverseTidCountsVector)
+    trainLossesBatch = trainLossesBatch.enqueue(trainLoss)
+    trainAccuraciesBatch = trainAccuraciesBatch.enqueue(trainAcc)
   }
 
   def shouldStop: Boolean = {
-    bestLoss < minLoss || timesWithoutImproving >= earlyStopping
+    bestValLoss < minLoss || timesWithoutImproving >= earlyStopping
   }
 
   def getWeights: SparseNumVector[Double] = bestWeights
 
-  def getLoss: Double = bestLoss
+  def getLoss: Double = bestValLoss
 
-  def getAccuracy: Double = bestAccuracy
+  def getAccuracy: Double = bestValAccuracy
 
   def export(): Unit = {
     Iterator(
       ("weights.csv", bestWeights.toMap.iterator.map { case (tid, value) => s"$tid, $value" }),
-      ("stats.csv", (losses zip accuracies).map { case (l, a) => s"$l, $a" }.reverseIterator.map(_.toString))
+      ("val_stats.csv", (valLosses zip valAccuracies).map { case (l, a) => s"$l, $a" }.iterator.map(_.toString)),
+      ("train_stats.csv", (trainLosses zip trainAccuracies zip trainBatchSizes).map { case ((l, a), b) => s"$l, $a, $b" }.iterator.map(_.toString))
     ).foreach { case (filename, lines) =>
       Utils.upload(filename, lines)
     }

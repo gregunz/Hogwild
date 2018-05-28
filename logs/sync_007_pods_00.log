@@ -1,0 +1,99 @@
+[Mon May 28 18:17:19 GMT 2018] [LOSS = 0.9989956079870856][ACCURACY = 51.436347142425156 %]
+[Mon May 28 18:18:22 GMT 2018] [LOSS = 0.5496142609215234][ACCURACY = 86.38818091494232 %]
+[Mon May 28 18:19:20 GMT 2018] [LOSS = 0.42265420774256435][ACCURACY = 88.33210937837488 %]
+[Mon May 28 18:20:27 GMT 2018] [LOSS = 0.34545694069135846][ACCURACY = 89.8958918311806 %]
+[Mon May 28 18:21:34 GMT 2018] [LOSS = 0.2948721149688037][ACCURACY = 91.01905049894164 %]
+[Mon May 28 18:22:47 GMT 2018] [LOSS = 0.27411101726750914][ACCURACY = 91.4553544429565 %]
+[Mon May 28 18:24:02 GMT 2018] [LOSS = 0.26140267456511823][ACCURACY = 91.61518856106096 %]
+[Mon May 28 18:25:21 GMT 2018] [LOSS = 0.24967275523414115][ACCURACY = 91.99965441271762 %]
+[Mon May 28 18:26:41 GMT 2018] [LOSS = 0.2382475409258565][ACCURACY = 92.20700678215042 %]
+[Mon May 28 18:28:06 GMT 2018] [LOSS = 0.234449714932867][ACCURACY = 92.31500280789668 %]
+[Mon May 28 18:29:32 GMT 2018] [LOSS = 0.22958210311987085][ACCURACY = 92.44891787982202 %]
+[Mon May 28 18:31:00 GMT 2018] [LOSS = 0.22331726040777528][ACCURACY = 92.49643613115038 %]
+[Mon May 28 18:32:30 GMT 2018] [LOSS = 0.22104628825740516][ACCURACY = 92.48347660806083 %]
+[Mon May 28 18:34:01 GMT 2018] [LOSS = 0.21904812845489213][ACCURACY = 92.45323772085187 %]
+[Mon May 28 18:35:32 GMT 2018] [LOSS = 0.21553471867857002][ACCURACY = 92.47051708497128 %]
+[Mon May 28 18:37:04 GMT 2018] [LOSS = 0.2147751449212341][ACCURACY = 92.45755756188171 %]
+[Mon May 28 18:38:41 GMT 2018] [LOSS = 0.2125092316217367][ACCURACY = 92.63467104410557 %]
+[Mon May 28 18:40:18 GMT 2018] [LOSS = 0.21084718161749558][ACCURACY = 92.55691390556827 %]
+[Mon May 28 18:41:54 GMT 2018] [LOSS = 0.21018810963195322][ACCURACY = 92.50507581321007 %]
+[Mon May 28 18:43:30 GMT 2018] [LOSS = 0.2086017305148948][ACCURACY = 92.75562659294138 %]
+[Mon May 28 18:45:08 GMT 2018] [LOSS = 0.20789104951491152][ACCURACY = 92.61307183895633 %]
+[Mon May 28 18:46:47 GMT 2018] [LOSS = 0.20531138142977634][ACCURACY = 92.62603136204588 %]
+[Mon May 28 18:48:27 GMT 2018] [LOSS = 0.20467195872835459][ACCURACY = 92.50939565423992 %]
+[Mon May 28 18:50:06 GMT 2018] [LOSS = 0.20225491786034294][ACCURACY = 92.77722579809064 %]
+[Mon May 28 18:51:46 GMT 2018] [LOSS = 0.19939652130862548][ACCURACY = 92.72538770573243 %]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  555k    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 16421  100    37  100 16384     54  23918 --:--:-- --:--:-- --:--:-- 23937100 16421  100    37  100 16384     54  23918 --:--:-- --:--:-- --:--:-- 23937
+2311 24614  100    38  2320  555k     55   809k --:--:-- --:--:-- --:--:--  808k2311 24614  100    38  2320  555k     55   809k --:--:-- --:--:-- --:--:--  808k
+[Mon May 28 18:51:48 GMT 2018] https://transfer.sh/ZnGQl/weights.csv
+
+[Mon May 28 18:51:48 GMT 2018] https://transfer.sh/11QXuS/weights.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 16421  100    37  100 16384     45  20352 --:--:-- --:--:-- --:--:-- 20373100 16421  100    37  100 16384     45  20352 --:--:-- --:--:-- --:--:-- 20373
+[Mon May 28 18:51:48 GMT 2018] https://transfer.sh/t6yVy/weights.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  555k  100    38  100  555k     37   550k  0:00:01  0:00:01 --:--:--  550k100  555k  100    38  100  555k     37   550k  0:00:01  0:00:01 --:--:--  550k
+[Mon May 28 18:51:48 GMT 2018] https://transfer.sh/10idvz/weights.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1025  100    35  100   990     59   1677 --:--:-- --:--:-- --:--:--  1737
+[Mon May 28 18:51:49 GMT 2018] https://transfer.sh/GHLsi/stats.csv
+
+100  1025  100    35  100   990     65   1860 --:--:-- --:--:-- --:--:--  1926
+[Mon May 28 18:51:49 GMT 2018] https://transfer.sh/M3s0R/stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 11  555k    0     0   11 65536      0  30581  0:00:18  0:00:02  0:00:16 30581100  1025  100    35  100   990     51   1443 --:--:-- --:--:-- --:--:--  1491100  1025  100    35  100   990     51   1443 --:--:-- --:--:-- --:--:--  1491
+[Mon May 28 18:51:49 GMT 2018] https://transfer.sh/1nvPe/stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0   990    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0  0  2290    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  2290    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  2333  100    43  100  2290     78   4186 --:--:-- --:--:-- --:--:--  4257
+[Mon May 28 18:51:49 GMT 2018] https://transfer.sh/Mx8Zq/filtered_logs.txt
+
+100  2333  100    43  100  2290     78   4171 --:--:-- --:--:-- --:--:--  4241
+[Mon May 28 18:51:49 GMT 2018] https://transfer.sh/M8Uug/filtered_logs.txt
+
+100  1025  100    35  100   990     25    708  0:00:01  0:00:01 --:--:--   733
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+[Mon May 28 18:51:49 GMT 2018] https://transfer.sh/2ieKN/stats.csv
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 11  555k    0     0   11 65536      0  20838  0:00:27  0:00:03  0:00:24 20844100  2333  100    43  100  2290     51   2762 --:--:-- --:--:-- --:--:--  2814
+[Mon May 28 18:51:50 GMT 2018] https://transfer.sh/D62E7/filtered_logs.txt
+
+100  2333  100    43  100  2290     66   3539 --:--:-- --:--:-- --:--:--  3600100  2333  100    43  100  2290     66   3533 --:--:-- --:--:-- --:--:--  3600
+[Mon May 28 18:51:50 GMT 2018] https://transfer.sh/wWecJ/filtered_logs.txt
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 24 14.8M    0     0   24 3696k      0  3347k  0:00:04  0:00:01  0:00:03 3347k 19 14.8M    0     0   19 2928k      0  2666k  0:00:05  0:00:01  0:00:04 2666k100    38  100    38    0     0     67      0 --:--:-- --:--:-- --:--:--    67
+[Mon May 28 18:51:51 GMT 2018] https://transfer.sh/31tYL/all_logs.txt
+
+ 11  555k    0     0   11 65536      0  15807  0:00:35  0:00:04  0:00:31 15807

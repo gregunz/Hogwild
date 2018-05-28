@@ -13,6 +13,7 @@ import scala.util.Random
 
 object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
 
+  var exportOnce: Boolean = true
 
   def run(mode: SyncCoordinatorMode): Unit = {
 
@@ -44,9 +45,12 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
         def onError(t: Throwable): Unit = {
           logger.log(2)(s"One worker left. (on error)")
           safeRemoveWorker()
-          if (stoppingCriteria.shouldStop && !WorkersAggregator.noWorkersAvailable) {
-            stoppingCriteria.export()
-            sys.exit(0)
+          instance.synchronized{
+            if(stoppingCriteria.shouldStop && exportOnce){
+              exportOnce = false
+              stoppingCriteria.export()
+              sys.exit(0)
+            }
           }
         }
 
@@ -70,7 +74,7 @@ object Coordinator extends GrpcServer with GrpcRunnable[SyncCoordinatorMode] {
                   if (stoppingCriteria.interval.hasReachedOrFirst && lossComputingFuture.isCompleted) {
                     stoppingCriteria.interval.reset()
                     lossComputingFuture = Future {
-                      stoppingCriteria.compute(svm, displayLoss = true)
+                      stoppingCriteria.computeValidationStats(svm, displayLoss = true)
                     }
                   }
                   weightsUpdate = svm.updateWeights(WorkersAggregator.getMeanGradient)
