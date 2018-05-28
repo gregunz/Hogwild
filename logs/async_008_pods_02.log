@@ -1,0 +1,58 @@
+May 28, 2018 8:51:18 PM io.grpc.internal.ManagedChannelImpl$NameResolverListenerImpl onError
+WARNING: [io.grpc.internal.ManagedChannelImpl-1] Failed to resolve name. status=Status{code=UNAVAILABLE, description=Unable to resolve host hogwild-pod-1.statefulset-service, cause=java.net.UnknownHostException: hogwild-pod-1.statefulset-service: Name does not resolve
+	at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
+	at java.net.InetAddress$2.lookupAllHostAddr(InetAddress.java:928)
+	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1323)
+	at java.net.InetAddress.getAllByName0(InetAddress.java:1276)
+	at java.net.InetAddress.getAllByName(InetAddress.java:1192)
+	at java.net.InetAddress.getAllByName(InetAddress.java:1126)
+	at io.grpc.internal.DnsNameResolver$JdkResolver.resolve(DnsNameResolver.java:361)
+	at io.grpc.internal.DnsNameResolver$1.run(DnsNameResolver.java:172)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+}
+[Mon May 28 20:51:18 GMT 2018] [DATA] dataset random sampling epoch 0
+[Mon May 28 20:51:22 GMT 2018] [VAL][LOSS = 1.0][ACCURACY = 46.5938053479632 %]
+[Mon May 28 20:51:37 GMT 2018] [TRAIN][LOSS = 0.5642358584589248][ACCURACY = 81.31868131868131 %][BATCH_SIZE = 1001]
+[Mon May 28 20:51:43 GMT 2018] [VAL][LOSS = 0.5277045375418803][ACCURACY = 85.61924921162901 %]
+[Mon May 28 20:52:04 GMT 2018] [TRAIN][LOSS = 0.26078619585196755][ACCURACY = 92.10000000000001 %][BATCH_SIZE = 1000]
+[Mon May 28 20:52:11 GMT 2018] [VAL][LOSS = 0.3987001752397829][ACCURACY = 88.35370858352412 %]
+[Mon May 28 20:52:29 GMT 2018] [TRAIN][LOSS = 0.2937584881978593][ACCURACY = 91.10889110889111 %][BATCH_SIZE = 1001]
+[Mon May 28 20:52:37 GMT 2018] [VAL][LOSS = 0.3135197911451595][ACCURACY = 89.58054343600156 %]
+[Mon May 28 20:52:57 GMT 2018] [TRAIN][LOSS = 0.22083261093488318][ACCURACY = 92.20779220779221 %][BATCH_SIZE = 1001]
+[Mon May 28 20:53:06 GMT 2018] [VAL][LOSS = 0.25925545510204906][ACCURACY = 91.412156032658 %]
+[Mon May 28 20:53:27 GMT 2018] [TRAIN][LOSS = 0.1540805255808976][ACCURACY = 94.8051948051948 %][BATCH_SIZE = 1001]
+[Mon May 28 20:53:37 GMT 2018] [VAL][LOSS = 0.2436909155979477][ACCURACY = 91.83550045358331 %]
+[Mon May 28 20:54:00 GMT 2018] [TRAIN][LOSS = 0.23244170968495112][ACCURACY = 91.00899100899102 %][BATCH_SIZE = 1001]
+[Mon May 28 20:54:10 GMT 2018] [VAL][LOSS = 0.23758709654182578][ACCURACY = 91.70158538165796 %]
+[Mon May 28 20:54:34 GMT 2018] [TRAIN][LOSS = 0.17367271058177303][ACCURACY = 93.20679320679321 %][BATCH_SIZE = 1001]
+[Mon May 28 20:54:44 GMT 2018] [VAL][LOSS = 0.22596152623937454][ACCURACY = 92.16380837185191 %]
+[Mon May 28 20:55:07 GMT 2018] [TRAIN][LOSS = 0.13460138106785174][ACCURACY = 95.4045954045954 %][BATCH_SIZE = 1001]
+[Mon May 28 20:55:18 GMT 2018] [VAL][LOSS = 0.21677486895636464][ACCURACY = 92.07741155125491 %]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  415k    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  415k  100    37  100  415k     41   461k --:--:-- --:--:-- --:--:--  461k
+[Mon May 28 20:55:20 GMT 2018] https://transfer.sh/MnzrA/weights.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0   339    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   378  100    39  100   339     63    555 --:--:-- --:--:-- --:--:--   618
+[Mon May 28 20:55:21 GMT 2018] https://transfer.sh/epUIq/val_stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   389  100    41  100   348     66    564 --:--:-- --:--:-- --:--:--   631100   389  100    41  100   348     66    564 --:--:-- --:--:-- --:--:--   630
+[Mon May 28 20:55:21 GMT 2018] https://transfer.sh/Aq6JC/train_stats.csv
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1902  100    43  100  1859     43   1879  0:00:01 --:--:--  0:00:01  1923100  1902  100    43  100  1859     43   1879  0:00:01 --:--:--  0:00:01  1921
+[Mon May 28 20:55:22 GMT 2018] https://transfer.sh/Nmm5v/filtered_logs.txt
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 50237  100    38  100 50199     39  52236 --:--:-- --:--:-- --:--:-- 52221100 50237  100    38  100 50199     39  52236 --:--:-- --:--:-- --:--:-- 52221
+[Mon May 28 20:55:23 GMT 2018] https://transfer.sh/OSlku/all_logs.txt
+
+[Mon May 28 20:55:23 GMT 2018] I am done!
