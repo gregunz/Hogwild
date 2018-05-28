@@ -13,6 +13,7 @@ import scala.util.Random
 object Worker extends GrpcRunnable[SyncWorkerMode] {
 
   private val instance = this
+  private var first = true
   private var someGradient: Option[SparseNumVector[Double]] = Some(SparseNumVector.empty)
 
   def run(mode: SyncWorkerMode): Unit = {
@@ -39,7 +40,7 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
 
   def createObserver(logger: Logger, dataset: Dataset, lambda: Double): StreamObserver[WorkerResponse] = {
     new StreamObserver[WorkerResponse] {
-      val err = "[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)"
+      val err = "[KILLED] this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)"
       def onError(t: Throwable): Unit = {
         logger.log(2)(s"$err (on error)")
         sys.exit(0)
@@ -77,7 +78,12 @@ object Worker extends GrpcRunnable[SyncWorkerMode] {
       instance.synchronized {
         while (someGradient.isEmpty) {instance.wait()}
         requestObserver.onNext(WorkerRequest(someGradient.get.toMap))
-        logger.log(3)("[SEND] jobs done, here you go my master!")
+        if(first){
+          first = false
+          logger.log(2)("[HI] i wanna help, give me something to compute!")
+        } else {
+          logger.log(3)("[SEND] jobs done, here you go my master!")
+        }
         someGradient = None
       }
     }

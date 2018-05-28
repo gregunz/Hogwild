@@ -157,7 +157,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
           val worker = RemoteWorker.fromWorkerDetails(msg.workerDetail.get)
 
           broadcastersHandler.add(worker)
-          logger.log(3)(s"[RECEIVED]: thanks to $worker for the computation, I owe you some gradients now ;)")
+          logger.log(3)(s"[RECEIVED] thanks to $worker for the computation, I owe you some gradients now ;)")
 
           val receivedWeights = SparseNumVector(msg.weightsUpdate)
           svm.addWeightsUpdate(receivedWeights)
@@ -166,7 +166,7 @@ object Worker extends GrpcServer with GrpcRunnable[AsyncWorkerMode] {
     }
 
     override def kill(request: Empty): Future[Empty] = {
-      logger.log(2)(s"[KILLED]: this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
+      logger.log(2)(s"[KILLED] this is the end, my friend... i am proud to have served you... arrrrghhh... (dying alone on the field)")
       keepComputing = false
       //sys.exit(0)
       Future(Empty())
