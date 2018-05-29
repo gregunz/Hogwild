@@ -6,6 +6,7 @@ import scala.collection.immutable.Queue
 
 case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
   require(verbosityLevel >= Logger.minLevel)
+  private var startTime: Long = System.currentTimeMillis
 
   private var logs: Queue[(String, Boolean)] = Queue.empty
 
@@ -37,6 +38,12 @@ case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
   def getAllLogs: Iterator[String] = logs.iterator.map(_._1)
 
   def getFilteredLogs: Iterator[String] = logs.iterator.filter(_._2).map(_._1)
+
+  def timeFromStart: String = {
+    ((startTime -  System.currentTimeMillis) / 1000) + " sec"
+  }
+
+  def resetStartingTime(): Unit = startTime = System.currentTimeMillis()
 
   override def toString: String = s"Logger($verbosityLevel)"
 }

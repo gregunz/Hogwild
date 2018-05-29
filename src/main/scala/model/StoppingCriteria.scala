@@ -90,6 +90,8 @@ case class StoppingCriteria(logger: Logger, dataset: Dataset, earlyStopping: Int
 
     Utils.upload("filtered_logs.txt", logger.getFilteredLogs, andPrint = false)
     Utils.upload("all_logs.txt", logger.getAllLogs, andPrint = false)
+
+    logger.log(2)(s"Convergence time is ${logger.timeFromStart}")
   }
 
 }

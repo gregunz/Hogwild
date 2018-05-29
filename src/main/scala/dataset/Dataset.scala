@@ -118,6 +118,8 @@ case class Dataset(logger: Logger, dataPath: String) {
       testSet
     }
     logger.log(2)("Dataset ready!!")
+    logger.log(2)(s"Dataset loaded in ${logger.timeFromStart}")
+    logger.resetStartingTime()
     this
   }
 
