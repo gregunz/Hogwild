@@ -40,7 +40,7 @@ case class Logger(verbosityLevel: Int, logFun: String => Unit = println) {
   def getFilteredLogs: Iterator[String] = logs.iterator.filter(_._2).map(_._1)
 
   def timeFromStart: String = {
-    ((startTime -  System.currentTimeMillis) / 1000) + " sec"
+    ((System.currentTimeMillis - startTime) / 1000) + " sec"
   }
 
   def resetStartingTime(): Unit = startTime = System.currentTimeMillis()
