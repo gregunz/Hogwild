@@ -1,4 +1,4 @@
-# A Distributed version of Hogwild!
+# A Distributed version of Hogwild! [1]
 Team : Grégoire Clément, Maxime Delisle, Sylvain Beaud
 
 ## Description
@@ -22,6 +22,6 @@ Another interesting feature of our implementation is the fact that once the comp
 Results are uploaded on transfer.sh (linked displayed in the console). In case of failure (if server transfer.sh is down) we also print them in the console (just to be sure!).
 
 ### Reference
-Recht, Benjamin, et al. "Hogwild: A lock-free approach to parallelizing stochastic gradient descent." Advances in neural information processing systems. 2011.
+[1] Recht, Benjamin, et al. "Hogwild: A lock-free approach to parallelizing stochastic gradient descent." Advances in neural information processing systems. 2011.
 
 [dataset]: http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/lyrl2004_rcv1v2_README.htm
