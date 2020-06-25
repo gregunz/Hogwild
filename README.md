@@ -8,6 +8,9 @@ One of the main highlights of our implementation is the possibility to add and r
 
 Another interesting feature of our implementation is the fact that once the computations are finished, the logs and statistics are uploaded and stored on transfer.sh and can be downloaded for a later use. We have also put options to adjust the level of verbosity of the logs.
 
+## Report
+See `project.pdf`
+
 ## How to run the project
 `$ sh run.sh $1 $2 $3`
 
